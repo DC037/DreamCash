@@ -333,7 +333,39 @@ async function viewPaymentHistory(){
 
 }
   async function viewIncomeHistory() {
-  alert("Income History Coming Soon");
+  const user = auth.currentUser;
+
+  if(!user){
+    alert("Please login again");
+    return;
+  }
+
+  try{
+    const snap = await db.collection("incomeHistory")
+      .where("userId", "==", user.uid)
+      .get();
+
+    let msg = "";
+
+    snap.forEach(doc => {
+      const d = doc.data();
+
+      msg +=
+        "Type: " + d.type +
+        "\nAmount: +" + d.amount + " DC" +
+        "\nNote: " + d.note +
+        "\n\n";
+    });
+
+    if(msg === ""){
+      msg = "No income history found";
+    }
+
+    alert(msg);
+
+  }catch(error){
+    alert(error.message);
+  }
   }
 function copyReferral(){
   navigator.clipboard.writeText(referralCode);
