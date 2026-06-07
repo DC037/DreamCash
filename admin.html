@@ -76,14 +76,40 @@ async function loadWithdrawals(){
 }
 
 async function approveWithdrawal(id){
-  await db.collection("withdrawals").doc(id).update({
-    status: "Approved"
+
+  const withdrawRef = db.collection("withdrawals").doc(id);
+  const withdrawDoc = await withdrawRef.get();
+  const w = withdrawDoc.data();
+
+  if(w.status === "Approved"){
+    alert("Already Approved");
+    return;
+  }
+
+  const userRef = db.collection("users").doc(w.userId);
+
+  await db.runTransaction(async (transaction) => {
+
+    const userDoc = await transaction.get(userRef);
+    const userData = userDoc.data();
+
+    const currentBalance = Number(userData.balance || 0);
+    const newBalance = currentBalance - Number(w.amount);
+
+    transaction.update(userRef,{
+      balance: newBalance
+    });
+
+    transaction.update(withdrawRef,{
+      status: "Approved",
+      deducted: true
+    });
+
   });
 
-  alert("Withdrawal Approved");
+  alert("Withdrawal Approved & Balance Deducted");
   loadWithdrawals();
 }
-
 async function rejectWithdrawal(id){
   await db.collection("withdrawals").doc(id).update({
     status: "Rejected"
