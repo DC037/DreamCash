@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dream Cash Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{min-height:100vh;background:#f1f5f9;padding:15px}
+.header{background:linear-gradient(135deg,#0f766e,#0ea5e9);color:white;padding:22px;border-radius:20px;text-align:center}
+.card{background:white;margin-top:15px;padding:18px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.balance{font-size:34px;font-weight:bold;color:#15803d;margin-top:8px}
+.btn{width:100%;border:none;padding:13px;border-radius:25px;background:linear-gradient(135deg,#15803d,#22c55e);color:white;font-size:16px;font-weight:bold;margin-top:12px}
+.info{font-size:14px;color:#555;margin-top:8px}
+.refBox{background:#e0f2fe;padding:12px;border-radius:12px;margin-top:10px;word-break:break-all;color:#075985;font-weight:bold}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
+.menu a{text-decoration:none;background:white;padding:18px;border-radius:18px;text-align:center;color:#0f766e;font-weight:bold;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.logout{background:#ef4444}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h2>Dream Cash</h2>
+  <p id="userName">Loading...</p>
+</div>
+
+<div class="card">
+  <p>Available Balance</p>
+  <div class="balance">₹<span id="balance">0</span></div>
+  <button class="btn">Withdraw</button>
+</div>
+
+<div class="card">
+  <h3>Your Referral Link</h3>
+  <p class="info">Share this link and invite friends.</p>
+  <div class="refBox" id="refLink">Loading...</div>
+  <button class="btn" onclick="copyReferral()">Copy Referral Link</button>
+</div>
+
+<div class="card">
+  <h3>Referral Details</h3>
+  <p class="info">My Referral Code: <b id="myCode">Loading...</b></p>
+  <p class="info">Total Referrals: <b id="refCount">0</b></p>
+</div>
+
+<div class="menu">
+  <a href="#">Profile</a>
+  <a href="#">Invite</a>
+  <a href="#">History</a>
+  <a href="#">Support</a>
+</div>
+
+<button class="btn logout" onclick="logoutUser()">Logout</button>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCVlHJ6pEI6A3HmSma0LNsFanatv-yhic",
+  authDomain: "dreamcash-dafb4.firebaseapp.com",
+  projectId: "dreamcash-dafb4",
+  storageBucket: "dreamcash-dafb4.firebasestorage.app",
+  messagingSenderId: "66002195487",
+  appId: "1:66002195487:web:6fb777fca2630c466a312a"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let referralLink = "";
+
+auth.onAuthStateChanged(async function(user){
+  if(user){
+    const doc = await db.collection("users").doc(user.uid).get();
+
+    if(doc.exists){
+      const data = doc.data();
+
+      document.getElementById("userName").innerText = "Welcome, " + data.fullName;
+      document.getElementById("balance").innerText = data.balance || 0;
+      document.getElementById("myCode").innerText = data.myReferralCode || "";
+      document.getElementById("refCount").innerText = data.referralCount || 0;
+
+      referralLink = window.location.origin + window.location.pathname.replace("dashboard.html","login.html") + "?ref=" + data.myReferralCode;
+      document.getElementById("refLink").innerText = referralLink;
+    }
+  }else{
+    window.location.href = "login.html";
+  }
+});
+
+function copyReferral(){
+  navigator.clipboard.writeText(referralLink);
+  alert("Referral link copied");
+}
+
+function logoutUser(){
+  auth.signOut().then(function(){
+    window.location.href = "login.html";
+  });
+}
+</script>
+
+</body>
+</html>
