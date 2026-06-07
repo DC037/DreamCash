@@ -129,18 +129,43 @@ async function registerUser(){
   try{
     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
     const uid = userCredential.user.uid;
-    const myReferralCode = whatsapp.slice(-6) + uid.slice(0,4).toUpperCase();
+    const myReferralCode = (whatsapp.slice(-6) + uid.slice(0,4)).toUpperCase();
 
     await db.collection("users").doc(uid).set({
-      fullName: fullName,
-      whatsapp: whatsapp,
-      email: email,
-      referredBy: referralCode || "",
-      myReferralCode: myReferralCode,
-      balance: 0,
-      referralCount: 0,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  fullName: fullName,
+  whatsapp: whatsapp,
+  email: email,
+  referredBy: referralCode || "",
+  myReferralCode: myReferralCode,
+  balance: 0,
+  referralCount: 0,
+  referralIncome: 0,
+  joinedUsers: [],
+  createdAt: firebase.firestore.FieldValue.serverTimestamp()
+});
+
+if(referralCode){
+  const refSnap = await db.collection("users")
+    .where("myReferralCode", "==", referralCode)
+    .limit(1)
+    .get();
+
+  if(!refSnap.empty){
+    const refDoc = refSnap.docs[0];
+
+    await db.collection("users").doc(refDoc.id).update({
+      referralCount: firebase.firestore.FieldValue.increment(1),
+      referralIncome: firebase.firestore.FieldValue.increment(20),
+      balance: firebase.firestore.FieldValue.increment(20),
+      joinedUsers: firebase.firestore.FieldValue.arrayUnion({
+        name: fullName,
+        whatsapp: whatsapp,
+        email: email,
+        joinedAt: new Date().toISOString()
+      })
     });
+  }
+}
 
     alert("Registration successful");
     window.location.href = "dashboard.html";
