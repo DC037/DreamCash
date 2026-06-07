@@ -120,9 +120,20 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
 
 <div class="card section">
   <h3>🏦 Withdrawal</h3>
-  <input class="input" placeholder="Enter withdrawal amount">
-  <input class="input" placeholder="Enter UPI ID">
-  <button class="btn">Submit Withdraw</button>
+
+  <input id="withdrawAmount"
+         class="input"
+         type="number"
+         placeholder="Enter withdrawal amount">
+
+  <input id="withdrawUpi"
+         class="input"
+         type="text"
+         placeholder="Enter UPI ID">
+
+  <button class="btn" onclick="submitWithdrawal()">
+      Submit Withdraw
+  </button>
 </div>
 
 <div class="card section">
@@ -217,7 +228,41 @@ document.getElementById("myReferrals").innerHTML = html;
     window.location.href = "login.html";
   }
 });
+async function submitWithdrawal(){
 
+    const amount = document.getElementById("withdrawAmount").value;
+    const upi = document.getElementById("withdrawUpi").value;
+
+    if(!amount || !upi){
+        alert("Please enter amount and UPI ID");
+        return;
+    }
+
+    const user = auth.currentUser;
+
+    if(!user){
+        alert("Please login again");
+        return;
+    }
+
+    try{
+        await db.collection("withdrawals").add({
+            userId: user.uid,
+            amount: Number(amount),
+            upiId: upi,
+            status: "Pending",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("Withdrawal Request Submitted");
+
+        document.getElementById("withdrawAmount").value = "";
+        document.getElementById("withdrawUpi").value = "";
+
+    }catch(error){
+        alert(error.message);
+    }
+  }
 function copyReferral(){
   navigator.clipboard.writeText(referralCode);
   alert("Referral Link Copied");
