@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DreamCash Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body{font-family:Arial;background:#eef3f7;margin:0;padding:15px;}
+    .card{background:white;padding:15px;border-radius:12px;margin-bottom:15px;box-shadow:0 3px 10px #0001;}
+    h2{color:#0b6b7a;}
+    .row{border-bottom:1px solid #eee;padding:10px 0;}
+    .btn{border:none;padding:8px 14px;border-radius:20px;color:white;font-weight:bold;margin:5px;}
+    .green{background:#16c784;}
+    .red{background:#e74c3c;}
+    .status{font-weight:bold;color:#e67e22;}
+  </style>
+</head>
+<body>
+
+  <h2>DreamCash Admin Panel</h2>
+
+  <div class="card">
+    <h3>Withdrawal Requests</h3>
+    <div id="withdrawalList">Loading...</div>
+  </div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCVIHJ66pEI6A3HmSmaOLNsFanatv-yhic",
+  authDomain: "dreamcash-dafb4.firebaseapp.com",
+  projectId: "dreamcash-dafb4",
+  storageBucket: "dreamcash-dafb4.firebasestorage.app",
+  messagingSenderId: "66002195487",
+  appId: "1:66002195487:web:6fb777fca2630c466a312a"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+async function loadWithdrawals(){
+  const box = document.getElementById("withdrawalList");
+  box.innerHTML = "Loading...";
+
+  const snap = await db.collection("withdrawals")
+    .orderBy("createdAt", "desc")
+    .get();
+
+  if(snap.empty){
+    box.innerHTML = "No withdrawal requests found.";
+    return;
+  }
+
+  let html = "";
+
+  snap.forEach(doc => {
+    const d = doc.data();
+
+    html += `
+      <div class="row">
+        <b>Amount:</b> ₹${d.amount}<br>
+        <b>UPI:</b> ${d.upiId}<br>
+        <b>User ID:</b> ${d.userId}<br>
+        <b>Status:</b> <span class="status">${d.status}</span><br><br>
+
+        <button class="btn green" onclick="approveWithdrawal('${doc.id}')">Approve</button>
+        <button class="btn red" onclick="rejectWithdrawal('${doc.id}')">Reject</button>
+      </div>
+    `;
+  });
+
+  box.innerHTML = html;
+}
+
+async function approveWithdrawal(id){
+  await db.collection("withdrawals").doc(id).update({
+    status: "Approved"
+  });
+
+  alert("Withdrawal Approved");
+  loadWithdrawals();
+}
+
+async function rejectWithdrawal(id){
+  await db.collection("withdrawals").doc(id).update({
+    status: "Rejected"
+  });
+
+  alert("Withdrawal Rejected");
+  loadWithdrawals();
+}
+
+loadWithdrawals();
+</script>
+
+</body>
+</html>
