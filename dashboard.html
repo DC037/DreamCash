@@ -266,13 +266,22 @@ async function submitWithdrawal(){
         alert("Please login again");
         return;
     }
+const userDoc = await db.collection("users").doc(user.uid).get();
+const userData = userDoc.data();
 
+const currentBalance = Number(userData.balance || 0);
+
+if(Number(amount) > currentBalance){
+  alert("Insufficient Balance");
+  return;
+}
     try{
         await db.collection("withdrawals").add({
             userId: user.uid,
             amount: Number(amount),
             upiId: upi,
             status: "Pending",
+          deducted: false,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
