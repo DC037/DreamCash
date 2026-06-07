@@ -147,14 +147,14 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
     <div class="icon">💳</div>
     <h3>Payment History</h3>
     <p>View your withdrawal requests.</p>
-    <button class="btn blue">View</button>
+   <button class="btn blue" onclick="viewPaymentHistory()">View</button>
   </div>
 
   <div class="box">
     <div class="icon">💰</div>
     <h3>Income History</h3>
     <p>View your earning records.</p>
-    <button class="btn">View</button>
+    <button class="btn" onclick="viewIncomeHistory()">View</button>
   </div>
 
 </div>
@@ -317,6 +317,9 @@ async function viewPaymentHistory(){
   }
 
 }
+  async function viewIncomeHistory() {
+  alert("Income History Coming Soon");
+  }
 function copyReferral(){
   navigator.clipboard.writeText(referralCode);
   alert("Referral Link Copied");
