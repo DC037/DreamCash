@@ -67,6 +67,10 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
   <h4>👥 Total Refer</h4>
   <h1><span id="totalRefer">0</span></h1>
 </div>
+  <div class="card section">
+  <h3>👥 My Referrals</h3>
+  <div id="myReferrals">Loading...</div>
+</div>
 <div class="card spin">
   <h2>🎡 Lucky Spin</h2>
   <p class="small">Spin daily and win exciting cash rewards.</p>
@@ -182,7 +186,24 @@ auth.onAuthStateChanged(async function(user){
         document.getElementById("balance").innerText = (data.balance || 0).toFixed(2);
         document.getElementById("refCount").innerText = data.referralCount || 0;
 document.getElementById("totalRefer").innerText = data.referralCount || 0;
-        if(data.myReferralCode){
+       let referrals = data.joinedUsers || [];
+let html = "";
+
+if(referrals.length === 0){
+  html = "No referrals yet";
+}else{
+  referrals.forEach((r, index) => {
+    html += `
+      <div class="row">
+        <span>${index + 1}. ${r.name}<br>📱 ${r.whatsapp}</span>
+        <b class="green">Joined</b>
+      </div>
+    `;
+  });
+}
+
+document.getElementById("myReferrals").innerHTML = html;
+       if(data.myReferralCode){
           const realLink = "https://dc037.github.io/DreamCash/login.html?ref=" + data.myReferralCode;
           document.getElementById("myCode").innerText = realLink;
           referralCode = realLink;
