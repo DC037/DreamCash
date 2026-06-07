@@ -127,7 +127,7 @@ body{
     <input class="input" type="email" placeholder="Email ID">
     <input class="input" type="password" placeholder="Password">
     <input class="input" type="password" placeholder="Confirm Password">
-
+<input class="input" type="text" id="referralCode" placeholder="Referral Code">
     <label class="check">
       <input type="checkbox">
       <span>I agree to the Terms & Conditions of Dream Cash.</span>
@@ -152,6 +152,12 @@ function showRegister(){
   document.getElementById("loginForm").classList.remove("active");
   document.getElementById("registerTab").classList.add("active");
   document.getElementById("loginTab").classList.remove("active");
+}
+  const params = new URLSearchParams(window.location.search);
+const refCode = params.get("ref");
+
+if (refCode) {
+    document.getElementById("referralCode").value = refCode;
 }
 </script>
 
