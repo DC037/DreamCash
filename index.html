@@ -4,60 +4,198 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dream Cash</title>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{background:#f3f6fb;color:#111;padding-bottom:80px}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
+body{
+  background:#f3f6fb;
+  color:#111;
+  padding-bottom:85px;
+}
 .header{
   background:linear-gradient(135deg,#0f766e,#0ea5e9);
-  color:white;padding:20px 15px;border-radius:0 0 25px 25px;
+  color:white;
+  padding:20px 15px;
+  border-radius:0 0 25px 25px;
 }
 .header h1{font-size:26px}
 .header p{font-size:14px;margin-top:5px}
-.wallet{
-  background:white;margin:15px;padding:18px;border-radius:18px;
-  box-shadow:0 5px 18px rgba(0,0,0,.12);text-align:center;
+
+.announce{
+  margin:15px;
+  background:#fff7ed;
+  color:#9a3412;
+  padding:12px;
+  border-radius:14px;
+  font-weight:bold;
+  text-align:center;
 }
+
+.profile,.wallet,.section{
+  background:white;
+  margin:15px;
+  padding:16px;
+  border-radius:18px;
+  box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+.profile{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.avatar{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  background:#0ea5e9;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+}
+.profile h3{color:#075985}
+.profile p{font-size:13px;color:#555}
+
+.wallet{text-align:center}
 .wallet h2{color:#0f766e;font-size:18px}
-.balance{font-size:36px;font-weight:bold;margin:10px;color:#064e3b}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:15px}
+.balance{
+  font-size:36px;
+  font-weight:bold;
+  margin:10px;
+  color:#064e3b;
+}
+
+.btn{
+  border:none;
+  border-radius:25px;
+  padding:10px 18px;
+  background:linear-gradient(135deg,#15803d,#22c55e);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+.orange{
+  background:linear-gradient(135deg,#f97316,#facc15);
+  color:#082f49;
+}
+.blue{
+  background:linear-gradient(135deg,#2563eb,#38bdf8);
+}
+
+.banner{
+  margin:15px;
+  padding:18px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#f97316,#facc15);
+  color:#082f49;
+  text-align:center;
+  box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+.banner h2{font-size:22px}
+.banner p{font-size:13px;margin:8px}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:15px;
+}
 .card{
-  background:white;border-radius:18px;padding:16px;text-align:center;
+  background:white;
+  border-radius:18px;
+  padding:16px;
+  text-align:center;
   box-shadow:0 4px 15px rgba(0,0,0,.1);
 }
 .card .icon{font-size:35px}
-.card h3{font-size:16px;margin:8px 0;color:#0f172a}
-.card p{font-size:12px;color:#555;margin-bottom:12px}
-.btn{
-  border:none;border-radius:25px;padding:10px 18px;
-  background:linear-gradient(135deg,#15803d,#22c55e);
-  color:white;font-weight:bold;cursor:pointer;
+.card h3{
+  font-size:16px;
+  margin:8px 0;
+  color:#0f172a;
 }
-.orange{background:linear-gradient(135deg,#f97316,#facc15);color:#082f49}
-.blue{background:linear-gradient(135deg,#2563eb,#38bdf8)}
-.section{
-  background:white;margin:15px;padding:15px;border-radius:18px;
-  box-shadow:0 4px 15px rgba(0,0,0,.1);
+.card p{
+  font-size:12px;
+  color:#555;
+  margin-bottom:12px;
 }
-.section h2{font-size:18px;margin-bottom:10px;color:#075985}
+
+.section h2{
+  font-size:18px;
+  margin-bottom:10px;
+  color:#075985;
+}
 .input{
-  width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;margin:8px 0;
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  margin:8px 0;
 }
 .ref-box{
-  background:#e0f2fe;border:2px dashed #0284c7;
-  padding:12px;border-radius:12px;text-align:center;font-weight:bold;color:#075985;
+  background:#e0f2fe;
+  border:2px dashed #0284c7;
+  padding:12px;
+  border-radius:12px;
+  text-align:center;
+  font-weight:bold;
+  color:#075985;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+}
+.row:last-child{border-bottom:none}
+.green{color:#15803d;font-weight:bold}
+.red{color:#dc2626;font-weight:bold}
+.blue-text{color:#075985;font-weight:bold}
+
+.level-box{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  padding:10px;
+  margin-top:8px;
 }
 .notice{
-  font-size:12px;color:#555;text-align:center;margin:15px;
+  font-size:12px;
+  color:#555;
+  text-align:center;
+  margin:15px;
 }
 .nav{
-  position:fixed;bottom:0;left:0;width:100%;background:white;
-  display:flex;justify-content:space-around;padding:10px 0;
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
   box-shadow:0 -4px 15px rgba(0,0,0,.15);
 }
-.nav div{text-align:center;font-size:12px;color:#0f766e;font-weight:bold}
-.nav span{display:block;font-size:22px}
+.nav div{
+  text-align:center;
+  font-size:12px;
+  color:#0f766e;
+  font-weight:bold;
+}
+.nav span{
+  display:block;
+  font-size:22px;
+}
 </style>
 </head>
+
 <body>
 
 <div class="header">
@@ -65,24 +203,43 @@ body{background:#f3f6fb;color:#111;padding-bottom:80px}
   <p>Spin, Scratch, Refer & Earn Rewards</p>
 </div>
 
+<div class="announce">
+  🎁 Welcome Bonus ₹10 | Earn with Referral, Rank Reward & 5 Level Income
+</div>
+
+<div class="profile">
+  <div class="avatar">👤</div>
+  <div>
+    <h3>Hello, User</h3>
+    <p>Member ID: DC1001 | Status: Active</p>
+  </div>
+</div>
+
 <div class="wallet">
-  <h2>DC Wallet</h2>
+  <h2>💳 DC Wallet</h2>
   <div class="balance">₹0.00</div>
   <button class="btn">Withdraw Now</button>
 </div>
 
+<div class="banner">
+  <h2>🎡 Lucky Spin</h2>
+  <p>Spin daily and win exciting cash rewards.</p>
+  <button class="btn blue">Spin Now</button>
+</div>
+
 <div class="grid">
+
   <div class="card">
-    <div class="icon">🎡</div>
-    <h3>Spin & Earn</h3>
-    <p>Spin the wheel and win rewards.</p>
-    <button class="btn orange">Play</button>
+    <div class="icon">✅</div>
+    <h3>Daily Check-In</h3>
+    <p>Claim your daily reward.</p>
+    <button class="btn">Claim</button>
   </div>
 
   <div class="card">
     <div class="icon">🎁</div>
     <h3>Scratch Card</h3>
-    <p>Scratch daily card and earn cash.</p>
+    <p>Scratch and win cash.</p>
     <button class="btn orange">Scratch</button>
   </div>
 
@@ -96,14 +253,97 @@ body{background:#f3f6fb;color:#111;padding-bottom:80px}
   <div class="card">
     <div class="icon">📋</div>
     <h3>Offer Wall</h3>
-    <p>Complete tasks and earn money.</p>
+    <p>Complete tasks and earn.</p>
     <button class="btn blue">Start</button>
+  </div>
+
+  <div class="card">
+    <div class="icon">🏆</div>
+    <h3>Rank Reward</h3>
+    <p>Achieve ranks and unlock rewards.</p>
+    <button class="btn orange">View</button>
+  </div>
+
+  <div class="card">
+    <div class="icon">🌐</div>
+    <h3>5 Level Income</h3>
+    <p>Earn from your team levels.</p>
+    <button class="btn">Details</button>
+  </div>
+
+</div>
+
+<div class="section">
+  <h2>🌐 5 Level Joining Income</h2>
+
+  <div class="level-box">
+    <div class="row">
+      <span>Level 1 Joining Income</span>
+      <b class="green">₹20</b>
+    </div>
+    <div class="row">
+      <span>Level 2 Joining Income</span>
+      <b class="green">₹15</b>
+    </div>
+    <div class="row">
+      <span>Level 3 Joining Income</span>
+      <b class="green">₹10</b>
+    </div>
+    <div class="row">
+      <span>Level 4 Joining Income</span>
+      <b class="green">₹5</b>
+    </div>
+    <div class="row">
+      <span>Level 5 Joining Income</span>
+      <b class="green">₹5</b>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>🏆 Rank Rewards</h2>
+
+  <div class="row">
+    <span>Bronze Rank - 10 Referrals</span>
+    <b class="green">₹100</b>
+  </div>
+
+  <div class="row">
+    <span>Silver Rank - 50 Referrals</span>
+    <b class="green">₹500</b>
+  </div>
+
+  <div class="row">
+    <span>Gold Rank - 100 Referrals</span>
+    <b class="green">₹1500</b>
+  </div>
+
+  <div class="row">
+    <span>Diamond Rank - 500 Referrals</span>
+    <b class="green">₹10000</b>
+  </div>
+</div>
+
+<div class="section">
+  <h2>📊 Referral Earnings</h2>
+  <div class="row">
+    <span>Total Referrals</span>
+    <b>0</b>
+  </div>
+  <div class="row">
+    <span>Referral Income</span>
+    <b class="green">₹0.00</b>
+  </div>
+  <div class="row">
+    <span>Direct Referral Bonus</span>
+    <b class="green">₹20</b>
   </div>
 </div>
 
 <div class="section">
   <h2>💰 Deposit</h2>
   <input class="input" type="number" placeholder="Enter deposit amount">
+  <input class="input" type="text" placeholder="Enter UPI Transaction ID">
   <button class="btn">Deposit Request</button>
 </div>
 
@@ -121,14 +361,438 @@ body{background:#f3f6fb;color:#111;padding-bottom:80px}
   <button class="btn blue" onclick="copyCode()">Copy Code</button>
 </div>
 
+<div class="section">
+  <h2>📜 Recent History</h2>
+  <div class="row">
+    <span>Daily Check-In</span>
+    <b class="green">+₹0.00</b>
+  </div>
+  <div class="row">
+    <span>Spin Reward</span>
+    <b class="green">+₹0.00</b>
+  </div>
+  <div class="row">
+    <span>Level Income</span>
+    <b class="green">+₹0.00</b>
+  </div>
+  <div class="row">
+    <span>Withdrawal</span>
+    <b class="red">Pending</b>
+  </div>
+</div>
+
 <p class="notice">
-  Note: This is frontend demo. Real wallet, database, login and payment system will be added later.
+  Note: This is frontend demo. Real login, database, wallet, referral tracking, rank rewards and payment system will be added later.
 </p>
 
 <div class="nav">
   <div><span>🏠</span>Home</div>
   <div><span>🎡</span>Spin</div>
   <div><span>👥</span>Refer</div>
+  <div><span>🏆</span>Rank</div>
+  <div><span>👤</span>Profile</div>
+</div>
+
+<script>
+function copyCode(){
+  navigator.clipboard.writeText("DREAM123");
+  alert("Referral code copied!");
+}
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dream Cash</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
+body{
+  background:#f3f6fb;
+  color:#111;
+  padding-bottom:85px;
+}
+.header{
+  background:linear-gradient(135deg,#0f766e,#0ea5e9);
+  color:white;
+  padding:20px 15px;
+  border-radius:0 0 25px 25px;
+}
+.header h1{font-size:26px}
+.header p{font-size:14px;margin-top:5px}
+
+.announce{
+  margin:15px;
+  background:#fff7ed;
+  color:#9a3412;
+  padding:12px;
+  border-radius:14px;
+  font-weight:bold;
+  text-align:center;
+}
+
+.profile,.wallet,.section{
+  background:white;
+  margin:15px;
+  padding:16px;
+  border-radius:18px;
+  box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+.profile{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.avatar{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  background:#0ea5e9;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+}
+.profile h3{color:#075985}
+.profile p{font-size:13px;color:#555}
+
+.wallet{text-align:center}
+.wallet h2{color:#0f766e;font-size:18px}
+.balance{
+  font-size:36px;
+  font-weight:bold;
+  margin:10px;
+  color:#064e3b;
+}
+
+.btn{
+  border:none;
+  border-radius:25px;
+  padding:10px 18px;
+  background:linear-gradient(135deg,#15803d,#22c55e);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+.orange{
+  background:linear-gradient(135deg,#f97316,#facc15);
+  color:#082f49;
+}
+.blue{
+  background:linear-gradient(135deg,#2563eb,#38bdf8);
+}
+
+.banner{
+  margin:15px;
+  padding:18px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#f97316,#facc15);
+  color:#082f49;
+  text-align:center;
+  box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+.banner h2{font-size:22px}
+.banner p{font-size:13px;margin:8px}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:15px;
+}
+.card{
+  background:white;
+  border-radius:18px;
+  padding:16px;
+  text-align:center;
+  box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+.card .icon{font-size:35px}
+.card h3{
+  font-size:16px;
+  margin:8px 0;
+  color:#0f172a;
+}
+.card p{
+  font-size:12px;
+  color:#555;
+  margin-bottom:12px;
+}
+
+.section h2{
+  font-size:18px;
+  margin-bottom:10px;
+  color:#075985;
+}
+.input{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  margin:8px 0;
+}
+.ref-box{
+  background:#e0f2fe;
+  border:2px dashed #0284c7;
+  padding:12px;
+  border-radius:12px;
+  text-align:center;
+  font-weight:bold;
+  color:#075985;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+}
+.row:last-child{border-bottom:none}
+.green{color:#15803d;font-weight:bold}
+.red{color:#dc2626;font-weight:bold}
+.blue-text{color:#075985;font-weight:bold}
+
+.level-box{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  padding:10px;
+  margin-top:8px;
+}
+.notice{
+  font-size:12px;
+  color:#555;
+  text-align:center;
+  margin:15px;
+}
+.nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  box-shadow:0 -4px 15px rgba(0,0,0,.15);
+}
+.nav div{
+  text-align:center;
+  font-size:12px;
+  color:#0f766e;
+  font-weight:bold;
+}
+.nav span{
+  display:block;
+  font-size:22px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>💸 Dream Cash</h1>
+  <p>Spin, Scratch, Refer & Earn Rewards</p>
+</div>
+
+<div class="announce">
+  🎁 Welcome Bonus ₹10 | Earn with Referral, Rank Reward & 5 Level Income
+</div>
+
+<div class="profile">
+  <div class="avatar">👤</div>
+  <div>
+    <h3>Hello, User</h3>
+    <p>Member ID: DC1001 | Status: Active</p>
+  </div>
+</div>
+
+<div class="wallet">
+  <h2>💳 DC Wallet</h2>
+  <div class="balance">₹0.00</div>
+  <button class="btn">Withdraw Now</button>
+</div>
+
+<div class="banner">
+  <h2>🎡 Lucky Spin</h2>
+  <p>Spin daily and win exciting cash rewards.</p>
+  <button class="btn blue">Spin Now</button>
+</div>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="icon">✅</div>
+    <h3>Daily Check-In</h3>
+    <p>Claim your daily reward.</p>
+    <button class="btn">Claim</button>
+  </div>
+
+  <div class="card">
+    <div class="icon">🎁</div>
+    <h3>Scratch Card</h3>
+    <p>Scratch and win cash.</p>
+    <button class="btn orange">Scratch</button>
+  </div>
+
+  <div class="card">
+    <div class="icon">👥</div>
+    <h3>Refer & Earn</h3>
+    <p>Invite friends and get bonus.</p>
+    <button class="btn blue">Refer</button>
+  </div>
+
+  <div class="card">
+    <div class="icon">📋</div>
+    <h3>Offer Wall</h3>
+    <p>Complete tasks and earn.</p>
+    <button class="btn blue">Start</button>
+  </div>
+
+  <div class="card">
+    <div class="icon">🏆</div>
+    <h3>Rank Reward</h3>
+    <p>Achieve ranks and unlock rewards.</p>
+    <button class="btn orange">View</button>
+  </div>
+
+  <div class="card">
+    <div class="icon">🌐</div>
+    <h3>5 Level Income</h3>
+    <p>Earn from your team levels.</p>
+    <button class="btn">Details</button>
+  </div>
+
+</div>
+
+<div class="section">
+  <h2>🌐 5 Level Joining Income</h2>
+
+  <div class="level-box">
+    <div class="row">
+      <span>Level 1 Joining Income</span>
+      <b class="green">₹20</b>
+    </div>
+    <div class="row">
+      <span>Level 2 Joining Income</span>
+      <b class="green">₹15</b>
+    </div>
+    <div class="row">
+      <span>Level 3 Joining Income</span>
+      <b class="green">₹10</b>
+    </div>
+    <div class="row">
+      <span>Level 4 Joining Income</span>
+      <b class="green">₹5</b>
+    </div>
+    <div class="row">
+      <span>Level 5 Joining Income</span>
+      <b class="green">₹5</b>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>🏆 Rank Rewards</h2>
+
+  <div class="row">
+    <span>Bronze Rank - 10 Referrals</span>
+    <b class="green">₹100</b>
+  </div>
+
+  <div class="row">
+    <span>Silver Rank - 50 Referrals</span>
+    <b class="green">₹500</b>
+  </div>
+
+  <div class="row">
+    <span>Gold Rank - 100 Referrals</span>
+    <b class="green">₹1500</b>
+  </div>
+
+  <div class="row">
+    <span>Diamond Rank - 500 Referrals</span>
+    <b class="green">₹10000</b>
+  </div>
+</div>
+
+<div class="section">
+  <h2>📊 Referral Earnings</h2>
+  <div class="row">
+    <span>Total Referrals</span>
+    <b>0</b>
+  </div>
+  <div class="row">
+    <span>Referral Income</span>
+    <b class="green">₹0.00</b>
+  </div>
+  <div class="row">
+    <span>Direct Referral Bonus</span>
+    <b class="green">₹20</b>
+  </div>
+</div>
+
+<div class="section">
+  <h2>💰 Deposit</h2>
+  <input class="input" type="number" placeholder="Enter deposit amount">
+  <input class="input" type="text" placeholder="Enter UPI Transaction ID">
+  <button class="btn">Deposit Request</button>
+</div>
+
+<div class="section">
+  <h2>🏦 Withdrawal</h2>
+  <input class="input" type="number" placeholder="Enter withdrawal amount">
+  <input class="input" type="text" placeholder="Enter UPI ID">
+  <button class="btn">Submit Withdraw</button>
+</div>
+
+<div class="section">
+  <h2>🔗 Your Referral Code</h2>
+  <div class="ref-box">DREAM123</div>
+  <br>
+  <button class="btn blue" onclick="copyCode()">Copy Code</button>
+</div>
+
+<div class="section">
+  <h2>📜 Recent History</h2>
+  <div class="row">
+    <span>Daily Check-In</span>
+    <b class="green">+₹0.00</b>
+  </div>
+  <div class="row">
+    <span>Spin Reward</span>
+    <b class="green">+₹0.00</b>
+  </div>
+  <div class="row">
+    <span>Level Income</span>
+    <b class="green">+₹0.00</b>
+  </div>
+  <div class="row">
+    <span>Withdrawal</span>
+    <b class="red">Pending</b>
+  </div>
+</div>
+
+<p class="notice">
+  Note: This is frontend demo. Real login, database, wallet, referral tracking, rank rewards and payment system will be added later.
+</p>
+
+<div class="nav">
+  <div><span>🏠</span>Home</div>
+  <div><span>🎡</span>Spin</div>
+  <div><span>👥</span>Refer</div>
+  <div><span>🏆</span>Rank</div>
   <div><span>👤</span>Profile</div>
 </div>
 
