@@ -63,7 +63,10 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
   <h1><span id="balance">0.00</span>DC</h1>
   <button class="btn">Withdraw Now</button>
 </div>
-
+<div class="card wallet">
+  <h4>👥 Total Refer</h4>
+  <h1><span id="totalRefer">0</span></h1>
+</div>
 <div class="card spin">
   <h2>🎡 Lucky Spin</h2>
   <p class="small">Spin daily and win exciting cash rewards.</p>
@@ -177,8 +180,8 @@ auth.onAuthStateChanged(async function(user){
 
         document.getElementById("userName").innerText = data.fullName || "User";
         document.getElementById("balance").innerText = (data.balance || 0).toFixed(2);
-        document.getElementById("refCount").innerText = (data.referralCount || 0) + "DC";
-
+        document.getElementById("refCount").innerText = data.referralCount || 0;
+document.getElementById("totalRefer").innerText = data.referralCount || 0;
         if(data.myReferralCode){
           const realLink = "https://dc037.github.io/DreamCash/login.html?ref=" + data.myReferralCode;
           document.getElementById("myCode").innerText = realLink;
