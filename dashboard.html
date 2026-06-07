@@ -164,14 +164,31 @@ let referralCode = "DREAM123";
 
 auth.onAuthStateChanged(async function(user){
   if(user){
-    const doc = await db.collection("users").doc(user.uid).get();
-    if(doc.exists){
-      const data = doc.data();
-      document.getElementById("userName").innerText = data.fullName || "User";
-      document.getElementById("balance").innerText = (data.balance || 0).toFixed(2);
-    document.getElementById("myCode").innerText = "https://dc037.github.io/DreamCash/login.html?ref=" + (data.myReferralCode || "DREAM123");
-      document.getElementById("refCount").innerText = (data.referralCount || 0) + "DC";
-      referralCode = "https://dc037.github.io/DreamCash/login.html?ref=" + (data.myReferralCode || "DREAM123");
+    const code = user.uid.slice(0,6).toUpperCase();
+    const link = "https://dc037.github.io/DreamCash/login.html?ref=" + code;
+
+    document.getElementById("myCode").innerText = "TEST LINK WORKING";
+    referralCode = link;
+
+    try{
+      const doc = await db.collection("users").doc(user.uid).get();
+      if(doc.exists){
+        const data = doc.data();
+
+        document.getElementById("userName").innerText = data.fullName || "User";
+        document.getElementById("balance").innerText = (data.balance || 0).toFixed(2);
+        document.getElementById("refCount").innerText = (data.referralCount || 0) + "DC";
+
+        if(data.myReferralCode){
+          const realLink = "https://dc037.github.io/DreamCash/login.html?ref=" + data.myReferralCode;
+          document.getElementById("myCode").innerText = realLink;
+          referralCode = realLink;
+        }
+      }
+    }catch(error){
+      console.log(error);
+    }
+
   }else{
     window.location.href = "login.html";
   }
