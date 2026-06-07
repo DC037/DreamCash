@@ -278,7 +278,45 @@ async function submitWithdrawal(){
     }catch(error){
         alert(error.message);
     }
+}  
+async function viewPaymentHistory(){
+
+  const user = auth.currentUser;
+
+  if(!user){
+    alert("Please login again");
+    return;
   }
+
+  try{
+
+    const snap = await db.collection("withdrawals")
+      .where("userId","==",user.uid)
+      .get();
+
+    let msg = "";
+
+    snap.forEach(doc => {
+      const d = doc.data();
+
+      msg +=
+      "Amount: " + d.amount +
+      "\nUPI: " + d.upiId +
+      "\nStatus: " + d.status +
+      "\n\n";
+    });
+
+    if(msg === ""){
+      msg = "No withdrawal history found";
+    }
+
+    alert(msg);
+
+  }catch(error){
+    alert(error.message);
+  }
+
+}
 function copyReferral(){
   navigator.clipboard.writeText(referralCode);
   alert("Referral Link Copied");
