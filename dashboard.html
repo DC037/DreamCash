@@ -119,9 +119,9 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
 </div>
 
 <div class="card section">
-  <h3>🔗 Your Referral Code</h3>
-  <div class="dashed" id="myCode">DREAM123</div>
-  <button class="btn blue" onclick="copyReferral()">Copy Code</button>
+  <h3>🔗 Your Referral Link</h3>
+  <div class="dashed" id="myCode">Loading...</div>
+  <button class="btn blue" onclick="copyReferral()">Copy Link</button>
 </div>
 
 <div class="card section">
@@ -169,10 +169,9 @@ auth.onAuthStateChanged(async function(user){
       const data = doc.data();
       document.getElementById("userName").innerText = data.fullName || "User";
       document.getElementById("balance").innerText = (data.balance || 0).toFixed(2);
-      document.getElementById("myCode").innerText = data.myReferralCode || "DREAM123";
+      document.getElementById("myCode").innerText = window.location.origin + window.location.pathname.replace("dashboard.html","login.html") + "?ref=" + (data.myReferralCode || "DREAM123");
       document.getElementById("refCount").innerText = (data.referralCount || 0) + "DC";
-      referralCode = data.myReferralCode || "DREAM123";
-    }
+      referralCode = window.location.origin + window.location.pathname.replace("dashboard.html","login.html") + "?ref=" + (data.myReferralCode || "DREAM123");
   }else{
     window.location.href = "login.html";
   }
@@ -180,7 +179,7 @@ auth.onAuthStateChanged(async function(user){
 
 function copyReferral(){
   navigator.clipboard.writeText(referralCode);
-  alert("Referral Code Copied");
+  alert("Referral Link Copied");
 }
 </script>
 </body>
