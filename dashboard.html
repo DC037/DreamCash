@@ -540,10 +540,51 @@ document.getElementById("rankRewardBox").style.display = "none";
 document.getElementById("levelIncomeBox").style.display = "none";
     }
     
-function showLevelTeam(level) {
-  document.getElementById("myReferrals").innerHTML =
-    "<h3>Level " + level + " Team</h3><p>Loading...</p>";
-}
+async function showLevelTeam(level) {
+  const box = document.getElementById("myReferrals");
+
+  if (level !== 1) {
+    box.innerHTML = "<h3>Level " + level + " Team</h3><p>Coming soon...</p>";
+    return;
+  }
+
+  box.innerHTML = "<h3>Level 1 Team</h3><p>Loading...</p>";
+
+  const user = auth.currentUser;
+
+  if (!user) {
+    box.innerHTML = "Please login again";
+    return;
+  }
+
+  const myDoc = await db.collection("users").doc(user.uid).get();
+  const myCode = myDoc.data().myReferralCode;
+
+  const snap = await db.collection("users")
+    .where("referredBy", "==", myCode)
+    .get();
+
+  let html = "<h3>Level 1 Team</h3>";
+
+  if (snap.empty) {
+    box.innerHTML = "<h3>Level 1 Team</h3><p>No user found</p>";
+    return;
+  }
+
+  snap.forEach(doc => {
+    const d = doc.data();
+
+    html += `
+      <div style="padding:8px;border-bottom:1px solid #ddd;">
+        <b>${d.fullName || "No Name"}</b><br>
+        📱 ${d.whatsapp || "No Mobile"}<br>
+        ✅ Joined
+      </div>
+    `;
+  });
+
+  box.innerHTML = html;
+    }
     
 function showProfile(){
 document.getElementById("profileBox").style.display = "block";
