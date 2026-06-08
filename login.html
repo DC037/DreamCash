@@ -34,18 +34,18 @@ body{min-height:100vh;background:linear-gradient(135deg,#0f766e,#0ea5e9);display
   </div>
 
   <div class="tabs">
-    <button id="loginTab" class="active" onclick="showLogin()">Login</button>
-    <button id="registerTab" onclick="showRegister()">Register</button>
+    <button id="loginTab" onclick="showLogin()">Login</button>
+    <button id="registerTab" class="active" onclick="showRegister()">Register</button>
   </div>
 
-  <div id="loginForm" class="form active">
+  <div id="loginForm" class="form">
     <input id="loginMobile" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
     <input id="loginPassword" class="input" type="password" placeholder="Password">
     <button class="btn" onclick="loginUser()">Login</button>
     <p class="note">New user? <span class="link" onclick="showRegister()">Create Account</span></p>
   </div>
 
-  <div id="registerForm" class="form">
+  <div id="registerForm" class="form active">
     <input id="fullName" class="input" type="text" placeholder="Full Name">
     <input id="whatsapp" class="input" type="tel" placeholder="WhatsApp Number">
     <input id="email" class="input" type="email" placeholder="Email ID">
@@ -94,22 +94,24 @@ function showRegister(){
   document.getElementById("loginTab").classList.remove("active");
 }
 
-window.addEventListener("load", function(){
+setTimeout(function(){
 
   const params = new URLSearchParams(window.location.search);
   const refCode = params.get("ref");
   const register = params.get("register");
 
   if(register === "1" || refCode){
-
-    showRegister();
+    document.getElementById("loginForm").classList.remove("active");
+    document.getElementById("registerForm").classList.add("active");
+    document.getElementById("loginTab").classList.remove("active");
+    document.getElementById("registerTab").classList.add("active");
 
     if(refCode){
       document.getElementById("referralCode").value = refCode;
     }
   }
 
-});
+}, 1000);
 
 async function registerUser(){
   const fullName = document.getElementById("fullName").value.trim();
