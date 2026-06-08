@@ -111,7 +111,7 @@ Activate
 </button>
 
 <button class="btn red"
-onclick="rejectActivation('${doc.id}')">
+onclick="rejectActivation('${doc.id}','${d.userId}')"
 Reject
 </button>
 
@@ -137,7 +137,12 @@ alert("User Activated Successfully");
 loadActivationRequests();
 
   }
-  async function rejectActivation(id){
+  async function rejectActivation(id,userId){
+
+await db.collection("users").doc(userId).update({
+isActive: false,
+activationDate: null
+});
 
 await db.collection("activationRequests").doc(id).update({
 status: "Rejected"
