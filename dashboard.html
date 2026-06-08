@@ -126,11 +126,36 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
   <div class="row"><span>Direct Referral Bonus</span><b class="green">20DC</b></div>
 </div>
 </div>
-<div class="card section">
-  <h3>✅ Activate Account</h3>
-  <div class="dashed">Activation Amount: ₹99 One Time</div>
-  <input class="input" placeholder="Enter UPI Transaction ID">
-  <button class="btn">Activate Now</button>
+<div class="card section" id="activationBox">
+
+<h3>✅ Activate Account</h3>
+
+<div class="dashed">
+Activation Amount: ₹99 One Time
+</div>
+
+<input
+id="depositAmount"
+class="input"
+type="number"
+placeholder="Enter Deposit Amount">
+
+<input
+id="transactionId"
+class="input"
+type="text"
+placeholder="Enter UPI Transaction ID">
+
+<button
+class="btn"
+onclick="submitActivationRequest()">
+
+Submit Request
+
+</button>
+
+<p id="activationStatus"></p>
+
 </div>
 
 <div class="card section">
@@ -229,7 +254,11 @@ auth.onAuthStateChanged(async function(user){
       const doc = await db.collection("users").doc(user.uid).get();
       if(doc.exists){
         const data = doc.data();
-
+if(data.isActive === true){
+document.getElementById("activationBox").style.display = "none";
+}else{
+document.getElementById("activationBox").style.display = "block";
+}
         document.getElementById("userName").innerText = data.fullName || "User";
         document.getElementById("balance").innerText = (data.balance || 0).toFixed(2);
         document.getElementById("refCount").innerText = data.referralCount || 0;
@@ -351,7 +380,47 @@ if(Number(amount) > currentBalance){
     }catch(error){
         alert(error.message);
     }
-}  
+}
+  async function submitActivationRequest(){
+
+const amount = document.getElementById("depositAmount").value;
+const transactionId = document.getElementById("transactionId").value;
+
+if(!amount || !transactionId){
+alert("Please enter amount and transaction ID");
+return;
+}
+
+const user = auth.currentUser;
+
+if(!user){
+alert("Please login again");
+return;
+}
+
+try{
+await db.collection("activationRequests").add({
+userId: user.uid,
+email: user.email,
+amount: Number(amount),
+transactionId: transactionId,
+status: "pending",
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
+});
+
+alert("Activation request submitted. Wait for admin approval.");
+
+document.getElementById("activationStatus").innerText =
+"Pending for admin approval";
+
+document.getElementById("depositAmount").value = "";
+document.getElementById("transactionId").value = "";
+
+}catch(error){
+alert(error.message);
+}
+
+}
 async function viewPaymentHistory(){
 
   const user = auth.currentUser;
