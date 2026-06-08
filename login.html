@@ -94,12 +94,16 @@ function showRegister(){
   document.getElementById("loginTab").classList.remove("active");
 }
 
-const params = new URLSearchParams(window.location.search);
-const refCode = params.get("ref");
+window.onload = function(){
 
-if(refCode){
-  document.getElementById("referralCode").value = refCode;
-  showRegister();
+  const params = new URLSearchParams(window.location.search);
+  const refCode = params.get("ref");
+
+  if(refCode){
+    document.getElementById("referralCode").value = refCode;
+    showRegister();
+  }
+
 }
 
 async function registerUser(){
