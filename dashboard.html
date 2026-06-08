@@ -542,8 +542,63 @@ document.getElementById("levelIncomeBox").style.display = "none";
     }
     
 async function showLevelTeam(level) {
-  document.getElementById("myReferrals").innerHTML =
-    "<h3>Level " + level + " Team</h3><p>Loading...</p>";
+
+  const box = document.getElementById("myReferrals");
+  box.innerHTML = "<h3>Level " + level + " Team</h3><p>Loading...</p>";
+
+  const user = auth.currentUser;
+
+  if (!user) {
+    box.innerHTML = "Please login again";
+    return;
+  }
+
+  const myDoc = await db.collection("users").doc(user.uid).get();
+
+  let codes = [myDoc.data().myReferralCode];
+
+  for (let i = 1; i <= level; i++) {
+
+    let nextCodes = [];
+    let html = "";
+
+    for (const code of codes) {
+
+      const snap = await db.collection("users")
+        .where("referredBy", "==", code)
+        .get();
+
+      snap.forEach(doc => {
+
+        const d = doc.data();
+
+        nextCodes.push(d.myReferralCode);
+
+        if (i === level) {
+
+          html += `
+          <div style="padding:8px;border-bottom:1px solid #ddd;">
+            <b>${d.fullName || "No Name"}</b><br>
+            📱 ${d.whatsapp || "No Mobile"}<br>
+            ✅ Joined
+          </div>
+          `;
+
+        }
+
+      });
+
+    }
+
+    codes = nextCodes;
+
+    if (i === level) {
+      box.innerHTML = html || "<p>No user found in Level " + level + "</p>";
+    }
+
+  }
+
+}
 }
 function showProfile(){
 document.getElementById("profileBox").style.display = "block";
