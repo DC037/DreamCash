@@ -550,40 +550,56 @@ async function showLevelTeam(level) {
 
   box.innerHTML = "<h3>Level 1 Team</h3><p>Loading...</p>";
 
-  const user = auth.currentUser;
+  try {
+    const user = auth.currentUser;
 
-  if (!user) {
-    box.innerHTML = "Please login again";
-    return;
+    if (!user) {
+      box.innerHTML = "<h3>Level 1 Team</h3><p>Please login again</p>";
+      return;
+    }
+
+    const myDoc = await db.collection("users").doc(user.uid).get();
+
+    if (!myDoc.exists) {
+      box.innerHTML = "<h3>Level 1 Team</h3><p>User data not found</p>";
+      return;
+    }
+
+    const myCode = myDoc.data().myReferralCode;
+
+    if (!myCode) {
+      box.innerHTML = "<h3>Level 1 Team</h3><p>Referral code not found</p>";
+      return;
+    }
+
+    const snap = await db.collection("users")
+      .where("referredBy", "==", myCode)
+      .get();
+
+    if (snap.empty) {
+      box.innerHTML = "<h3>Level 1 Team</h3><p>No user found</p>";
+      return;
+    }
+
+    let html = "<h3>Level 1 Team</h3>";
+
+    snap.forEach(doc => {
+      const d = doc.data();
+
+      html += `
+        <div style="padding:8px;border-bottom:1px solid #ddd;">
+          <b>${d.fullName || "No Name"}</b><br>
+          📱 ${d.whatsapp || "No Mobile"}<br>
+          ✅ Joined
+        </div>
+      `;
+    });
+
+    box.innerHTML = html;
+
+  } catch (error) {
+    box.innerHTML = "<h3>Level 1 Team</h3><p>Error: " + error.message + "</p>";
   }
-
-  const myDoc = await db.collection("users").doc(user.uid).get();
-  const myCode = myDoc.data().myReferralCode;
-
-  const snap = await db.collection("users")
-    .where("referredBy", "==", myCode)
-    .get();
-
-  let html = "<h3>Level 1 Team</h3>";
-
-  if (snap.empty) {
-    box.innerHTML = "<h3>Level 1 Team</h3><p>No user found</p>";
-    return;
-  }
-
-  snap.forEach(doc => {
-    const d = doc.data();
-
-    html += `
-      <div style="padding:8px;border-bottom:1px solid #ddd;">
-        <b>${d.fullName || "No Name"}</b><br>
-        📱 ${d.whatsapp || "No Mobile"}<br>
-        ✅ Joined
-      </div>
-    `;
-  });
-
-  box.innerHTML = html;
     }
     
 function showProfile(){
