@@ -541,23 +541,10 @@ document.getElementById("rankRewardBox").style.display = "none";
 document.getElementById("levelIncomeBox").style.display = "none";
     }
     
-async function showLevelTeam(level) {
-
-  const box = document.getElementById("myReferrals");
-  box.innerHTML = "<h3>Level " + level + " Team</h3><p>Loading...</p>";
-
-  const user = auth.currentUser;
-
-  if (!user) {
-    box.innerHTML = "Please login again";
-    return;
-  }
-
-  const myDoc = await db.collection("users").doc(user.uid).get();
-
-  let codes = [myDoc.data().myReferralCode];
-
-  for (let i = 1; i <= level; i++) {
+function showLevelTeam(level) {
+  document.getElementById("myReferrals").innerHTML =
+    "<h3>Level " + level + " Team</h3><p>Loading...</p>";
+}
 
     let nextCodes = [];
     let html = "";
