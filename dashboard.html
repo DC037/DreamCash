@@ -225,7 +225,7 @@ Submit Request
 <button class="btn red" onclick="logoutUser()">Logout</button>
   </div>
 <div class="bottom">
-  <a href="#"><span>🏠</span>Home</a>
+  <a href="#" onclick="showHome();return false;"><span>🏠</span>Home</a>
   <a href="#"><span>🎡</span>Spin</a>
   <a href="#"><span>👥</span>Refer</a>
   <a href="#"><span>🏆</span>Rank</a>
@@ -545,7 +545,14 @@ document.getElementById("referEarnBox").style.display = "none";
 document.getElementById("rankRewardBox").style.display = "none";
 document.getElementById("levelIncomeBox").style.display = "none";
 }
+    
+function showHome(){
+document.getElementById("profileBox").style.display = "none";
 
+document.getElementById("referEarnBox").style.display = "block";
+document.getElementById("rankRewardBox").style.display = "block";
+document.getElementById("levelIncomeBox").style.display = "block";
+    }
 function logoutUser(){
 auth.signOut().then(()=>{
 window.location.href = "login.html";
