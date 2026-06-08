@@ -210,7 +210,7 @@ Submit Request
 </div>
 
 <p class="note">Note: This is frontend demo. Real login, database, wallet, referral tracking, rank rewards and payment system will be added later.</p>
-<div class="card section" id="adminBox" style="display:none;">
+<div class="card" id="adminBox" style="display:none;">
   <h3>⚙️ Admin Panel</h3>
   <p>Manage withdrawal requests.</p>
   <a href="admin.html">
@@ -268,6 +268,7 @@ auth.onAuthStateChanged(async function(user){
       if(doc.exists){
         const data = doc.data();
         document.getElementById("adminBox").style.display = "block";
+        alert("ADMIN CODE RUNNING");
 if(data.isActive === true){
 document.getElementById("activationBox").style.display = "none";
 }else{
