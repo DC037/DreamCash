@@ -69,10 +69,19 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
 </div>
   <div id="myReferralsBox" style="display:none;">
   <div class="card section">
-  <h3>👥 My Referrals</h3>
-  <div id="myReferrals">Loading...</div>
-</div>
-</div>
+    <h3>👥 My Team</h3>
+
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+      <button class="btn blue" onclick="showTeamLevel(1)">Level 1</button>
+      <button class="btn blue" onclick="showTeamLevel(2)">Level 2</button>
+      <button class="btn blue" onclick="showTeamLevel(3)">Level 3</button>
+      <button class="btn blue" onclick="showTeamLevel(4)">Level 4</button>
+      <button class="btn blue" onclick="showTeamLevel(5)">Level 5</button>
+    </div>
+
+    <div id="myReferrals">Level select karein...</div>
+  </div>
+  </div>
 <div class="card spin">
   <h2>🎡 Lucky Spin</h2>
   <p class="small">Spin daily and win exciting cash rewards.</p>
@@ -256,6 +265,49 @@ document.getElementById("myReferrals").innerHTML = html;
     window.location.href = "login.html";
   }
 });
+  async function showTeamLevel(level){
+
+  const user = auth.currentUser;
+
+  if(!user){
+    alert("Please login again");
+    return;
+  }
+
+  const doc = await db.collection("users").doc(user.uid).get();
+  const data = doc.data();
+
+  let referrals = data.joinedUsers || [];
+  let html = "";
+
+  if(level === 1){
+
+    if(referrals.length === 0){
+      html = "Level 1 team empty";
+    }else{
+
+      referrals.forEach((r,index)=>{
+
+        html += `
+        <div class="row">
+          <span>${index+1}. ${r.name}<br>📱 ${r.whatsapp}</span>
+          <b class="green">Level 1</b>
+        </div>
+        `;
+
+      });
+
+    }
+
+  }else{
+
+    html = "Level " + level + " team abhi empty hai";
+
+  }
+
+  document.getElementById("myReferrals").innerHTML = html;
+
+  }
 async function submitWithdrawal(){
 
     const amount = document.getElementById("withdrawAmount").value;
