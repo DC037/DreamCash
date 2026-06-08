@@ -63,14 +63,16 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
   <h1><span id="balance">0.00</span>DC</h1>
   <button class="btn">Withdraw Now</button>
 </div>
-<div class="card wallet">
+<div class="card wallet" onclick="showMyReferrals()">
   <h4>👥 Total Refer</h4>
   <h1><span id="totalRefer">0</span></h1>
 </div>
+  <div id="myReferralsBox" style="display:none;">
   <div class="card section">
   <h3>👥 My Referrals</h3>
   <div id="myReferrals">Loading...</div>
 </div>
+
 <div class="card spin">
   <h2>🎡 Lucky Spin</h2>
   <p class="small">Spin daily and win exciting cash rewards.</p>
@@ -388,6 +390,12 @@ function showLevelIncome() {
   document.getElementById("referEarnBox").style.display = "block";
   document.getElementById("rankRewardBox").style.display = "none";
   document.getElementById("levelIncomeBox").style.display = "none";
+    }
+    function showMyReferrals() {
+document.getElementById("myReferralsBox").style.display = "block";
+document.getElementById("referEarnBox").style.display = "none";
+document.getElementById("rankRewardBox").style.display = "none";
+document.getElementById("levelIncomeBox").style.display = "none";
     }
   </script>
 </body>
