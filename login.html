@@ -98,12 +98,15 @@ window.addEventListener("load", function(){
 
   const params = new URLSearchParams(window.location.search);
   const refCode = params.get("ref");
+  const register = params.get("register");
 
-  if(refCode){
-    auth.signOut().then(() => {
+  if(register === "1" || refCode){
+
+    showRegister();
+
+    if(refCode){
       document.getElementById("referralCode").value = refCode;
-      showRegister();
-    });
+    }
   }
 
 });
