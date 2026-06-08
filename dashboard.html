@@ -299,8 +299,7 @@ auth.onAuthStateChanged(async (user) => {
       data.myReferralCode || user.uid.slice(0,6).toUpperCase();
 
     referralCode =
-      "https://dc037.github.io/DreamCash/login.html?ref=" + code;
-
+      "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + code;
     document.getElementById("myCode").innerText =
       referralCode;
 
