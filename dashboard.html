@@ -551,7 +551,7 @@ async function showLevelTeam(level) {
   box.innerHTML = "<h3>Level 1 Team</h3><p>Loading...</p>";
 
   try {
-    const user = auth.currentUser;
+    const user = firebase.auth().currentUser;
 
     if (!user) {
       box.innerHTML = "<h3>Level 1 Team</h3><p>Please login again</p>";
