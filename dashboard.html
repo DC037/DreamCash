@@ -207,7 +207,7 @@ Submit Request
 </div>
 
 <p class="note">Note: This is frontend demo. Real login, database, wallet, referral tracking, rank rewards and payment system will be added later.</p>
-<div class="card section">
+<div class="card section" id="adminBox" style="display:none;">
   <h3>⚙️ Admin Panel</h3>
   <p>Manage withdrawal requests.</p>
   <a href="admin.html">
@@ -254,6 +254,11 @@ auth.onAuthStateChanged(async function(user){
       const doc = await db.collection("users").doc(user.uid).get();
       if(doc.exists){
         const data = doc.data();
+        if(user.email === "vasimahmad614@gmail.com"){
+document.getElementById("adminBox").style.display = "block";
+}else{
+document.getElementById("adminBox").style.display = "none";
+        }
 if(data.isActive === true){
 document.getElementById("activationBox").style.display = "none";
 }else{
