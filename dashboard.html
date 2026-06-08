@@ -80,7 +80,7 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
 <div class="grid">
   <div class="box"><div class="icon">✅</div><h3>Daily Check-In</h3><p>Claim your daily reward.</p><button class="btn">Claim</button></div>
   <div class="box"><div class="icon">🎁</div><h3>Scratch Card</h3><p>Scratch and win cash.</p><button class="btn orange">Scratch</button></div>
-  <div class="box"><div class="icon">👥</div><h3>Refer & Earn</h3><p>Invite friends and get bonus.</p><button class="btn blue">Refer</button></div>
+  <button class="btn blue" onclick="showReferEarn()">👥 Refer</button>
   <div class="box"><div class="icon">📋</div><h3>Offer Wall</h3><p>Complete tasks and earn.</p><button class="btn blue">Start</button></div>
   <button class="btn orange" onclick="showRankReward()">🏆 Rank Rewards</button>
   <button class="btn blue" onclick="showLevelIncome()">💰 5 Level Income</button>
@@ -107,14 +107,14 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
     <div class="row"><span>👑 Crown Rank - Level 5 - 222 Referrals & All Team 1022 Referrals</span><b class="green">25000 DC</b></div>
   </div>
 </div>
-
+<div id="referEarnBox" style="display:none;">
 <div class="card section">
   <h3>📊 Referral Earnings</h3>
   <div class="row"><span>Total Referrals</span><b id="refCount">0</b></div>
   <div class="row"><span>Referral Income</span><b class="green">0.00DC</b></div>
   <div class="row"><span>Direct Referral Bonus</span><b class="green">20DC</b></div>
 </div>
-
+</div>
 <div class="card section">
   <h3>✅ Activate Account</h3>
   <div class="dashed">Activation Amount: ₹99 One Time</div>
@@ -384,6 +384,11 @@ function showLevelIncome() {
   document.getElementById("levelIncomeBox").style.display = "block";
   document.getElementById("rankRewardBox").style.display = "none";
 }
+    function showReferEarn() {
+  document.getElementById("referEarnBox").style.display = "block";
+  document.getElementById("rankRewardBox").style.display = "none";
+  document.getElementById("levelIncomeBox").style.display = "none";
+    }
   </script>
 </body>
 </html>
