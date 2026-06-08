@@ -82,26 +82,30 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
   <div class="box"><div class="icon">🎁</div><h3>Scratch Card</h3><p>Scratch and win cash.</p><button class="btn orange">Scratch</button></div>
   <div class="box"><div class="icon">👥</div><h3>Refer & Earn</h3><p>Invite friends and get bonus.</p><button class="btn blue">Refer</button></div>
   <div class="box"><div class="icon">📋</div><h3>Offer Wall</h3><p>Complete tasks and earn.</p><button class="btn blue">Start</button></div>
-  <div class="box"><div class="icon">🏆</div><h3>Rank Reward</h3><p>Achieve ranks and unlock rewards.</p><button class="btn orange">View</button></div>
-  <div class="box"><div class="icon">🌐</div><h3>5 Level Income</h3><p>Earn from your team levels.</p><button class="btn">Details</button></div>
+  <button class="btn orange" onclick="showRankReward()">View</button>
+  <button class="btn green" onclick="showLevelIncome()">Details</button>
 </div>
 
-<div class="card section">
-  <h3>🌐 5 Level Joining Income</h3>
-  <div class="row"><span>Level 1 Joining Income</span><b class="green">20DC</b></div>
-  <div class="row"><span>Level 2 Joining Income</span><b class="green">15DC</b></div>
-  <div class="row"><span>Level 3 Joining Income</span><b class="green">10DC</b></div>
-  <div class="row"><span>Level 4 Joining Income</span><b class="green">5DC</b></div>
-  <div class="row"><span>Level 5 Joining Income</span><b class="green">5DC</b></div>
+<div id="levelIncomeBox" style="display:none;">
+  <div class="card section">
+    <h3>🌐 5 Level Joining Income</h3>
+    <div class="row"><span>Level 1 Joining Income</span><b class="green">20DC</b></div>
+    <div class="row"><span>Level 2 Joining Income</span><b class="green">15DC</b></div>
+    <div class="row"><span>Level 3 Joining Income</span><b class="green">10DC</b></div>
+    <div class="row"><span>Level 4 Joining Income</span><b class="green">5DC</b></div>
+    <div class="row"><span>Level 5 Joining Income</span><b class="green">5DC</b></div>
+  </div>
 </div>
 
-<div class="card section">
-  <h3>🏆 Rank Rewards</h3>
-  <div class="row"><span>🥉 Bronze Rank - Level 1 - 11 Referrals</span><b class="green">100 DC</b></div>
-  <div class="row"><span>🥈 Silver Rank - Level 2 - 25 Referrals & All Team 51 Referrals</span><b class="green">500 DC</b></div>
-  <div class="row"><span>🥇 Gold Rank - Level 3 - 40 Referrals & All Team 101 Referrals</span><b class="green">1500 DC</b></div>
-  <div class="row"><span>💎 Diamond Rank - Level 4 - 80 Referrals & All Team 501 Referrals</span><b class="green">10000 DC</b></div>
-  <div class="row"><span>👑 Crown Rank - Level 5 - 222 Referrals & All Team 1022 Referrals</span><b class="green">25000 DC</b></div>
+<div id="rankRewardBox" style="display:none;">
+  <div class="card section">
+    <h3>🏆 Rank Rewards</h3>
+    <div class="row"><span>🥉 Bronze Rank - Level 1 - 11 Referrals</span><b class="green">100 DC</b></div>
+    <div class="row"><span>🥈 Silver Rank - Level 2 - 25 Referrals & All Team 51 Referrals</span><b class="green">500 DC</b></div>
+    <div class="row"><span>🥇 Gold Rank - Level 3 - 40 Referrals & All Team 101 Referrals</span><b class="green">1500 DC</b></div>
+    <div class="row"><span>💎 Diamond Rank - Level 4 - 80 Referrals & All Team 501 Referrals</span><b class="green">10000 DC</b></div>
+    <div class="row"><span>👑 Crown Rank - Level 5 - 222 Referrals & All Team 1022 Referrals</span><b class="green">25000 DC</b></div>
+  </div>
 </div>
 
 <div class="card section">
@@ -370,5 +374,16 @@ function copyReferral(){
   alert("Referral Link Copied");
 }
 </script>
+  <script>
+function showRankReward() {
+  document.getElementById("rankRewardBox").style.display = "block";
+  document.getElementById("levelIncomeBox").style.display = "none";
+}
+
+function showLevelIncome() {
+  document.getElementById("levelIncomeBox").style.display = "block";
+  document.getElementById("rankRewardBox").style.display = "none";
+}
+  </script>
 </body>
 </html>
