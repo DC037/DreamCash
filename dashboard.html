@@ -502,7 +502,6 @@ async function viewPaymentHistory(){
         "\nAmount: +" + d.amount + " DC" +
         "\nNote: " + d.note +
         "\n\n";
-    });
 
     if(msg === ""){
       msg = "No income history found";
@@ -545,48 +544,7 @@ function showLevelTeam(level) {
   document.getElementById("myReferrals").innerHTML =
     "<h3>Level " + level + " Team</h3><p>Loading...</p>";
 }
-
-    let nextCodes = [];
-    let html = "";
-
-    for (const code of codes) {
-
-      const snap = await db.collection("users")
-        .where("referredBy", "==", code)
-        .get();
-
-      snap.forEach(doc => {
-
-        const d = doc.data();
-
-        nextCodes.push(d.myReferralCode);
-
-        if (i === level) {
-
-          html += `
-          <div style="padding:8px;border-bottom:1px solid #ddd;">
-            <b>${d.fullName || "No Name"}</b><br>
-            📱 ${d.whatsapp || "No Mobile"}<br>
-            ✅ Joined
-          </div>
-          `;
-
-        }
-
-      });
-
-    }
-
-    codes = nextCodes;
-
-    if (i === level) {
-      box.innerHTML = html || "<p>No user found in Level " + level + "</p>";
-    }
-
-  }
-
-}
-}
+    
 function showProfile(){
 document.getElementById("profileBox").style.display = "block";
 document.getElementById("myReferralsBox").style.display = "none";
