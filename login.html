@@ -141,6 +141,7 @@ async function registerUser(){
   referralCount: 0,
   referralIncome: 0,
   joinedUsers: [],
+  status: "Inactive",
   createdAt: firebase.firestore.FieldValue.serverTimestamp()
 });
 
@@ -161,6 +162,7 @@ if(referralCode){
         name: fullName,
         whatsapp: whatsapp,
         email: email,
+        status: "Inactive"
         joinedAt: new Date().toISOString()
       })
     });
