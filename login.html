@@ -94,17 +94,19 @@ function showRegister(){
   document.getElementById("loginTab").classList.remove("active");
 }
 
-window.onload = function(){
+window.addEventListener("load", function(){
 
   const params = new URLSearchParams(window.location.search);
   const refCode = params.get("ref");
 
   if(refCode){
-    document.getElementById("referralCode").value = refCode;
-    showRegister();
+    auth.signOut().then(() => {
+      document.getElementById("referralCode").value = refCode;
+      showRegister();
+    });
   }
 
-}
+});
 
 async function registerUser(){
   const fullName = document.getElementById("fullName").value.trim();
