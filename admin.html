@@ -141,10 +141,53 @@ activationDate: firebase.firestore.FieldValue.serverTimestamp()
 await db.collection("activationRequests").doc(id).update({
 status: "Approved"
 });
-
+await distributeLevelIncome(userId);
 alert("User Activated Successfully");
 
 loadActivationRequests();
+
+  }
+  async function distributeLevelIncome(userId){
+
+const levelAmounts = [10, 5, 3, 2, 1];
+
+let userDoc = await db.collection("users").doc(userId).get();
+let userData = userDoc.data();
+
+let uplineCode = userData.referredBy;
+
+for(let i = 0; i < 5; i++){
+
+if(!uplineCode){ break; }
+
+const snap = await db.collection("users")
+.where("myReferralCode", "==", uplineCode)
+.limit(1)
+.get();
+
+if(snap.empty){ break; }
+
+const uplineDoc = snap.docs[0];
+const uplineData = uplineDoc.data();
+
+const amount = levelAmounts[i];
+
+await db.collection("users").doc(uplineDoc.id).update({
+balance: firebase.firestore.FieldValue.increment(amount)
+});
+
+await db.collection("incomeHistory").add({
+userId: uplineDoc.id,
+fromUserId: userId,
+type: "Level " + (i + 1) + " Income",
+amount: amount,
+note: "Income from account activation",
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
+});
+
+uplineCode = uplineData.referredBy;
+
+}
 
   }
   async function rejectActivation(id,userId){
