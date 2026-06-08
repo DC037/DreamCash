@@ -23,7 +23,10 @@
     <h3>Withdrawal Requests</h3>
     <div id="withdrawalList">Loading...</div>
   </div>
-
+<div class="card">
+<h3>✅ Activation Requests</h3>
+<div id="activationList">Loading...</div>
+</div>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -74,7 +77,77 @@ async function loadWithdrawals(){
 
   box.innerHTML = html;
 }
+async function loadActivationRequests(){
 
+const box = document.getElementById("activationList");
+box.innerHTML = "Loading...";
+
+const snap = await db.collection("activationRequests")
+.orderBy("createdAt","desc")
+.get();
+
+if(snap.empty){
+box.innerHTML = "No activation requests found.";
+return;
+}
+
+let html = "";
+
+snap.forEach(doc => {
+
+const d = doc.data();
+
+html += `
+<div class="row">
+<b>Amount:</b> ₹${d.amount}<br>
+<b>Transaction ID:</b> ${d.transactionId}<br>
+<b>User ID:</b> ${d.userId}<br>
+<b>Email:</b> ${d.email}<br>
+<b>Status:</b> ${d.status}<br><br>
+
+<button class="btn green"
+onclick="approveActivation('${doc.id}','${d.userId}')">
+Activate
+</button>
+
+<button class="btn red"
+onclick="rejectActivation('${doc.id}')">
+Reject
+</button>
+
+</div>
+`;
+});
+
+box.innerHTML = html;
+}
+  async function approveActivation(id,userId){
+
+await db.collection("users").doc(userId).update({
+isActive: true,
+activationDate: firebase.firestore.FieldValue.serverTimestamp()
+});
+
+await db.collection("activationRequests").doc(id).update({
+status: "Approved"
+});
+
+alert("User Activated Successfully");
+
+loadActivationRequests();
+
+  }
+  async function rejectActivation(id){
+
+await db.collection("activationRequests").doc(id).update({
+status: "Rejected"
+});
+
+alert("Activation Request Rejected");
+
+loadActivationRequests();
+
+  }
 async function approveWithdrawal(id){
 
   const withdrawRef = db.collection("withdrawals").doc(id);
@@ -120,6 +193,7 @@ async function rejectWithdrawal(id){
 }
 
 loadWithdrawals();
+  loadActivationRequests();
 </script>
 
 </body>
