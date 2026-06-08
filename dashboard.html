@@ -267,11 +267,7 @@ auth.onAuthStateChanged(async function(user){
       const doc = await db.collection("users").doc(user.uid).get();
       if(doc.exists){
         const data = doc.data();
-        if(user.email === "vasimahmad614@gmail.com"){
-document.getElementById("adminBox").style.display = "block";
-}else{
-document.getElementById("adminBox").style.display = "none";
-        }
+        document.getElementById("adminBox").style.display = "block";
 if(data.isActive === true){
 document.getElementById("activationBox").style.display = "none";
 }else{
