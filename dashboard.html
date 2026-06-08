@@ -214,12 +214,22 @@ Submit Request
     <button class="btn red">Open Admin Panel</button>
   </a>
 </div>
+  <div class="card section" id="profileBox" style="display:none;">
+<h3>👤 My Profile</h3>
+
+<div class="row"><span>Name</span><b id="profileName">-</b></div>
+<div class="row"><span>Email</span><b id="profileEmail">-</b></div>
+<div class="row"><span>My Refer Code</span><b id="profileCode">-</b></div>
+<div class="row"><span>Joined By Code</span><b id="profileJoinedBy">-</b></div>
+
+<button class="btn red" onclick="logoutUser()">Logout</button>
+  </div>
 <div class="bottom">
   <a href="#"><span>🏠</span>Home</a>
   <a href="#"><span>🎡</span>Spin</a>
   <a href="#"><span>👥</span>Refer</a>
   <a href="#"><span>🏆</span>Rank</a>
-  <a href="#"><span>👤</span>Profile</a>
+  <a href="#" onclick="showProfile()"><span>👤</span>Profile</a>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -265,6 +275,10 @@ document.getElementById("activationBox").style.display = "none";
 document.getElementById("activationBox").style.display = "block";
 }
         document.getElementById("userName").innerText = data.fullName || "User";
+        document.getElementById("profileName").innerText = data.fullName || "User";
+document.getElementById("profileEmail").innerText = user.email || "-";
+document.getElementById("profileCode").innerText = data.myReferralCode || "-";
+document.getElementById("profileJoinedBy").innerText = data.referredBy || "Direct Join";
         document.getElementById("balance").innerText = (data.balance || 0).toFixed(2);
         document.getElementById("refCount").innerText = data.referralCount || 0;
 document.getElementById("totalRefer").innerText = data.referralCount || 0;
@@ -523,6 +537,21 @@ document.getElementById("referEarnBox").style.display = "none";
 document.getElementById("rankRewardBox").style.display = "none";
 document.getElementById("levelIncomeBox").style.display = "none";
     }
-  </script>
+
+function showProfile(){
+document.getElementById("profileBox").style.display = "block";
+document.getElementById("myReferralsBox").style.display = "none";
+document.getElementById("referEarnBox").style.display = "none";
+document.getElementById("rankRewardBox").style.display = "none";
+document.getElementById("levelIncomeBox").style.display = "none";
+}
+
+function logoutUser(){
+auth.signOut().then(()=>{
+window.location.href = "login.html";
+});
+}
+
+</script>
 </body>
 </html>
