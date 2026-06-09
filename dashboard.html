@@ -476,7 +476,88 @@ function showMyReferrals() {
   document.getElementById("myReferralsBox").style.display = "block";
 }
 
+async function showLevelTeam(level){
+  const box = document.getElementById("myReferrals");
+  box.innerHTML = "Loading Level " + level + " Team...";
 
+  const user = auth.currentUser;
+  if(!user){
+    box.innerHTML = "Please login first";
+    return;
+  }
+
+  const userDoc = await db.collection("users").doc(user.uid).get();
+  const userData = userDoc.data();
+
+  let currentLevelUsers = userData.joinedUsers || [];
+
+  for (let i = 1; i < level; i++) {
+    let nextLevelUsers = [];
+
+    for (const member of currentLevelUsers) {
+      let memberDoc = null;
+
+      if (member.uid) {
+        memberDoc = await db.collection("users").doc(member.uid).get();
+      } else if (member.whatsapp) {
+        const snap = await db.collection("users")
+          .where("whatsapp", "==", member.whatsapp)
+          .limit(1)
+          .get();
+
+        if (!snap.empty) {
+          memberDoc = snap.docs[0];
+        }
+      }
+
+      if (memberDoc && memberDoc.exists) {
+        const memberData = memberDoc.data();
+        const childUsers = memberData.joinedUsers || [];
+        nextLevelUsers = nextLevelUsers.concat(childUsers);
+      }
+    }
+
+    currentLevelUsers = nextLevelUsers;
+  }
+
+  if(currentLevelUsers.length === 0){
+    box.innerHTML = "No Level " + level + " Team Found";
+    return;
+  }
+
+  let html = "";
+
+  for (const member of currentLevelUsers) {
+    let liveStatus = "Inactive";
+
+    if (member.uid) {
+      const liveDoc = await db.collection("users").doc(member.uid).get();
+      if (liveDoc.exists && liveDoc.data().isActive === true) {
+        liveStatus = "Active";
+      }
+    } else if (member.whatsapp) {
+      const liveSnap = await db.collection("users")
+        .where("whatsapp", "==", member.whatsapp)
+        .limit(1)
+        .get();
+
+      if (!liveSnap.empty && liveSnap.docs[0].data().isActive === true) {
+        liveStatus = "Active";
+      }
+    }
+
+    html += `
+      <div class="card section">
+        <p><b>Name:</b> ${member.name || "User"}</p>
+        <p><b>Mobile:</b> ${member.whatsapp || "Not Available"}</p>
+        <p><b>Date:</b> ${member.joinedAt ? new Date(member.joinedAt).toLocaleDateString() : "N/A"}</p>
+        <p><b>Status:</b> ${liveStatus}</p>
+      </div>
+    `;
+  }
+
+  box.innerHTML = html;
+  }
   async function viewPaymentHistory() {
   const user = auth.currentUser;
   if (!user) return;
