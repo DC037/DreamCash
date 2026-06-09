@@ -132,7 +132,7 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
 <div class="card section" id="activationBox">
 
 <h3>✅ Activate Account</h3>
-
+<p id="accountStatus">Account Status: Loading...</p>
 <div class="dashed">
 Activation Amount: ₹99 One Time
 </div>
@@ -294,7 +294,15 @@ auth.onAuthStateChanged(async (user) => {
 
     document.getElementById("totalRefer").innerText =
       data.referralCount || 0;
+const accountStatus = document.getElementById("accountStatus");
 
+if(data.isActive === true){
+  accountStatus.innerText = "🟢 Account Status: Active";
+  accountStatus.style.color = "green";
+}else{
+  accountStatus.innerText = "🔴 Account Status: Inactive";
+  accountStatus.style.color = "red";
+  }
     const code =
       data.myReferralCode || user.uid.slice(0,6).toUpperCase();
 
