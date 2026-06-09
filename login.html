@@ -15,8 +15,8 @@ body{min-height:100vh;background:linear-gradient(135deg,#0f766e,#0ea5e9);display
 .tabs{display:flex;background:#e0f2fe;border-radius:30px;padding:5px;margin-bottom:18px}
 .tabs button{flex:1;border:none;padding:12px;border-radius:25px;font-weight:bold;background:transparent;color:#075985}
 .tabs button.active{background:linear-gradient(135deg,#15803d,#22c55e);color:white}
-.form{display:none}
-.form.active{display:block}
+#loginForm{display:block}
+#registerForm{display:none}
 .input{width:100%;padding:13px;margin:8px 0;border:1px solid #ddd;border-radius:14px;font-size:15px}
 .check{display:flex;gap:8px;font-size:13px;color:#555;margin:10px 0}
 .btn{width:100%;border:none;padding:13px;border-radius:25px;background:linear-gradient(135deg,#15803d,#22c55e);color:white;font-size:16px;font-weight:bold;margin-top:10px}
@@ -166,7 +166,7 @@ if(referralCode){
         name: fullName,
         whatsapp: whatsapp,
         email: email,
-        status: "Inactive"
+        status: "Inactive",
         joinedAt: new Date().toISOString()
       })
     });
