@@ -658,6 +658,57 @@ async function viewIncomeHistory() {
 
   alert(text);
 }
+  
+const spinRewards = [0.10, 0.25, 0.40, 0.55, 0.75, 1];
+
+function openSpinWheel(){
+  document.getElementById("spinPopup").style.display = "flex";
+  updateSpinText();
+}
+
+function closeSpinWheel(){
+  document.getElementById("spinPopup").style.display = "none";
+}
+
+function getSpinData(){
+  let data = JSON.parse(localStorage.getItem("dreamSpinData")) || {};
+  let now = Date.now();
+
+  if(!data.lastTime || now - data.lastTime >= 86400000){
+    data = { spinsLeft: 5, lastTime: now };
+    localStorage.setItem("dreamSpinData", JSON.stringify(data));
+  }
+
+  return data;
+}
+
+function updateSpinText(){
+  let data = getSpinData();
+  document.getElementById("spinLeftText").innerText = "Today Spins Left: " + data.spinsLeft;
+}
+
+function startSpin(){
+  let data = getSpinData();
+
+  if(data.spinsLeft <= 0){
+    alert("Your 5 spins are finished. Come back after 24 hours.");
+    return;
+  }
+
+  let reward = spinRewards[Math.floor(Math.random()*spinRewards.length)];
+  let wheel = document.getElementById("spinWheel");
+
+  wheel.style.transition = "transform 3s ease";
+  wheel.style.transform = "rotate(" + (1800 + Math.floor(Math.random()*360)) + "deg)";
+
+  setTimeout(() => {
+    wheel.innerHTML = reward.toFixed(2) + "DC";
+    data.spinsLeft--;
+    localStorage.setItem("dreamSpinData", JSON.stringify(data));
+    updateSpinText();
+    alert("Congratulations! You won " + reward.toFixed(2) + " DC");
+  },3000);
+            }
 </script>
   <div id="spinPopup" class="spinPopup">
   <div class="spinBox">
