@@ -125,7 +125,7 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
 <div class="card section">
   <h3>📊 Referral Earnings</h3>
   <div class="row"><span>Total Referrals</span><b id="refCount">0</b></div>
-  <div class="row"><span>Referral Income</span><b class="green">0.00DC</b></div>
+  <div class="row"><span>Referral Income</span><b class="green" id="refIncome">0.00DC</b></div>
   <div class="row"><span>Direct Referral Bonus</span><b class="green">20DC</b></div>
 </div>
 </div>
@@ -296,6 +296,8 @@ auth.onAuthStateChanged(async (user) => {
 
     document.getElementById("totalRefer").innerText =
       data.referralCount || 0;
+    document.getElementById("refCount").innerText = data.referralCount || 0;
+document.getElementById("refIncome").innerText = Number(data.referralIncome || 0).toFixed(2) + "DC";
 const accountStatus = document.getElementById("accountStatus");
 
 if(data.isActive === true){
