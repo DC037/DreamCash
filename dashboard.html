@@ -503,11 +503,20 @@ async function showLevelTeam(level){
   let liveStatus = "Inactive";
 
   if (member.uid) {
-    const liveDoc = await db.collection("users").doc(member.uid).get();
-    if (liveDoc.exists && liveDoc.data().isActive === true) {
-      liveStatus = "Active";
-    }
+  const liveDoc = await db.collection("users").doc(member.uid).get();
+  if (liveDoc.exists && liveDoc.data().isActive === true) {
+    liveStatus = "Active";
   }
+} else if (member.whatsapp) {
+  const liveSnap = await db.collection("users")
+    .where("whatsapp", "==", member.whatsapp)
+    .limit(1)
+    .get();
+
+  if (!liveSnap.empty && liveSnap.docs[0].data().isActive === true) {
+    liveStatus = "Active";
+  }
+    }
 
   html += `
     <div class="card section">
