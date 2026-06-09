@@ -160,8 +160,6 @@ if(referralCode){
 
     await db.collection("users").doc(refDoc.id).update({
       referralCount: firebase.firestore.FieldValue.increment(1),
-      referralIncome: firebase.firestore.FieldValue.increment(20),
-      balance: firebase.firestore.FieldValue.increment(20),
       joinedUsers: firebase.firestore.FieldValue.arrayUnion({
         name: fullName,
         whatsapp: whatsapp,
