@@ -743,6 +743,44 @@ spinBtn.innerText = "Spin";
 },3000);
   
  }
+  
+async function dailyCheckIn(){
+
+let data = JSON.parse(localStorage.getItem("dailyCheckIn")) || {};
+let now = Date.now();
+
+if(data.lastClaim && (now - data.lastClaim) < 86400000){
+alert("Daily reward already claimed. Come back after 24 hours.");
+return;
+}
+
+let reward = (Math.random() * 0.40 + 0.10).toFixed(2);
+
+data.lastClaim = now;
+localStorage.setItem("dailyCheckIn", JSON.stringify(data));
+
+const user = auth.currentUser;
+
+if(user){
+
+await db.collection("users").doc(user.uid).update({
+balance: firebase.firestore.FieldValue.increment(parseFloat(reward))
+});
+
+await db.collection("incomeHistory").add({
+uid: user.uid,
+type: "Daily Check-In",
+amount: parseFloat(reward),
+note: "Daily Check-In Reward",
+createdAt: Date.now()
+});
+
+document.getElementById("balance").innerText =
+(parseFloat(document.getElementById("balance").innerText) + parseFloat(reward)).toFixed(2);
+}
+
+alert("Daily Check-In Success! You won " + reward + " DC");
+  }
 </script>
   <div id="spinPopup" class="spinPopup">
   <div class="spinBox">
