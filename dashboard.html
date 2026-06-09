@@ -476,64 +476,7 @@ function showMyReferrals() {
   document.getElementById("myReferralsBox").style.display = "block";
 }
 
-async function showLevelTeam(level){
-  const box = document.getElementById("myReferrals");
-  box.innerHTML = "Loading Level " + level + " Team...";
 
-  const user = auth.currentUser;
-  if(!user){
-    box.innerHTML = "Please login first";
-    return;
-  }
-
-  const userDoc = await db.collection("users").doc(user.uid).get();
-  const userData = userDoc.data();
-
-  if(level === 1){
-    const joinedUsers = userData.joinedUsers || [];
-
-    if(joinedUsers.length === 0){
-      box.innerHTML = "No Level 1 Team Found";
-      return;
-    }
-
-    let html = "";
-
-    for (const member of joinedUsers) {
-  let liveStatus = "Inactive";
-
-  if (member.uid) {
-  const liveDoc = await db.collection("users").doc(member.uid).get();
-  if (liveDoc.exists && liveDoc.data().isActive === true) {
-    liveStatus = "Active";
-  }
-} else if (member.whatsapp) {
-  const liveSnap = await db.collection("users")
-    .where("whatsapp", "==", member.whatsapp)
-    .limit(1)
-    .get();
-
-  if (!liveSnap.empty && liveSnap.docs[0].data().isActive === true) {
-    liveStatus = "Active";
-  }
-    }
-
-  html += `
-    <div class="card section">
-      <p><b>Name:</b> ${member.name || "User"}</p>
-      <p><b>Mobile:</b> ${member.whatsapp || "Not Available"}</p>
-      <p><b>Date:</b> ${member.joinedAt ? new Date(member.joinedAt).toLocaleDateString() : "N/A"}</p>
-      <p><b>Status:</b> ${liveStatus}</p>
-    </div>
-  `;
-    }
-
-    box.innerHTML = html;
-  }else{
-    box.innerHTML = "Level " + level + " Team coming soon...";
-  }
-
-}
   async function viewPaymentHistory() {
   const user = auth.currentUser;
   if (!user) return;
