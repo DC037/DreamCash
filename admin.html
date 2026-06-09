@@ -180,7 +180,8 @@ const uplineData = uplineDoc.data();
 const amount = levelAmounts[i];
 
 await db.collection("users").doc(uplineDoc.id).update({
-balance: firebase.firestore.FieldValue.increment(amount)
+  balance: firebase.firestore.FieldValue.increment(amount),
+  referralIncome: firebase.firestore.FieldValue.increment(amount)
 });
 
 await db.collection("incomeHistory").add({
