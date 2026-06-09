@@ -132,13 +132,20 @@ Reject
 box.innerHTML = html;
 }
   async function approveActivation(id,userId){
+const reqRef = db.collection("activationRequests").doc(id);
+const reqDoc = await reqRef.get();
+const reqData = reqDoc.data();
 
+if(reqData.status === "Approved"){
+  alert("Already Approved");
+  return;
+}
 await db.collection("users").doc(userId).update({
 isActive: true,
 activationDate: firebase.firestore.FieldValue.serverTimestamp()
 });
 
-await db.collection("activationRequests").doc(id).update({
+await reqRef.update({
 status: "Approved"
 });
 await distributeLevelIncome(userId);
