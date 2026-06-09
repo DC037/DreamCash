@@ -688,6 +688,9 @@ function updateSpinText(){
 }
 
 function startSpin(){
+  let spinBtn = document.querySelector("#spinPopup .btn.blue");
+spinBtn.disabled = true;
+spinBtn.innerText = "Spinning...";
   let data = getSpinData();
 
   if(data.spinsLeft <= 0){
@@ -729,36 +732,12 @@ function startSpin(){
 
   alert("Congratulations! You won " + reward.toFixed(2) + " DC");
 
-},3000);setTimeout(async () => {
-  wheel.innerHTML = reward.toFixed(2) + "DC";
-
-  data.spinsLeft--;
-  localStorage.setItem("dreamSpinData", JSON.stringify(data));
-  updateSpinText();
-
-  const user = auth.currentUser;
-
-  if(user){
-    await db.collection("users").doc(user.uid).update({
-      balance: firebase.firestore.FieldValue.increment(reward)
-    });
-
-    await db.collection("incomeHistory").add({
-      uid: user.uid,
-      type: "Lucky Spin Reward",
-      amount: reward,
-      note: "Lucky Spin se " + reward.toFixed(2) + " DC mila",
-      createdAt: Date.now()
-    });
-
-    document.getElementById("balance").innerText =
-      (parseFloat(document.getElementById("balance").innerText) + reward).toFixed(2);
-  }
-
-  alert("Congratulations! You won " + reward.toFixed(2) + " DC");
+spinBtn.disabled = false;
+spinBtn.innerText = "Spin";
 
 },3000);
-            }
+  
+ }
 </script>
   <div id="spinPopup" class="spinPopup">
   <div class="spinBox">
