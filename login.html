@@ -35,17 +35,18 @@ body{min-height:100vh;background:linear-gradient(135deg,#0f766e,#0ea5e9);display
 
   <div class="tabs">
   <button id="loginTab" class="active" onclick="showLogin()">Login</button>
+
   <button id="registerTab" onclick="showRegister()">Register</button>
 </div>
 
-<div id="loginForm" class="form active">
+<div id="loginForm" class="form active" style="display:block;">
   <input id="loginMobile" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
   <input id="loginPassword" class="input" type="password" placeholder="Password">
   <button class="btn" onclick="loginUser()">Login</button>
   <p class="note">New user? <span class="link" onclick="showRegister()">Create Account</span></p>
 </div>
 
-<div id="registerForm" class="form">
+<div id="registerForm" class="form" style="display:none;">
     
     <input id="fullName" class="input" type="text" placeholder="Full Name">
     <input id="whatsapp" class="input" type="tel" placeholder="WhatsApp Number">
@@ -89,25 +90,21 @@ function showLogin(){
 }
 
 function showRegister(){
-  document.getElementById("registerForm").style.display = "block";
-  document.getElementById("loginForm").style.display = "none";
-  document.getElementById("registerTab").classList.add("active");
-  document.getElementById("loginTab").classList.remove("active");
-  }
+    document.getElementById("registerForm").style.display = "block";
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registerTab").classList.add("active");
+    document.getElementById("loginTab").classList.remove("active");
+}
 
-setTimeout(function(){
+const params = new URLSearchParams(window.location.search);
+const refCode = params.get("ref");
 
-  const params = new URLSearchParams(window.location.search);
-  const refCode = params.get("ref");
-
-  if(refCode){
-    showRegister();
-    document.getElementById("referralCode").value = refCode;
-  }else{
-    showLogin();
-  }
-
-}, 500);
+if(refCode){
+    setTimeout(function(){
+        showRegister();
+        document.getElementById("referralCode").value = refCode;
+    }, 500);
+}
 
 async function registerUser(){
   const fullName = document.getElementById("fullName").value.trim();
