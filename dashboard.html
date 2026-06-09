@@ -391,6 +391,57 @@ async function showLevelTeam(level){
   }
 
 }
+  async function viewPaymentHistory() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const snap = await db.collection("withdrawals")
+    .where("uid", "==", user.uid)
+    .get();
+
+  let text = "";
+
+  snap.forEach(doc => {
+    const d = doc.data();
+
+    text +=
+      "Amount: ₹" + d.amount +
+      "\nStatus: " + d.status +
+      "\n\n";
+  });
+
+  if (text === "") {
+    text = "No payment history found";
+  }
+
+  alert(text);
+}
+
+async function viewIncomeHistory() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const snap = await db.collection("incomeHistory")
+    .where("uid", "==", user.uid)
+    .get();
+
+  let text = "";
+
+  snap.forEach(doc => {
+    const d = doc.data();
+
+    text +=
+      d.type + " : ₹" + d.amount +
+      "\n" + d.note +
+      "\n\n";
+  });
+
+  if (text === "") {
+    text = "No income history found";
+  }
+
+  alert(text);
+}
 </script>
 </body>
 </html>
