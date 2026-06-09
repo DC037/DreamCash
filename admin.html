@@ -156,7 +156,7 @@ loadActivationRequests();
   }
   async function distributeLevelIncome(userId){
 
-const levelAmounts = [10, 5, 3, 2, 1];
+const levelAmounts = [20, 10, 5, 3, 2];
 
 let userDoc = await db.collection("users").doc(userId).get();
 let userData = userDoc.data();
