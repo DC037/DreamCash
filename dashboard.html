@@ -301,6 +301,7 @@ const accountStatus = document.getElementById("accountStatus");
 if(data.isActive === true){
   accountStatus.innerText = "🟢 Account Status: Active";
   accountStatus.style.color = "green";
+  document.getElementById("activationBox").style.display = "none";
 }else{
   accountStatus.innerText = "🔴 Account Status: Inactive";
   accountStatus.style.color = "red";
