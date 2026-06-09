@@ -323,7 +323,121 @@ if(data.isActive === true){
   }
 
 });
+async function submitActivationRequest() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Please login first");
+    return;
+  }
 
+  const amount = document.getElementById("depositAmount").value;
+  const transactionId = document.getElementById("transactionId").value;
+
+  if (!amount || !transactionId) {
+    alert("Please enter amount and transaction ID");
+    return;
+  }
+
+  await db.collection("activationRequests").add({
+    userId: user.uid,
+    email: user.email,
+    amount: Number(amount),
+    transactionId: transactionId,
+    status: "Pending",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  alert("Activation Request Submitted");
+  document.getElementById("depositAmount").value = "";
+  document.getElementById("transactionId").value = "";
+}
+
+async function submitWithdraw() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Please login first");
+    return;
+  }
+
+  const amount = document.getElementById("withdrawAmount").value;
+  const upi = document.getElementById("withdrawUpi").value;
+
+  if (!amount || !upi) {
+    alert("Please enter amount and UPI ID");
+    return;
+  }
+
+  await db.collection("withdrawals").add({
+    uid: user.uid,
+    userId: user.uid,
+    email: user.email,
+    amount: Number(amount),
+    upi: upi,
+    status: "Pending",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  alert("Withdrawal Request Submitted");
+  document.getElementById("withdrawAmount").value = "";
+  document.getElementById("withdrawUpi").value = "";
+}async function submitActivationRequest() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Please login first");
+    return;
+  }
+
+  const amount = document.getElementById("depositAmount").value;
+  const transactionId = document.getElementById("transactionId").value;
+
+  if (!amount || !transactionId) {
+    alert("Please enter amount and transaction ID");
+    return;
+  }
+
+  await db.collection("activationRequests").add({
+    userId: user.uid,
+    email: user.email,
+    amount: Number(amount),
+    transactionId: transactionId,
+    status: "Pending",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  alert("Activation Request Submitted");
+  document.getElementById("depositAmount").value = "";
+  document.getElementById("transactionId").value = "";
+}
+
+async function submitWithdraw() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Please login first");
+    return;
+  }
+
+  const amount = document.getElementById("withdrawAmount").value;
+  const upi = document.getElementById("withdrawUpi").value;
+
+  if (!amount || !upi) {
+    alert("Please enter amount and UPI ID");
+    return;
+  }
+
+  await db.collection("withdrawals").add({
+    uid: user.uid,
+    userId: user.uid,
+    email: user.email,
+    amount: Number(amount),
+    upi: upi,
+    status: "Pending",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  alert("Withdrawal Request Submitted");
+  document.getElementById("withdrawAmount").value = "";
+  document.getElementById("withdrawUpi").value = "";
+}
 function copyReferral() {
   navigator.clipboard.writeText(referralCode);
   alert("Referral Link Copied");
