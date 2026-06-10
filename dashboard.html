@@ -609,15 +609,24 @@ async function showLevelTeam(level){
       }
     }
 
-    html += `
-      <div class="card section">
-        <p><b>Name:</b> ${member.name || "User"}</p>
-        <p><b>Mobile:</b> ${member.whatsapp || "Not Available"}</p>
-        <p><b>Date:</b> ${member.joinedAt ? new Date(member.joinedAt).toLocaleDateString() : "N/A"}</p>
-        <p><b>Status:</b> ${liveStatus}</p>
-      </div>
-    `;
-  }
+    if(level === 1){
+  html += `
+  <div class="card section">
+    <p><b>Name:</b> ${member.name || "User"}</p>
+    <p><b>Mobile:</b> ${member.whatsapp || "Not Available"}</p>
+    <p><b>Date:</b> ${member.joinedAt ? new Date(member.joinedAt).toLocaleDateString() : "N/A"}</p>
+    <p><b>Status:</b> ${liveStatus}</p>
+  </div>
+  `;
+} else {
+  html += `
+  <div class="card section">
+    <p><b>Name:</b> ${member.name || "User"}</p>
+    <p><b>Status:</b> ${liveStatus}</p>
+  </div>
+  `;
+      
+    }
 
   box.innerHTML = html;
   }
