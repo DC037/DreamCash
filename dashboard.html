@@ -672,7 +672,101 @@ async function viewIncomeHistory() {
 
   alert(text);
 }
-  
+  const scratchRewards = [0.10, 0.20, 0.30, 0.50, 0.75];
+
+function getScratchData(){
+  let data = JSON.parse(localStorage.getItem("dreamScratchData")) || {};
+  let now = Date.now();
+
+  if(!data.lastTime || now - data.lastTime >= 86400000){
+    data = { scratchLeft: 5, lastTime: now };
+    localStorage.setItem("dreamScratchData", JSON.stringify(data));
+  }
+
+  return data;
+}
+
+async function scratchCard(){
+  let data = getScratchData();
+
+  if(data.scratchLeft <= 0){
+    alert("Your 5 scratch cards are finished. Come back after 24 hours.");
+    return;
+  }
+
+  let reward = scratchRewards[Math.floor(Math.random() * scratchRewards.length)];
+
+  data.scratchLeft--;
+  localStorage.setItem("dreamScratchData", JSON.stringify(data));
+
+  const user = auth.currentUser;
+
+  if(user){
+    await db.collection("users").doc(user.uid).update({
+      balance: firebase.firestore.FieldValue.increment(reward)
+    });
+
+    await db.collection("incomeHistory").add({
+      uid: user.uid,
+      type: "Scratch Card Reward",
+      amount: reward,
+      note: "Scratch Card se " + reward.toFixed(2) + " DC mila",
+      createdAt: Date.now()
+    });
+
+    document.getElementById("balance").innerText =
+      (parseFloat(document.getElementById("balance").innerText) + reward).toFixed(2);
+  }
+
+  alert("Scratch Card Success! You won " + reward.toFixed(2) + " DC. Scratch left: " + data.scratchLeft);
+}const scratchRewards = [0.10, 0.20, 0.30, 0.50, 0.75];
+
+function getScratchData(){
+  let data = JSON.parse(localStorage.getItem("dreamScratchData")) || {};
+  let now = Date.now();
+
+  if(!data.lastTime || now - data.lastTime >= 86400000){
+    data = { scratchLeft: 5, lastTime: now };
+    localStorage.setItem("dreamScratchData", JSON.stringify(data));
+  }
+
+  return data;
+}
+
+async function scratchCard(){
+  let data = getScratchData();
+
+  if(data.scratchLeft <= 0){
+    alert("Your 5 scratch cards are finished. Come back after 24 hours.");
+    return;
+  }
+
+  let reward = scratchRewards[Math.floor(Math.random() * scratchRewards.length)];
+
+  data.scratchLeft--;
+  localStorage.setItem("dreamScratchData", JSON.stringify(data));
+
+  const user = auth.currentUser;
+
+  if(user){
+    await db.collection("users").doc(user.uid).update({
+      balance: firebase.firestore.FieldValue.increment(reward)
+    });
+
+    await db.collection("incomeHistory").add({
+      uid: user.uid,
+      type: "Scratch Card Reward",
+      amount: reward,
+      note: "Scratch Card se " + reward.toFixed(2) + " DC mila",
+      createdAt: Date.now()
+    });
+
+    document.getElementById("balance").innerText =
+      (parseFloat(document.getElementById("balance").innerText) + reward).toFixed(2);
+  }
+
+  alert("Scratch Card Success! You won " + reward.toFixed(2) + " DC. Scratch left: " + data.scratchLeft);
+  }
 const spinRewards = [0.10, 0.25, 0.40, 0.55, 0.75, 1];
 
 function openSpinWheel(){
