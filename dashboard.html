@@ -608,21 +608,15 @@ async function showLevelTeam(level){
         liveStatus = "Active";
       }
     }
-
- if(level === 1){
-html += "<div class='card section'>";
-html += "<p><b>Name:</b> " + (member.name || "User") + "</p>";
-html += "<p><b>Mobile:</b> " + (member.whatsapp || "Not Available") + "</p>";
-html += "<p><b>Date:</b> " + (member.joinedAt ? new Date(member.joinedAt).toLocaleDateString() : "N/A") + "</p>";
-html += "<p><b>Status:</b> " + liveStatus + "</p>";
-html += "</div>";
-}else{
-html += "<div class='card section'>";
-html += "<p><b>Name:</b> " + (member.name || "User") + "</p>";
-html += "<p><b>Status:</b> " + liveStatus + "</p>";
-html += "</div>";
- }
-
+html += `
+<div class="card section">
+  <p><b>Name:</b> ${member.name || "User"}</p>
+  <p><b>Mobile:</b> ${member.whatsapp || "Not Available"}</p>
+  <p><b>Date:</b> ${member.joinedAt ? new Date(member.joinedAt).toLocaleDateString() : "N/A"}</p>
+  <p><b>Status:</b> ${liveStatus}</p>
+</div>
+`;
+ 
   box.innerHTML = html;
   }
   async function viewPaymentHistory() {
