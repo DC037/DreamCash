@@ -690,49 +690,87 @@ async function viewIncomeHistory() {
   alert(text);
 }
   const scratchRewards = [0.10, 0.20, 0.30, 0.50, 0.75];
+let scratchRewardValue = 0;
+let scratchDataNow = null;
 
-async function scratchCard(){
-  const user = auth.currentUser;
-  if(!user){
-    alert("Please login first");
-    return;
-  }
-
-  let data = JSON.parse(localStorage.getItem("scratchCardData")) || {};
+function openScratchPopup(){
+  scratchDataNow = JSON.parse(localStorage.getItem("scratchCardData")) || {};
   let now = Date.now();
 
-  if(!data.lastTime || now - data.lastTime >= 86400000){
-    data = { left: 5, lastTime: now };
+  if(!scratchDataNow.lastTime || now - scratchDataNow.lastTime >= 86400000){
+    scratchDataNow = { left: 5, lastTime: now };
   }
 
-  if(data.left <= 0){
+  if(scratchDataNow.left <= 0){
     alert("Your 5 scratch cards are finished. Come back after 24 hours.");
-    localStorage.setItem("scratchCardData", JSON.stringify(data));
     return;
   }
 
-  let reward = scratchRewards[Math.floor(Math.random() * scratchRewards.length)];
+  scratchRewardValue = scratchRewards[Math.floor(Math.random() * scratchRewards.length)];
 
-  data.left--;
-  localStorage.setItem("scratchCardData", JSON.stringify(data));
+  document.getElementById("scratchReward").innerText =
+    scratchRewardValue.toFixed(2) + " DC";
 
-  await db.collection("users").doc(user.uid).update({
-    balance: firebase.firestore.FieldValue.increment(reward)
-  });
+  document.getElementById("scratchPopup").style.display = "flex";
 
-  await db.collection("incomeHistory").add({
-    uid: user.uid,
-    type: "Scratch Card",
-    amount: reward,
-    note: "Scratch Card Reward",
-    createdAt: Date.now()
-  });
+  let canvas = document.getElementById("scratchCanvas");
+  let ctx = canvas.getContext("2d");
 
-  document.getElementById("balance").innerText =
-    (parseFloat(document.getElementById("balance").innerText) + reward).toFixed(2);
-
-  alert("Scratch Card : " + reward.toFixed(2) + " DC\nScratch Left: " + data.left);
+  ctx.fillStyle = "orange";
+  ctx.fillRect(0,0,260,150);
 }
+let isDrawing = false;
+
+canvas.addEventListener("mousedown", () => isDrawing = true);
+canvas.addEventListener("mouseup", () => isDrawing = false);
+
+canvas.addEventListener("mousemove", function(e){
+    if(!isDrawing) return;
+
+    ctx.globalCompositeOperation = "destination-out";
+
+    let rect = canvas.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+    let y = e.clientY - rect.top;
+
+    ctx.beginPath();
+    ctx.arc(x, y, 20, 0, Math.PI * 2);
+    ctx.fill();
+});
+  canvas.addEventListener("mouseup", async function(){
+
+    scratchDataNow.left--;
+    localStorage.setItem("scratchCardData",
+    JSON.stringify(scratchDataNow));
+
+    const user = auth.currentUser;
+
+    if(user){
+        await db.collection("users").doc(user.uid).update({
+            balance: firebase.firestore.FieldValue.increment(scratchRewardValue)
+        });
+
+        await db.collection("incomeHistory").add({
+            uid: user.uid,
+            type: "Scratch Card",
+            amount: scratchRewardValue,
+            note: "Scratch Card Reward",
+            createdAt: Date.now()
+        });
+
+        document.getElementById("balance").innerText =
+        (parseFloat(document.getElementById("balance").innerText)
+        + scratchRewardValue).toFixed(2);
+    }
+
+    alert("You Won " + scratchRewardValue.toFixed(2) +
+    " DC | Scratch Left: " + scratchDataNow.left);
+});
+  
+function closeScratchPopup(){
+  document.getElementById("scratchPopup").style.display = "none";
+  }
+
 const spinRewards = [0.10, 0.25, 0.40, 0.55, 0.75, 1];
 
 function openSpinWheel(){
