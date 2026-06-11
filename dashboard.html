@@ -118,7 +118,7 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
   display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:bold;color:#0b7a75;
 }
 #scratchCanvas{
-  position:absolute;top:0;left:0;width:100%;height:100%;background:orange;
+  position:absolute;top:0;left:0;width:100%;height:100%;background:orange;touch-action:none;
 }
 </style>
 </head>
@@ -719,8 +719,79 @@ function openScratchPopup(){
   ctx.fillStyle = "orange";
   ctx.fillRect(0,0,260,150);
 }
+let isDrawing = false;
+let rewardClaimed = false;
 
+function scratchMove(e){
+  if(!isDrawing) return;
+  e.preventDefault();
+
+  ctx.globalCompositeOperation = "destination-out";
+
+  let rect = canvas.getBoundingClientRect();
+  let touch = e.touches ? e.touches[0] : e;
+  let x = touch.clientX - rect.left;
+  let y = touch.clientY - rect.top;
+
+  ctx.beginPath();
+  ctx.arc(x, y, 22, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+async function claimAfterScratch(){
+  if(rewardClaimed) return;
+  rewardClaimed = true;
+
+  scratchDataNow.left--;
+  localStorage.setItem("scratchCardData", JSON.stringify(scratchDataNow));
+
+  const user = auth.currentUser;
+
+  if(user){
+    await db.collection("users").doc(user.uid).update({
+      balance: firebase.firestore.FieldValue.increment(scratchRewardValue)
+    });
+
+    await db.collection("incomeHistory").add({
+      uid: user.uid,
+      type: "Scratch Card",
+      amount: scratchRewardValue,
+      note: "Scratch Card Reward",
+      createdAt: Date.now()
+    });
+
+    document.getElementById("balance").innerText =
+      (parseFloat(document.getElementById("balance").innerText) + scratchRewardValue).toFixed(2);
+  }
+
+  alert("You Won " + scratchRewardValue.toFixed(2) + " DC | Scratch Left: " + scratchDataNow.left);
+}
+
+canvas.addEventListener("touchstart", function(e){
+  isDrawing = true;
+  e.preventDefault();
+}, {passive:false});
+
+canvas.addEventListener("touchmove", scratchMove, {passive:false});
+
+canvas.addEventListener("touchend", function(e){
+  isDrawing = false;
+  e.preventDefault();
+  claimAfterScratch();
+}, {passive:false});
+
+canvas.addEventListener("mousedown", function(){
+  isDrawing = true;
+});
+
+canvas.addEventListener("mousemove", scratchMove);
+
+canvas.addEventListener("mouseup", function(){
+  isDrawing = false;
+  claimAfterScratch();
+});
   
+
 function closeScratchPopup(){
   document.getElementById("scratchPopup").style.display = "none";
   }
