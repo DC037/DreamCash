@@ -713,21 +713,45 @@ function openScratchPopup(){
 
   document.getElementById("scratchPopup").style.display = "flex";
 
-  let canvas = document.getElementById("scratchCanvas");
-  let ctx = canvas.getContext("2d");
+  canvas = document.getElementById("scratchCanvas");
+ctx = canvas.getContext("2d");
+isDrawing = false;
+rewardClaimed = false;
 
-  ctx.fillStyle = "orange";
-  ctx.fillRect(0,0,260,150);
-}
-let isDrawing = false;
-let rewardClaimed = false;
+ctx.globalCompositeOperation = "source-over";
+ctx.clearRect(0,0,260,150);
+ctx.fillStyle = "orange";
+ctx.fillRect(0,0,260,150);
+
+
+ canvas.addEventListener("touchstart", function(e){
+    isDrawing = true;
+    e.preventDefault();
+}, {passive:false});
+
+canvas.addEventListener("touchmove", scratchMove, {passive:false});
+
+canvas.addEventListener("touchend", function(e){
+    isDrawing = false;
+    e.preventDefault();
+    claimAfterScratch();
+}, {passive:false});
+
+canvas.addEventListener("mousedown", function(){
+    isDrawing = true;
+});
+
+canvas.addEventListener("mousemove", scratchMove);
+
+canvas.addEventListener("mouseup", function(){
+    isDrawing = false;
+    claimAfterScratch();
+}); }
 
 function scratchMove(e){
   if(!isDrawing) return;
-  e.preventDefault();
-
-  ctx.globalCompositeOperation = "destination-out";
-
+e.preventDefault();
+ctx.globalCompositeOperation = "destination-out";
   let rect = canvas.getBoundingClientRect();
   let touch = e.touches ? e.touches[0] : e;
   let x = touch.clientX - rect.left;
