@@ -120,6 +120,22 @@ body{background:#f1f5f9;color:#111;padding-bottom:75px}
 #scratchCanvas{
   position:absolute;top:0;left:0;width:100%;height:100%;background:transparent;touch-action:none;
 }
+  .payment-history{
+    background: linear-gradient(135deg,#6b003f,#a0005b) !important;
+    color:white !important;
+}
+
+.income-history{
+    background: linear-gradient(135deg,#0a7a35,#16a34a) !important;
+    color:white !important;
+}
+
+.payment-history h3,
+.payment-history p,
+.income-history h3,
+.income-history p{
+    color:white !important;
+}
 </style>
 </head>
 
@@ -275,14 +291,14 @@ Submit Request
 </div>
 <div class="grid">
 
-  <div class="box">
+  <div class="box payment-history">
     <div class="icon">💳</div>
     <h3>Payment History</h3>
     <p>View your withdrawal requests.</p>
    <button class="btn blue" onclick="viewPaymentHistory()">View</button>
   </div>
 
-  <div class="box">
+  <div class="box income-history">
     <div class="icon">💰</div>
     <h3>Income History</h3>
     <p>View your earning records.</p>
