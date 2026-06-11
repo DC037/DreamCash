@@ -444,11 +444,11 @@ function copyCode(){
   alert("Referral code copied!");
 }
   setTimeout(() => {
-  const wallet = document.querySelector(".wallet");
+  const walletBtn = document.querySelector(".wallet .btn");
 
-  if (wallet && !document.querySelector(".social-buttons")) {
-    wallet.insertAdjacentHTML("beforeend", `
-      <div class="social-buttons">
+  if (walletBtn && !document.getElementById("topSocialButtons")) {
+    walletBtn.insertAdjacentHTML("afterend", `
+      <div id="topSocialButtons" class="social-buttons">
         <a href="https://t.me/YOUR_TELEGRAM_LINK" target="_blank" class="social-btn">
           <img src="https://i.ibb.co/gM239Ztk/image-search-1781172828596.png">
         </a>
@@ -463,7 +463,7 @@ function copyCode(){
       </div>
     `);
   }
-}, 1500);
+}, 1000);
 </script>
 
 </body>
