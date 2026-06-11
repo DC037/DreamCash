@@ -22,7 +22,10 @@ margin-right:8px;
     }
     .green{background:#16c784;}
     .red{background:#e74c3c;}
-    .status{font-weight:bold;color:#e67e22;}
+    .status{font-weight:bold;}
+.status.approved{color:green;}
+.status.rejected{color:red;}
+.status.pending{color:#e67e22;}
   </style>
 </head>
 <body>
@@ -77,7 +80,10 @@ async function loadWithdrawals(){
         <b>Amount:</b> ₹${d.amount}<br>
         <b>UPI:</b> ${d.upiId}<br>
         <b>User ID:</b> ${d.userId}<br>
-        <b>Status:</b> <span class="status">${d.status}</span><br><br>
+        <b>Status:</b> 
+<span class="status ${d.status === 'Approved' ? 'approved' : d.status === 'Rejected' ? 'rejected' : 'pending'}">
+${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d.status}
+</span><br><br>
 
         <button class="btn green" onclick="approveWithdrawal('${doc.id}')">Approve</button>
         <button class="btn red" onclick="rejectWithdrawal('${doc.id}')">Reject</button>
