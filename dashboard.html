@@ -851,6 +851,16 @@ document.getElementById("balance").innerText =
 alert("Daily Check-In Success! You won " + reward + " DC");
   }
 </script>
+  <div id="scratchPopup" class="scratchPopup">
+  <div class="scratchBox">
+    <h2>🎁 Scratch Card</h2>
+    <div class="scratchArea">
+      <div id="scratchReward" class="scratchReward">0.00 DC</div>
+      <canvas id="scratchCanvas" width="260" height="150"></canvas>
+    </div>
+    <button class="btn orange" onclick="closeScratchPopup()">Close</button>
+  </div>
+  </div>
   <div id="spinPopup" class="spinPopup">
   <div class="spinBox">
     <h2>🎡 Lucky Spin</h2>
