@@ -874,9 +874,6 @@ function updateSpinText(){
 
 function startSpin(){
   let spinBtn = document.querySelector("#spinPopup .btn.blue");
-spinBtn.disabled = true;
-spinBtn.innerText = "Spinning...";
-  
   let data = getSpinData();
 
   if(data.spinsLeft <= 0){
@@ -884,48 +881,49 @@ spinBtn.innerText = "Spinning...";
     return;
   }
 
-  let reward = spinRewards[Math.floor(Math.random()*spinRewards.length)];
+  spinBtn.disabled = true;
+  spinBtn.innerText = "Spinning...";
+
+  let reward = spinRewards[Math.floor(Math.random() * spinRewards.length)];
   let wheel = document.getElementById("spinWheel");
 
-  wheel.style.transition = "none";
-wheel.style.transform = "rotate(0deg)";
+  let spinDegree = 1800 + Math.floor(Math.random() * 360);
 
-setTimeout(() => {
   wheel.style.transition = "transform 3s ease";
-  wheel.style.transform = "rotate(" + (1800 + Math.floor(Math.random() * 360)) + "deg)";
-}, 50);
-  setTimeout(async () => {
-  wheel.innerHTML = reward.toFixed(2) + "DC";
+  wheel.style.transform = "rotate(" + spinDegree + "deg)";
 
-  data.spinsLeft--;
-  localStorage.setItem("dreamSpinData", JSON.stringify(data));
-  updateSpinText();
+  setTimeout(() => {
+    wheel.innerHTML = reward.toFixed(2) + "DC";
 
-  const user = auth.currentUser;
+    data.spinsLeft--;
+    localStorage.setItem("dreamSpinData", JSON.stringify(data));
+    updateSpinText();
 
-  if(user){
-    await db.collection("users").doc(user.uid).update({
-      balance: firebase.firestore.FieldValue.increment(reward)
-    });
+    const user = auth.currentUser;
 
-    await db.collection("incomeHistory").add({
-      uid: user.uid,
-      type: "Lucky Spin Reward",
-      amount: reward,
-      note: "Lucky Spin se " + reward.toFixed(2) + " DC mila",
-      createdAt: Date.now()
-    });
+    if(user){
+      db.collection("users").doc(user.uid).update({
+        balance: firebase.firestore.FieldValue.increment(reward)
+      });
+
+      db.collection("incomeHistory").add({
+        uid: user.uid,
+        type: "Lucky Spin Reward",
+        amount: reward,
+        note: "Lucky Spin se " + reward.toFixed(2) + " DC mila",
+        createdAt: Date.now()
+      });
+    }
 
     document.getElementById("balance").innerText =
       (parseFloat(document.getElementById("balance").innerText) + reward).toFixed(2);
-  }
 
-  alert("Congratulations! You won " + reward.toFixed(2) + " DC");
+    alert("Congratulations! You won " + reward.toFixed(2) + " DC");
 
-spinBtn.disabled = false;
-spinBtn.innerText = "Spin";
-
-},3000);
+    spinBtn.disabled = false;
+    spinBtn.innerText = "Spin";
+  }, 3000);
+}
   
  }
   
