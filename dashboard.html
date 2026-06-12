@@ -469,8 +469,9 @@ async function submitActivationRequest() {
     const screenshotFile = document.getElementById("paymentScreenshot").files[0];
 
     if (!amount || !transactionId) {
-      alert("Please enter amount and transaction ID");
-      return;
+    alert("Please enter amount and UTR / Reference Number");
+    return;
+    }
     }
 
     if (!screenshotFile) {
