@@ -875,7 +875,7 @@ function updateSpinText(){
 function startSpin(){
   let spinBtn = document.querySelector("#spinPopup .btn.blue");
 spinBtn.disabled = true;
-spinBtn.innerText = "Spin";
+spinBtn.innerText = "Spinning...";
   setTimeout(() => {
   spinBtn.disabled = false;
   spinBtn.innerText = "Spin";
@@ -890,9 +890,13 @@ spinBtn.innerText = "Spin";
   let reward = spinRewards[Math.floor(Math.random()*spinRewards.length)];
   let wheel = document.getElementById("spinWheel");
 
-  wheel.style.transition = "transform 3s ease";
-  wheel.style.transform = "rotate(" + (1800 + Math.floor(Math.random()*360)) + "deg)";
+  wheel.style.transition = "none";
+wheel.style.transform = "rotate(0deg)";
 
+setTimeout(() => {
+  wheel.style.transition = "transform 3s ease";
+  wheel.style.transform = "rotate(" + (1800 + Math.floor(Math.random() * 360)) + "deg)";
+}, 50);
   setTimeout(async () => {
   wheel.innerHTML = reward.toFixed(2) + "DC";
 
