@@ -478,14 +478,7 @@ const screenshotFile = paymentInput.files && paymentInput.files.length > 0 ? pay
       return;
     }
 
-    const storageRef = firebase.storage().ref(
-  "paymentScreenshots/" + Date.now() + "_" + screenshotFile.name
-);
-alert("Uploading Screenshot...");
-await storageRef.put(screenshotFile);
-
-const screenshotUrl = await storageRef.getDownloadURL();
-alert("Screenshot Uploaded");
+    const screenshotUrl = "";
     await db.collection("activationRequests").add({
       userId: user.uid,
       email: user.email,
