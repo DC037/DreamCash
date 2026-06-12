@@ -677,7 +677,7 @@ if (freshMemberDoc && freshMemberDoc.exists) {
 html += `
 <div class="card section">
 <p><b>Name:</b> ${displayMember.name || "User"}</p>
-<p><b>Mobile:</b> ${displayMember.whatsapp || "Not Available"}</p>
+${level === 1 ? `<p><b>Mobile:</b> ${displayMember.whatsapp || "Not Available"}</p>` : ""}
 <p><b>Date:</b> ${displayMember.joinedAt ? new Date(displayMember.joinedAt).toLocaleDateString() : "N/A"}</p>
 <p><b>Status:</b> ${liveStatus}</p>
 </div>
