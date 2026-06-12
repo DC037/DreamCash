@@ -647,17 +647,38 @@ async function showLevelTeam(level){
   let html = "";
 for (const member of currentLevelUsers) {
 
-let liveStatus = "Inactive";
+let liveStatus = "🔴 Inactive";
+let displayMember = member;
 
-if (member.isActive === true) {
-liveStatus = "Active";
+let freshMemberDoc = null;
+
+if (member.uid) {
+  freshMemberDoc = await db.collection("users").doc(member.uid).get();
+} else if (member.whatsapp) {
+  const freshSnap = await db.collection("users")
+    .where("whatsapp", "==", member.whatsapp)
+    .limit(1)
+    .get();
+
+  if (!freshSnap.empty) {
+    freshMemberDoc = freshSnap.docs[0];
+  }
 }
+
+if (freshMemberDoc && freshMemberDoc.exists) {
+  const freshData = freshMemberDoc.data();
+  displayMember = {...member, ...freshData};
+
+  if (freshData.isActive === true) {
+    liveStatus = "🟢 Active";
+  }
+    }
 
 html += `
 <div class="card section">
-<p><b>Name:</b> ${member.name || "User"}</p>
-<p><b>Mobile:</b> ${member.whatsapp || "Not Available"}</p>
-<p><b>Date:</b> ${member.joinedAt ? new Date(member.joinedAt).toLocaleDateString() : "N/A"}</p>
+<p><b>Name:</b> ${displayMember.name || "User"}</p>
+<p><b>Mobile:</b> ${displayMember.whatsapp || "Not Available"}</p>
+<p><b>Date:</b> ${displayMember.joinedAt ? new Date(displayMember.joinedAt).toLocaleDateString() : "N/A"}</p>
 <p><b>Status:</b> ${liveStatus}</p>
 </div>
 `;
