@@ -895,12 +895,16 @@ function startSpin(){
     });
 
     db.collection("incomeHistory").add({
-      uid: user.uid,
-      type: "Lucky Spin",
-      amount: parseFloat(reward),
-      note: "Lucky Spin Reward",
-      createdAt: Date.now()
-    });
+  uid: user.uid,
+  type: "Lucky Spin",
+  amount: parseFloat(reward),
+  note: "Lucky Spin Reward",
+  createdAt: Date.now()
+}).then(() => {
+  alert("Lucky Spin history saved");
+}).catch((error) => {
+  alert("History Error: " + error.message);
+});
   }
 
   document.getElementById("balance").innerText =
