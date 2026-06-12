@@ -872,7 +872,7 @@ function updateSpinText(){
   document.getElementById("spinLeftText").innerText = "Today Spins Left: " + data.spinsLeft;
 }
 
-async function startSpin(){
+function startSpin(){
   let data = getSpinData();
 
   if(data.spinsLeft <= 0){
@@ -889,24 +889,25 @@ async function startSpin(){
 
   const user = auth.currentUser;
 
-if(user){
-  await db.collection("users").doc(user.uid).update({
-    balance: firebase.firestore.FieldValue.increment(parseFloat(reward))
-  });
+  if(user){
+    db.collection("users").doc(user.uid).update({
+      balance: firebase.firestore.FieldValue.increment(parseFloat(reward))
+    });
 
-  await db.collection("incomeHistory").add({
-    uid: user.uid,
-    type: "Lucky Spin",
-    amount: parseFloat(reward),
-    note: "Lucky Spin Reward",
-    createdAt: Date.now()
-  });
-}
+    db.collection("incomeHistory").add({
+      uid: user.uid,
+      type: "Lucky Spin",
+      amount: parseFloat(reward),
+      note: "Lucky Spin Reward",
+      createdAt: Date.now()
+    });
+  }
 
-document.getElementById("balance").innerText =
-(parseFloat(document.getElementById("balance").innerText) + parseFloat(reward)).toFixed(2);
+  document.getElementById("balance").innerText =
+  (parseFloat(document.getElementById("balance").innerText) + parseFloat(reward)).toFixed(2);
 
-alert("Congratulations! You won " + reward + " DC");
+  alert("Congratulations! You won " + reward + " DC");
+    }
   
 async function dailyCheckIn(){
 
