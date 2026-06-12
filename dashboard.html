@@ -463,64 +463,20 @@ async function submitActivationRequest() {
 
   const amount = document.getElementById("depositAmount").value;
   const transactionId = document.getElementById("transactionId").value;
+const screenshotFile = document.getElementById("paymentScreenshot").files[0];
 
-  if (!amount || !transactionId) {
-    alert("Please enter amount and transaction ID");
-    return;
-  }
-
-  await db.collection("activationRequests").add({
-    userId: user.uid,
-    email: user.email,
-    amount: Number(amount),
-    transactionId: transactionId,
-    status: "Pending",
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  alert("Activation Request Submitted");
-  document.getElementById("depositAmount").value = "";
-  document.getElementById("transactionId").value = "";
+if (!screenshotFile) {
+  alert("Please Upload Payment Screenshot");
+  return;
 }
 
-async function submitWithdraw() {
-  const user = auth.currentUser;
-  if (!user) {
-    alert("Please login first");
-    return;
-  }
+const storageRef = firebase.storage().ref(
+  "paymentScreenshots/" + Date.now() + "_" + screenshotFile.name
+);
 
-  const amount = document.getElementById("withdrawAmount").value;
-  const upi = document.getElementById("withdrawUpi").value;
+await storageRef.put(screenshotFile);
 
-  if (!amount || !upi) {
-    alert("Please enter amount and UPI ID");
-    return;
-  }
-
-  await db.collection("withdrawals").add({
-    uid: user.uid,
-    userId: user.uid,
-    email: user.email,
-    amount: Number(amount),
-    upi: upi,
-    status: "Pending",
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  alert("Withdrawal Request Submitted");
-  document.getElementById("withdrawAmount").value = "";
-  document.getElementById("withdrawUpi").value = "";
-}async function submitActivationRequest() {
-  const user = auth.currentUser;
-  if (!user) {
-    alert("Please login first");
-    return;
-  }
-
-  const amount = document.getElementById("depositAmount").value;
-  const transactionId = document.getElementById("transactionId").value;
-
+const screenshotUrl = await storageRef.getDownloadURL();
   if (!amount || !transactionId) {
     alert("Please enter amount and transaction ID");
     return;
@@ -531,6 +487,7 @@ async function submitWithdraw() {
     email: user.email,
     amount: Number(amount),
     transactionId: transactionId,
+  screenshotUrl: screenshotUrl,
     status: "Pending",
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
@@ -538,6 +495,7 @@ async function submitWithdraw() {
   alert("Activation Request Submitted");
   document.getElementById("depositAmount").value = "";
   document.getElementById("transactionId").value = "";
+  document.getElementById("paymentScreenshot").value = "";
 }
 
 async function submitWithdraw() {
@@ -569,6 +527,7 @@ async function submitWithdraw() {
   document.getElementById("withdrawAmount").value = "";
   document.getElementById("withdrawUpi").value = "";
 }
+
 function copyReferral() {
   navigator.clipboard.writeText(referralCode);
   alert("Referral Link Copied");
