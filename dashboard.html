@@ -602,6 +602,11 @@ function showMyReferrals() {
 
 async function showLevelTeam(level){
   const box = document.getElementById("myReferrals");
+  document.querySelectorAll(".levelBtn").forEach(btn => {
+  btn.classList.remove("activeLevel");
+});
+
+document.getElementById("levelBtn" + level)?.classList.add("activeLevel");
   box.innerHTML = "Loading Level " + level + " Team...";
 
   const user = auth.currentUser;
