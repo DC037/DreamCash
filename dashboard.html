@@ -873,56 +873,7 @@ function updateSpinText(){
 }
 
 function startSpin(){
-  let spinBtn = document.querySelector("#spinPopup .btn.blue");
-  let data = getSpinData();
-
-  if(data.spinsLeft <= 0){
-    alert("Your 5 spins are finished. Come back after 24 hours.");
-    return;
-  }
-
-  spinBtn.disabled = true;
-  spinBtn.innerText = "Spinning...";
-
-  let reward = spinRewards[Math.floor(Math.random() * spinRewards.length)];
-  let wheel = document.getElementById("spinWheel");
-
-  let spinDegree = 1800 + Math.floor(Math.random() * 360);
-
-  wheel.style.transition = "transform 3s ease";
-  wheel.style.transform = "rotate(" + spinDegree + "deg)";
-
-  setTimeout(() => {
-    wheel.innerHTML = reward.toFixed(2) + "DC";
-
-    data.spinsLeft--;
-    localStorage.setItem("dreamSpinData", JSON.stringify(data));
-    updateSpinText();
-
-    const user = auth.currentUser;
-
-    if(user){
-      db.collection("users").doc(user.uid).update({
-        balance: firebase.firestore.FieldValue.increment(reward)
-      });
-
-      db.collection("incomeHistory").add({
-        uid: user.uid,
-        type: "Lucky Spin Reward",
-        amount: reward,
-        note: "Lucky Spin se " + reward.toFixed(2) + " DC mila",
-        createdAt: Date.now()
-      });
-    }
-
-    document.getElementById("balance").innerText =
-      (parseFloat(document.getElementById("balance").innerText) + reward).toFixed(2);
-
-    alert("Congratulations! You won " + reward.toFixed(2) + " DC");
-
-    spinBtn.disabled = false;
-    spinBtn.innerText = "Spin";
-  }, 3000);
+  alert("Spin temporarily disabled. Please try later.");
 }
   
 async function dailyCheckIn(){
