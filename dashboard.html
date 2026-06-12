@@ -466,8 +466,8 @@ async function submitActivationRequest() {
 
     const amount = document.getElementById("depositAmount").value;
     const transactionId = document.getElementById("transactionId").value;
-    const screenshotFile = document.getElementById("paymentScreenshot").files[0];
-
+    const paymentInput = document.getElementById("paymentScreenshot");
+const screenshotFile = paymentInput.files && paymentInput.files.length > 0 ? paymentInput.files[0] : null;
     if (!amount || !transactionId) {
     alert("Please enter amount and UTR / Reference Number");
     return;
