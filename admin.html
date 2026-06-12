@@ -119,7 +119,7 @@ html += `
 <b>Transaction ID:</b> ${d.transactionId}<br>
 <b>User ID:</b> ${d.userId}<br>
 <b>Email:</b> ${d.email}<br>
-<b>Screenshot:</b> <a href="${d.screenshotUrl}" target="_blank">View Screenshot</a><br>
+${d.screenshotUrl ? `<b>Screenshot:</b> <a href="${d.screenshotUrl}" target="_blank">View Screenshot</a><br>` : `<b>Screenshot:</b> Not Uploaded<br>`}
 <b>Status:</b>
 <span class="status ${d.status === 'Approved' ? 'approved' : d.status === 'Rejected' ? 'rejected' : 'pending'}">
 ${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d.status}
