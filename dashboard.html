@@ -500,8 +500,10 @@ const screenshotFile = paymentInput.files && paymentInput.files.length > 0 ? pay
     document.getElementById("transactionId").value = "";
     document.getElementById("paymentScreenshot").value = "";
 
-  } catch (error) {
-    alert("Error: " + error.message);
+} catch (error) {
+    console.log(error);
+    alert("Submit Failed: " + error.message);
+
   }
   }
 
