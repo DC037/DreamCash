@@ -470,16 +470,10 @@ async function submitActivationRequest() {
 
     const amount = document.getElementById("depositAmount").value;
     const transactionId = document.getElementById("transactionId").value;
-    const paymentInput = document.getElementById("paymentScreenshot");
-const screenshotFile = paymentInput.files && paymentInput.files.length > 0 ? paymentInput.files[0] : null;
+    
     if (!amount || !transactionId) {
     alert("Please enter amount and UTR / Reference Number");
     return;
-    }
-
-    if (!screenshotFile) {
-      alert("Please Upload Payment Screenshot");
-      return;
     }
 
     const screenshotUrl = "";
@@ -496,7 +490,6 @@ const screenshotFile = paymentInput.files && paymentInput.files.length > 0 ? pay
     alert("Activation Request Submitted");
     document.getElementById("depositAmount").value = "";
     document.getElementById("transactionId").value = "";
-    document.getElementById("paymentScreenshot").value = "";
 
 } catch (error) {
     console.log(error);
