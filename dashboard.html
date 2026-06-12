@@ -876,10 +876,7 @@ function startSpin(){
   let spinBtn = document.querySelector("#spinPopup .btn.blue");
 spinBtn.disabled = true;
 spinBtn.innerText = "Spinning...";
-  setTimeout(() => {
-  spinBtn.disabled = false;
-  spinBtn.innerText = "Spin";
-}, 5000);
+  
   let data = getSpinData();
 
   if(data.spinsLeft <= 0){
