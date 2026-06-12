@@ -150,6 +150,11 @@ color:white !important;
     font-size:14px !important;
     margin:2px;
   }
+  .levelBtn.activeLevel{
+  border:3px solid #ffffff !important;
+  box-shadow:0 0 10px #ffffff;
+  transform:scale(1.08);
+  }
 </style>
 </head>
 
@@ -183,15 +188,15 @@ color:white !important;
   <div class="card section">
     <h3>👥 My Team</h3>
 
-   <button onclick="showLevelTeam(1)" style="background:#28a745;color:white;border:none;padding:8px 12px;border-radius:8px;">Level 1</button>
+   <button id="levelBtn1" class="levelBtn" onclick="showLevelTeam(1)" style="background:#28a745;color:white;border:none;padding:8px 12px;border-radius:8px;">Level 1</button>
 
-<button onclick="showLevelTeam(2)" style="background:#ff9800;color:white;border:none;padding:8px 12px;border-radius:8px;">Level 2</button>
+<button id="levelBtn2" class="levelBtn" onclick="showLevelTeam(2)" style="background:#ff9800;color:white;border:none;padding:8px 12px;border-radius:8px;">Level 2</button>
 
-<button onclick="showLevelTeam(3)" style="background:#2196f3;color:white;border:none;padding:8px 12px;border-radius:8px;">Level 3</button>
+<button id="levelBtn3" class="levelBtn" onclick="showLevelTeam(3)" style="background:#2196f3;color:white;border:none;padding:8px 12px;border-radius:8px;">Level 3</button>
 
-<button onclick="showLevelTeam(4)" style="background:#000;color:white;border:none;padding:8px 12px;border-radius:8px;">Level 4</button>
+<button id="levelBtn4" class="levelBtn" onclick="showLevelTeam(4)" style="background:#000;color:white;border:none;padding:8px 12px;border-radius:8px;">Level 4</button>
 
-<button onclick="showLevelTeam(5)" style="background:#ffd700;color:black;border:none;padding:8px 12px;border-radius:8px;">Level 5</button>
+<button id="levelBtn5" class="levelBtn" onclick="showLevelTeam(5)" style="background:#ffd700;color:black;border:none;padding:8px 12px;border-radius:8px;">Level 5</button>
     </div>
 
     <div id="myReferrals">Level select karein...</div>
