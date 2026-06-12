@@ -873,8 +873,22 @@ function updateSpinText(){
 }
 
 function startSpin(){
-  alert("Spin temporarily disabled. Please try later.");
-}
+  let data = getSpinData();
+
+  if(data.spinsLeft <= 0){
+    alert("No spins left today. Come back tomorrow.");
+    return;
+  }
+
+  data.spinsLeft--;
+  localStorage.setItem("dreamSpinData", JSON.stringify(data));
+  updateSpinText();
+
+  const rewards = [0.10, 0.20, 0.30, 0.50, 1.00];
+  const reward = rewards[Math.floor(Math.random() * rewards.length)];
+
+  alert("Congratulations! You won " + reward + " DC");
+  }
   
 async function dailyCheckIn(){
 
