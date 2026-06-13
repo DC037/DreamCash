@@ -1008,7 +1008,7 @@ alert("Daily Check-In Success! You won " + reward + " DC");
 
         <button class="btn ${achieved ? 'green' : 'gray'}"
           ${achieved ? `onclick="claimRankReward('${rank.id}', ${rank.reward})"` : "disabled"}>
-          ${achieved ? "Claim " + rank.reward + " DC" : "Locked 🔒"}
+          ${achieved ? "Claim " + rank.reward + " DC" : rank.reward + " DC Locked 🔒"}
         </button>
       </div>
     `;
