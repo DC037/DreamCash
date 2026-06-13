@@ -31,7 +31,19 @@ margin-right:8px;
 <body>
 
   <h2>DreamCash Admin Panel</h2>
+<div class="card">
+  <h3>🔍 Member Search</h3>
 
+  <input type="text" id="searchMemberId"
+  placeholder="Enter Member ID (DC1001)"
+  style="width:100%;padding:10px;margin-bottom:10px;">
+
+  <button class="btn green" onclick="searchMember()">
+    Search Member
+  </button>
+
+  <div id="memberResult"></div>
+</div>
   <div class="card">
     <h3>Withdrawal Requests</h3>
     <div id="withdrawalList">Loading...</div>
@@ -342,6 +354,41 @@ async function rejectRankReward(id){
 
 loadWithdrawals();
   loadActivationRequests();
+  async function searchMember() {
+
+const memberId = document.getElementById("searchMemberId").value.trim();
+
+if(!memberId){
+alert("Enter Member ID");
+return;
+}
+
+const snap = await db.collection("users")
+.where("memberId","==",memberId)
+.limit(1)
+.get();
+
+if(snap.empty){
+document.getElementById("memberResult").innerHTML =
+"<p style='color:red'>Member Not Found</p>";
+return;
+}
+
+const d = snap.docs[0].data();
+
+document.getElementById("memberResult").innerHTML = `
+<div class="row">
+<b>Name:</b> ${d.fullName || "N/A"}<br>
+<b>Member ID:</b> ${d.memberId || "N/A"}<br>
+<b>Mobile:</b> ${d.whatsapp || "N/A"}<br>
+<b>Email:</b> ${d.email || "N/A"}<br>
+<b>Status:</b> ${d.isActive ? "Active" : "Inactive"}<br>
+<b>Balance:</b> ${d.balance || 0} DC<br>
+<b>Total Refer:</b> ${d.referralCount || 0}<br>
+<b>Referral Income:</b> ${d.referralIncome || 0} DC<br>
+</div>
+`;
+}
   loadRankRewardClaims();
 </script>
 
