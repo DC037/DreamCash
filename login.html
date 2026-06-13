@@ -134,11 +134,30 @@ async function registerUser(){
     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
     const uid = userCredential.user.uid;
     const myReferralCode = (whatsapp.slice(-6) + uid.slice(0,4)).toUpperCase();
+const counterRef = db.collection("settings").doc("memberCounter");
 
+const memberId = await db.runTransaction(async (transaction) => {
+  const counterDoc = await transaction.get(counterRef);
+
+  let lastNumber = 1000;
+
+  if (counterDoc.exists && counterDoc.data().lastMemberNumber) {
+    lastNumber = Number(counterDoc.data().lastMemberNumber);
+  }
+
+  const nextNumber = lastNumber + 1;
+
+  transaction.set(counterRef, {
+    lastMemberNumber: nextNumber
+  }, { merge: true });
+
+  return "DC" + nextNumber;
+});
     await db.collection("users").doc(uid).set({
   fullName: fullName,
   whatsapp: whatsapp,
   email: email,
+  memberId: memberId,
   referredBy: referralCode || "",
   myReferralCode: myReferralCode,
   balance: 0,
@@ -146,6 +165,7 @@ async function registerUser(){
   referralIncome: 0,
   joinedUsers: [],
   status: "Inactive",
+  isActive: false,
   createdAt: firebase.firestore.FieldValue.serverTimestamp()
 });
 
