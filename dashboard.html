@@ -894,7 +894,18 @@ function closeScratchPopup(){
   }
 
 const spinRewards = [0.10, 0.25, 0.40, 0.55, 0.75, 1];
+function checkSpinAccess() {
 
+  const status =
+    document.getElementById("status")?.innerText?.trim() || "";
+
+  if (status.toLowerCase() !== "active") {
+    alert("Please Active ID");
+    return;
+  }
+
+  openSpinWheel();
+}
 function openSpinWheel(){
   document.getElementById("spinPopup").style.display = "flex";
   updateSpinText();
