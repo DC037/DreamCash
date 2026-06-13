@@ -40,6 +40,10 @@ margin-right:8px;
 <h3>✅ Activation Requests</h3>
 <div id="activationList">Loading...</div>
 </div>
+  <div class="card">
+  <h3>🏆 Rank Reward Claims</h3>
+  <div id="rankRewardClaimsList">Loading...</div>
+  </div>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -253,7 +257,7 @@ async function approveWithdrawal(id){
       status: "Approved",
       deducted: true
     });
-
+    
   });
 
   alert("Withdrawal Approved & Balance Deducted");
@@ -263,13 +267,82 @@ async function rejectWithdrawal(id){
   await db.collection("withdrawals").doc(id).update({
     status: "Rejected"
   });
-
   alert("Withdrawal Rejected");
-  loadWithdrawals();
+loadWithdrawals();
+}
+async function loadRankRewardClaims(){
+  const box = document.getElementById("rankRewardClaimsList");
+  box.innerHTML = "Loading...";
+
+  const snap = await db.collection("rankRewardClaims")
+    .orderBy("createdAt", "desc")
+    .get();
+
+  if(snap.empty){
+    box.innerHTML = "No rank reward claims found.";
+    return;
+  }
+
+  let html = "";
+
+  for (const doc of snap.docs) {
+    const d = doc.data();
+
+    let userName = "N/A";
+    let userMobile = "N/A";
+
+    if(d.userId){
+      const userDoc = await db.collection("users").doc(d.userId).get();
+
+      if(userDoc.exists){
+        const u = userDoc.data();
+        userName = u.name || u.fullName || u.username || "N/A";
+        userMobile = u.mobile || u.phone || u.number || "N/A";
+      }
+    }
+
+    html += `
+    <div class="row">
+      <b>User Name:</b> ${userName}<br>
+      <b>Mobile:</b> ${userMobile}<br>
+      <b>User ID:</b> ${d.userId || "N/A"}<br>
+      <b>Rank:</b> ${d.rank || "N/A"}<br>
+      <b>Reward:</b> ${d.reward || d.amount || 0} DC<br>
+      <b>Status:</b>
+      <span class="status ${d.status === 'Approved' ? 'approved' : d.status === 'Rejected' ? 'rejected' : 'pending'}">
+        ${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d.status || "Pending"}
+      </span><br><br>
+
+      <button class="btn green" onclick="approveRankReward('${doc.id}')">Approve</button>
+      <button class="btn red" onclick="rejectRankReward('${doc.id}')">Reject</button>
+    </div>
+    `;
+  }
+
+  box.innerHTML = html;
+}
+
+async function approveRankReward(id){
+  await db.collection("rankRewardClaims").doc(id).update({
+    status: "Approved"
+  });
+
+  alert("Rank Reward Approved");
+  loadRankRewardClaims();
+}
+
+async function rejectRankReward(id){
+  await db.collection("rankRewardClaims").doc(id).update({
+    status: "Rejected"
+  });
+
+  alert("Rank Reward Rejected");
+  loadRankRewardClaims();
 }
 
 loadWithdrawals();
   loadActivationRequests();
+  loadRankRewardClaims();
 </script>
 
 </body>
