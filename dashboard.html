@@ -216,6 +216,7 @@ color:white !important;
   <button class="btn" onclick="dailyCheckIn()">Claim</button>
   </div>
   <div class="box scratchGreen"><div class="icon">🎁</div><h3>Scratch Card</h3><p>5 scratch cards per day.</p><button class="btn orange" onclick="openScratchPopup()">Scratch</button></div>
+  <button class="btn blue" onclick="checkScratchAccess()">Scratch Now</button>
   <button class="btn blue" onclick="showReferEarn()" style="font-size:20px;font-weight:bold;">🤝 Refer & Earn</button>
   <div class="box offerPurple"><div class="icon">📋</div><h3>Offer Wall</h3><p>Complete tasks and earn.</p></div>
   
@@ -765,7 +766,18 @@ async function viewIncomeHistory() {
   const scratchRewards = [0.10, 0.20, 0.30, 0.50, 0.75];
 let scratchRewardValue = 0;
 let scratchDataNow = null;
+function checkScratchAccess() {
 
+  const status =
+    document.getElementById("status")?.innerText?.trim() || "";
+
+  if (status.toLowerCase() !== "active") {
+    alert("Please Active ID");
+    return;
+  }
+
+  openScratchPopup();
+}
 function openScratchPopup(){
   scratchDataNow = JSON.parse(localStorage.getItem("scratchCardData")) || {};
   let now = Date.now();
