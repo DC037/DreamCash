@@ -44,6 +44,9 @@ body{min-height:100vh;background:linear-gradient(135deg,#0f766e,#0ea5e9);display
   <input id="loginPassword" class="input" type="password" placeholder="Password">
   <button class="btn" onclick="loginUser()">Login</button>
   <p class="note">New user? <span class="link" onclick="showRegister()">Create Account</span></p>
+<p style="text-align:right;margin-top:8px;">
+  <span class="link" onclick="forgotPassword()">Forgot Password?</span>
+</p>
 </div>
 
 <div id="registerForm" class="form" style="display:none;">
@@ -224,6 +227,18 @@ async function loginUser(){
     alert(error.message);
   }
 }
+  async function forgotPassword() {
+  const email = prompt("Enter your registered Email ID");
+
+  if (!email) return;
+
+  try {
+    await auth.sendPasswordResetEmail(email);
+    alert("Password reset link sent to your email.");
+  } catch (error) {
+    alert(error.message);
+  }
+  }
 </script>
 </body>
 </html>
