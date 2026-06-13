@@ -337,24 +337,23 @@ Submit Request
   <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid #eee;">
     <span style="font-size:16px;">📺 YouTube Channel</span>
     <a href="https://youtube.com/@dreamcashofficial?si=RRRnSpqtbtFwlGuS" target="_blank">
-      <button style="background:#ff0000;color:white;border:none;padding:8px 15px;border-radius:20px;">Open</button>
+      <button style="background:#ff0000;color:white;border:none;padding:10px 18px;border-radius:20px;">Open</button>
     </a>
   </div>
 
   <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid #eee;">
     <span style="font-size:16px;">📢 Telegram Channel</span>
     <a href="https://t.me/Dream_Cash_Official" target="_blank">
-      <button style="background:#0088cc;color:white;border:none;padding:8px 15px;border-radius:20px;">Join</button>
+      <button style="background:#0088cc;color:white;border:none;padding:10px 18px;border-radius:20px;">Join</button>
     </a>
   </div>
 
   <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid #eee;">
     <span style="font-size:16px;">💬 Support Chat</span>
     <a href="https://t.me/Dream_Cash_Support" target="_blank">
-      <button style="background:#ff9800;color:white;border:none;padding:8px 15px;border-radius:20px;">Help</button>
+      <button style="background:#ff9800;color:white;border:none;padding:10px 18px;border-radius:20px;">Help</button>
     </a>
   </div>
-
   <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;">
     <span style="font-size:16px;">📄 Plan PDF</span>
     <button style="background:#e53935;color:white;border:none;padding:8px 15px;border-radius:20px;">Coming Soon</button>
@@ -362,6 +361,7 @@ Submit Request
 </div>
 
 <p class="note">Note: This is frontend demo. Real login, database, wallet, referral tracking, rank rewards and payment system will be added later.</p>
+
 <div class="card" id="adminBox" style="display:none;">
   <h3>⚙️ Admin Panel</h3>
   <p>Manage withdrawal requests.</p>
@@ -369,22 +369,26 @@ Submit Request
     <button class="btn red">Open Admin Panel</button>
   </a>
 </div>
-  <div class="card section" id="profileBox" style="display:none;">
-<h3>👤 My Profile</h3>
 
-<div class="row"><span>Name</span><b id="profileName">-</b></div>
-<div class="row"><span>Email</span><b id="profileEmail">-</b></div>
-<div class="row"><span>My Refer Code</span><b id="profileCode">-</b></div>
-<div class="row"><span>Joined By Code</span><b id="profileJoinedBy">-</b></div>
+<div class="card section" id="profileBox" style="display:none;">
+  <h3>👤 My Profile</h3>
 
-<button class="btn red" onclick="logoutUser()">Logout</button>
-  </div>
+  <div class="row"><span>Name</span><b id="profileName">--</b></div>
+  <div class="row"><span>Email</span><b id="profileEmail">--</b></div>
+  <div class="row"><span>My Refer Code</span><b id="profileCode">--</b></div>
+  <div class="row"><span>Joined By Code</span><b id="profileJoinedBy">--</b></div>
+
+  <button class="btn red" onclick="logoutUser()">Logout</button>
+</div>
+
 <div class="bottom">
   <a href="#" onclick="showHome();return false;"><span>🏠</span>Home</a>
   <a href="#"><span>🎡</span>Spin</a>
   <a href="#"><span>👥</span>Refer</a>
   <a href="#"><span>🏆</span>Rank</a>
   <a href="#" onclick="showProfile()"><span>👤</span>Profile</a>
+</div>
+  
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
