@@ -504,6 +504,9 @@ if(data.isActive === true){
   }
 
 });
+  function openUPIPayment(){
+  window.location.href = "upi://pay?pa=dreamcash@naviaxis&pn=DreamCash&am=99&cu=INR";
+  }
 async function submitActivationRequest() {
   try {
     const user = auth.currentUser;
