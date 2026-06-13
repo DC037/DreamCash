@@ -422,7 +422,13 @@ firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 const db = firebase.firestore();
-
+const rankRewards = [
+  { id:"bronze", name:"Bronze Rank", refs:11, team:0, reward:100 },
+  { id:"silver", name:"Silver Rank", refs:25, team:51, reward:500 },
+  { id:"gold", name:"Gold Rank", refs:40, team:101, reward:1500 },
+  { id:"diamond", name:"Diamond Rank", refs:80, team:501, reward:10000 },
+  { id:"crown", name:"Crown Rank", refs:222, team:1022, reward:25000 }
+];
 let referralCode = "";
 
 auth.onAuthStateChanged(async (user) => {
@@ -464,6 +470,10 @@ auth.onAuthStateChanged(async (user) => {
     document.getElementById("totalRefer").innerText =
       data.referralCount || 0;
     document.getElementById("refCount").innerText = data.referralCount || 0;
+    loadRankRewards(
+  data.referralCount || 0,
+  data.totalTeam || 0
+);
 document.getElementById("refIncome").innerText = Number(data.referralIncome || 0).toFixed(2) + "DC";
 const accountStatus = document.getElementById("accountStatus");
 
