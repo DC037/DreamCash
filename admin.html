@@ -137,14 +137,26 @@ return;
 
 let html = "";
 
-snap.forEach(doc => {
+for (const doc of snap.docs) {
 
 const d = doc.data();
+let userName = "Unknown";
+let memberId = "N/A";
 
+try {
+  const userDoc = await db.collection("users").doc(d.userId).get();
+
+  if (userDoc.exists) {
+    userName = userDoc.data().name || "Unknown";
+    memberId = userDoc.data().memberId || "N/A";
+  }
+} catch (e) {}
 html += `
 <div class="row">
 <b>Amount:</b> ₹${d.amount}<br>
 <b>Transaction ID:</b> ${d.transactionId}<br>
+<b>Name:</b> ${userName}<br>
+<b>Member ID:</b> ${memberId}<br>
 <b>User ID:</b> ${d.userId}<br>
 <b>Email:</b> ${d.email}<br>
 ${d.screenshotUrl ? `<b>Screenshot:</b> <a href="${d.screenshotUrl}" target="_blank">View Screenshot</a><br>` : `<b>Screenshot:</b> Not Uploaded<br>`}
@@ -165,7 +177,7 @@ Reject
 
 </div>
 `;
-});
+}
 
 box.innerHTML = html;
 }
