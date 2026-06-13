@@ -992,6 +992,73 @@ document.getElementById("balance").innerText =
 
 alert("Daily Check-In Success! You won " + reward + " DC");
   }
+  function loadRankRewards(refs, team){
+  const box = document.getElementById("rankRewardList");
+  if(!box) return;
+
+  let html = "";
+
+  rankRewards.forEach(rank => {
+    const achieved = refs >= rank.refs && team >= rank.team;
+
+    html += `
+      <div class="row" style="margin:8px 0;">
+        <span>🏆 ${rank.name}<br>
+        <small>Need: ${rank.refs} Active Referrals ${rank.team > 0 ? "+ Team " + rank.team : ""}</small></span>
+
+        <button class="btn ${achieved ? 'green' : 'gray'}"
+          ${achieved ? `onclick="claimRankReward('${rank.id}', ${rank.reward})"` : "disabled"}>
+          ${achieved ? "Claim " + rank.reward + " DC" : "Locked 🔒"}
+        </button>
+      </div>
+    `;
+  });
+
+  box.innerHTML = html;
+}
+
+async function claimRankReward(rankId, reward){
+  const user = auth.currentUser;
+  if(!user) return alert("Please login first");
+
+  const userRef = db.collection("users").doc(user.uid);
+  const doc = await userRef.get();
+  const data = doc.data() || {};
+  const claimedRanks = data.claimedRanks || {};
+
+  if(claimedRanks[rankId]){
+    alert("This rank reward is already claimed.");
+    return;
+  }
+
+  let updateData = {
+  balance: firebase.firestore.FieldValue.increment(reward)
+};
+
+updateData["claimedRanks." + rankId] = true;
+
+await userRef.update(updateData);
+
+  await db.collection("incomeHistory").add({
+    uid: user.uid,
+    type: "Rank Reward",
+    amount: reward,
+    note: rankId + " Rank Reward",
+    createdAt: Date.now()
+  });
+
+  await db.collection("rankRewardClaims").add({
+    uid: user.uid,
+    email: user.email || "",
+    rank: rankId,
+    reward: reward,
+    status: "Claimed",
+    createdAt: Date.now()
+  });
+
+  alert("Rank Reward Claimed Successfully: " + reward + " DC");
+  location.reload();
+}
 </script>
   <div id="scratchPopup" class="scratchPopup">
   <div class="scratchBox">
