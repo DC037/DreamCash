@@ -478,10 +478,12 @@ const accountStatus = document.getElementById("accountStatus");
 
 if(data.isActive === true){
   accountStatus.innerText = "🟢 Account Status: Active";
+  document.getElementById("status").innerText = "Active";
   accountStatus.style.color = "green";
   document.getElementById("activationBox").style.display = "none";
 }else{
   accountStatus.innerText = "🔴 Account Status: Inactive";
+  document.getElementById("status").innerText = "Inactive";
   accountStatus.style.color = "red";
   }
     const code =
