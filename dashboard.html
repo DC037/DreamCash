@@ -460,7 +460,8 @@ auth.onAuthStateChanged(async (user) => {
 
     document.getElementById("profileCode").innerText =
       data.myReferralCode || "-";
-
+document.getElementById("memberId").innerText =
+data.memberId || "DC1001";
     document.getElementById("profileJoinedBy").innerText =
       data.referredBy || "Direct Join";
 
