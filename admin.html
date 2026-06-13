@@ -88,13 +88,25 @@ async function loadWithdrawals(){
 
   let html = "";
 
-  snap.forEach(doc => {
+  for (const doc of snap.docs) {
     const d = doc.data();
+let userName = "Unknown";
+let memberId = "N/A";
 
+try {
+  const userDoc = await db.collection("users").doc(d.userId).get();
+
+  if (userDoc.exists) {
+    userName = userDoc.data().name || "Unknown";
+    memberId = userDoc.data().memberId || "N/A";
+  }
+} catch (e) {}
     html += `
       <div class="row">
         <b>Amount:</b> ₹${d.amount}<br>
         <b>UPI:</b> ${d.upiId}<br>
+        <b>Name:</b> ${userName}<br>
+<b>Member ID:</b> ${memberId}<br>
         <b>User ID:</b> ${d.userId}<br>
         <b>Status:</b> 
 <span class="status ${d.status === 'Approved' ? 'approved' : d.status === 'Rejected' ? 'rejected' : 'pending'}">
@@ -105,7 +117,7 @@ ${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d
         <button class="btn red" onclick="rejectWithdrawal('${doc.id}')">Reject</button>
       </div>
     `;
-  });
+  }
 
   box.innerHTML = html;
 }
