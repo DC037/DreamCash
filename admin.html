@@ -485,7 +485,6 @@ async function viewUserWithdrawals(userId) {
   try {
     const snap = await db.collection("withdrawals")
       .where("userId", "==", userId)
-      .orderBy("createdAt", "desc")
       .get();
 
     if (snap.empty) {
