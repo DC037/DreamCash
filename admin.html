@@ -468,38 +468,45 @@ async function makeInactive(userId) {
 }
 
 async function sendReset(email) {
-  if (!email || email === "N/A") {
-    alert("Email not found");
-    return;
+    try {
+        if (!email || email === "N/A") {
+            alert("Email not found");
+            return;
+        }
+
+        await auth.sendPasswordResetEmail(email);
+        alert("Password reset link sent successfully");
+    } catch(error) {
+        alert(error.message);
+    }
+async function viewUserWithdrawals(userId) {
+  try {
+    const snap = await db.collection("withdrawals")
+      .where("userId", "==", userId)
+      .orderBy("createdAt", "desc")
+      .get();
+
+    if (snap.empty) {
+      alert("No withdrawal requests found");
+      return;
+    }
+
+    let text = "Withdrawal History:\n\n";
+
+    snap.forEach(doc => {
+      const d = doc.data();
+      text +=
+        "Amount: ₹" + d.amount + "\n" +
+        "UPI: " + d.upiId + "\n" +
+        "Status: " + d.status + "\n\n";
+    });
+
+    alert(text);
+
+  } catch(error) {
+    alert(error.message);
   }
-
-  await auth.sendPasswordResetEmail(email);
-  alert("Password reset link sent");
 }
-  async function viewUserWithdrawals(userId) {
-  const snap = await db.collection("withdrawals")
-    .where("userId", "==", userId)
-    .orderBy("createdAt", "desc")
-    .get();
-
-  if (snap.empty) {
-    alert("No withdrawal requests found");
-    return;
-  }
-
-  let text = "Withdrawal History:\n\n";
-
-  snap.forEach(doc => {
-    const d = doc.data();
-    text +=
-      "Amount: ₹" + d.amount + "\n" +
-      "UPI: " + d.upiId + "\n" +
-      "Status: " + d.status + "\n\n";
-  });
-
-  alert(text);
-}
-
 async function viewUserReferrals(userId) {
   const userDoc = await db.collection("users").doc(userId).get();
 
