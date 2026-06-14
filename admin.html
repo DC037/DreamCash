@@ -235,7 +235,7 @@ await db.collection("users").doc(uplineDoc.id).update({
 });
 
 await db.collection("incomeHistory").add({
-userId: uplineDoc.id,
+uid: uplineDoc.id,
 fromUserId: userId,
 type: "Level " + (i + 1) + " Income",
 amount: amount,
