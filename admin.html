@@ -416,6 +416,8 @@ document.getElementById("memberResult").innerHTML = `
 <button class="btn green" onclick="makeActive('${userId}')">Active</button>
 <button class="btn red" onclick="makeInactive('${userId}')">Inactive</button>
 <button class="btn green" onclick="sendReset('${d.email}')">Send Password Reset</button>
+<button class="btn green" onclick="viewUserWithdrawals('${userId}')">View Withdrawals</button>
+<button class="btn green" onclick="viewUserReferrals('${userId}')">View Referrals</button>
 </div>
 `;
 }
@@ -471,6 +473,58 @@ async function sendReset(email) {
 
   await auth.sendPasswordResetEmail(email);
   alert("Password reset link sent");
+}
+  async function viewUserWithdrawals(userId) {
+  const snap = await db.collection("withdrawals")
+    .where("userId", "==", userId)
+    .orderBy("createdAt", "desc")
+    .get();
+
+  if (snap.empty) {
+    alert("No withdrawal requests found");
+    return;
+  }
+
+  let text = "Withdrawal History:\n\n";
+
+  snap.forEach(doc => {
+    const d = doc.data();
+    text +=
+      "Amount: ₹" + d.amount + "\n" +
+      "UPI: " + d.upiId + "\n" +
+      "Status: " + d.status + "\n\n";
+  });
+
+  alert(text);
+}
+
+async function viewUserReferrals(userId) {
+  const userDoc = await db.collection("users").doc(userId).get();
+
+  if (!userDoc.exists) {
+    alert("User not found");
+    return;
+  }
+
+  const data = userDoc.data();
+  const list = data.joinedUsers || [];
+
+  if (list.length === 0) {
+    alert("No referrals found");
+    return;
+  }
+
+  let text = "Referral List:\n\n";
+
+  list.forEach((u, i) => {
+    text +=
+      (i + 1) + ". Name: " + (u.name || "N/A") + "\n" +
+      "Mobile: " + (u.whatsapp || "N/A") + "\n" +
+      "Email: " + (u.email || "N/A") + "\n" +
+      "Status: " + (u.status || "N/A") + "\n\n";
+  });
+
+  alert(text);
 }
   loadRankRewardClaims();
 </script>
