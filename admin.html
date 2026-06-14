@@ -72,7 +72,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-
+const auth = firebase.auth();
 async function loadWithdrawals(){
   const box = document.getElementById("withdrawalList");
   box.innerHTML = "Loading...";
