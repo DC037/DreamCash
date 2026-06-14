@@ -378,6 +378,7 @@ async function rejectRankReward(id){
 
 loadWithdrawals();
   loadActivationRequests();
+  loadRankRewardClaims();
   async function searchMember() {
 
 const memberId = document.getElementById("searchMemberId").value.trim();
@@ -479,6 +480,7 @@ async function sendReset(email) {
     } catch(error) {
         alert(error.message);
     }
+  }
 async function viewUserWithdrawals(userId) {
   try {
     const snap = await db.collection("withdrawals")
@@ -535,7 +537,6 @@ async function viewUserReferrals(userId) {
 
   alert(text);
 }
-  loadRankRewardClaims();
 </script>
 
 </body>
