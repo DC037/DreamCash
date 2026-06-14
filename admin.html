@@ -419,6 +419,59 @@ document.getElementById("memberResult").innerHTML = `
 </div>
 `;
 }
+  async function addBalance(userId) {
+  const amount = parseFloat(prompt("Enter amount to add"));
+  if (!amount) return;
+
+  await db.collection("users").doc(userId).update({
+    balance: firebase.firestore.FieldValue.increment(amount)
+  });
+
+  alert("Balance added");
+  searchMember();
+}
+
+async function cutBalance(userId) {
+  const amount = parseFloat(prompt("Enter amount to cut"));
+  if (!amount) return;
+
+  await db.collection("users").doc(userId).update({
+    balance: firebase.firestore.FieldValue.increment(-amount)
+  });
+
+  alert("Balance cut");
+  searchMember();
+}
+
+async function makeActive(userId) {
+  await db.collection("users").doc(userId).update({
+    status: "Active",
+    isActive: true
+  });
+
+  alert("User Activated");
+  searchMember();
+}
+
+async function makeInactive(userId) {
+  await db.collection("users").doc(userId).update({
+    status: "Inactive",
+    isActive: false
+  });
+
+  alert("User Inactive");
+  searchMember();
+}
+
+async function sendReset(email) {
+  if (!email || email === "N/A") {
+    alert("Email not found");
+    return;
+  }
+
+  await auth.sendPasswordResetEmail(email);
+  alert("Password reset link sent");
+}
   loadRankRewardClaims();
 </script>
 
