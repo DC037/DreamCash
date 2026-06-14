@@ -56,6 +56,18 @@ margin-right:8px;
   <h3>🏆 Rank Reward Claims</h3>
   <div id="rankRewardClaimsList">Loading...</div>
   </div>
+  <div class="card">
+<h3>👥 DreamCash Team</h3>
+
+<div id="teamStats">
+Loading...
+</div>
+
+<button class="btn green" onclick="loadDreamCashTeam()">
+Refresh Team
+</button>
+
+  </div>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -379,6 +391,36 @@ async function rejectRankReward(id){
 loadWithdrawals();
   loadActivationRequests();
   loadRankRewardClaims();
+  loadDreamCashTeam();
+  async function loadDreamCashTeam(){
+
+const box = document.getElementById("teamStats");
+
+const snap = await db.collection("users").get();
+
+let totalTeam = 0;
+let activeTeam = 0;
+let inactiveTeam = 0;
+
+snap.forEach(doc => {
+const d = doc.data();
+
+totalTeam++;
+
+if(d.isActive === true){
+activeTeam++;
+}else{
+inactiveTeam++;
+}
+});
+
+box.innerHTML = `
+<div class="row"><b>Total Team:</b> ${totalTeam}</div>
+<div class="row"><b>Active Team:</b> ${activeTeam}</div>
+<div class="row"><b>Inactive Team:</b> ${inactiveTeam}</div>
+`;
+
+  }
   async function searchMember() {
 
 const memberId = document.getElementById("searchMemberId").value.trim();
