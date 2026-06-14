@@ -399,7 +399,7 @@ return;
 }
 
 const d = snap.docs[0].data();
-
+const userId = snap.docs[0].id;
 document.getElementById("memberResult").innerHTML = `
 <div class="row">
 <b>Name:</b> ${d.fullName || "N/A"}<br>
@@ -410,6 +410,12 @@ document.getElementById("memberResult").innerHTML = `
 <b>Balance:</b> ${d.balance || 0} DC<br>
 <b>Total Refer:</b> ${d.referralCount || 0}<br>
 <b>Referral Income:</b> ${d.referralIncome || 0} DC<br>
+<br>
+<button class="btn green" onclick="addBalance('${userId}')">Add Balance</button>
+<button class="btn red" onclick="cutBalance('${userId}')">Cut Balance</button>
+<button class="btn green" onclick="makeActive('${userId}')">Active</button>
+<button class="btn red" onclick="makeInactive('${userId}')">Inactive</button>
+<button class="btn green" onclick="sendReset('${d.email}')">Send Password Reset</button>
 </div>
 `;
 }
