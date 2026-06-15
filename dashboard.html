@@ -529,14 +529,12 @@ async function submitActivationRequest() {
     alert("Please enter amount and UTR / Reference Number");
     return;
     }
-
-    const screenshotUrl = "";
+    
     await db.collection("activationRequests").add({
       userId: user.uid,
       email: user.email,
       amount: Number(amount),
       transactionId: transactionId,
-      screenshotUrl: screenshotUrl,
       status: "Pending",
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
