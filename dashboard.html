@@ -1094,9 +1094,15 @@ alert("Daily Check-In Success! You won " + reward + " DC");
 
   rankRewards.forEach(rank => {
     const achieved = refs >= rank.refs && team >= rank.team;
-
+const rankColors = {
+  bronze: "#fff3e0",
+  silver: "#f5f5f5",
+  gold: "#fff8dc",
+  diamond: "#e3f2fd",
+  crown: "#f3e5f5"
+};
     html += `
-      <div class="row" style="margin:8px 0;">
+      <div class="row" style="margin:8px 0;padding:12px;border-radius:12px;background:${rankColors[rank.id]};">
         <span>🏆 ${rank.name}<br>
         <small>Need: ${rank.refs} Active Referrals ${rank.team > 0 ? "+ Team " + rank.team : ""}</small></span>
 
