@@ -476,7 +476,11 @@ data.memberId || "DC1001";
 );
 document.getElementById("refIncome").innerText = Number(data.referralIncome || 0).toFixed(2) + "DC";
 const accountStatus = document.getElementById("accountStatus");
-
+if (data.isBanned === true) {
+  alert("Your account has been banned. Please contact support.");
+  document.body.innerHTML = "<h2 style='text-align:center;color:red;margin-top:50px;'>Account Banned</h2><p style='text-align:center;'>Please contact DreamCash Support.</p>";
+  return;
+}
 if(data.isActive === true){
   accountStatus.innerText = "🟢 Account Status: Active";
   document.getElementById("status").innerText = "Active";
