@@ -633,6 +633,12 @@ if (Number(amount) < 200) {
 alert("Minimum withdrawal amount is ₹200");
 return;
 }
+  const walletBalance = Number(document.getElementById("balance").innerText);
+
+if (Number(amount) > walletBalance) {
+  alert("Insufficient wallet balance");
+  return;
+}
   await db.collection("withdrawals").add({
     uid: user.uid,
     userId: user.uid,
