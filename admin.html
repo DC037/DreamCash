@@ -511,7 +511,27 @@ async function makeInactive(userId) {
   alert("User Inactive");
   searchMember();
 }
+  
+async function banUser(userId) {
+  await db.collection("users").doc(userId).update({
+    isBanned: true,
+    banStatus: "Banned"
+  });
 
+  alert("User Banned Successfully");
+  searchMember();
+}
+
+async function unbanUser(userId) {
+  await db.collection("users").doc(userId).update({
+    isBanned: false,
+    banStatus: "Active"
+  });
+
+  alert("User Unbanned Successfully");
+  searchMember();
+}
+  
 async function sendReset(email) {
     try {
         if (!email || email === "N/A") {
