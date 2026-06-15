@@ -639,6 +639,15 @@ if (Number(amount) > walletBalance) {
   alert("Insufficient wallet balance");
   return;
 }
+  const pendingWithdraw = await db.collection("withdrawals")
+  .where("userId", "==", user.uid)
+  .where("status", "==", "Pending")
+  .get();
+
+if (!pendingWithdraw.empty) {
+  alert("Your previous withdrawal request is still pending");
+  return;
+}
   await db.collection("withdrawals").add({
     uid: user.uid,
     userId: user.uid,
