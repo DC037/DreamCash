@@ -216,6 +216,54 @@ color:white !important;
   box-shadow:0 0 10px #ffffff;
   transform:scale(1.08);
   }
+  .topEarnerCard{
+background:linear-gradient(135deg,#c2185b,#880e4f);
+color:white;
+position:relative;
+overflow:hidden;
+border-radius:18px;
+}
+
+.topEarnerCard h3{
+color:white;
+margin-bottom:12px;
+}
+
+.topEarnerCard .row{
+color:white;
+border-bottom:1px solid rgba(255,255,255,0.2);
+padding:8px 0;
+}
+
+.topEarnerCard b{
+color:#ffd700;
+}
+
+.topEarnerCard::before{
+content:'';
+position:absolute;
+top:0;
+left:-100%;
+width:60%;
+height:100%;
+background:linear-gradient(
+90deg,
+transparent,
+rgba(255,255,255,0.35),
+transparent
+);
+transform:skewX(-25deg);
+animation:topEarnerShine 3s infinite;
+}
+
+@keyframes topEarnerShine{
+0%{
+left:-100%;
+}
+100%{
+left:150%;
+}
+}
 </style>
 </head>
 
@@ -301,6 +349,35 @@ color:white !important;
     <div id="rankRewardList"></div>
   </div>
 </div>
+  <div class="card topEarnerCard">
+<h3>🏆 Top Earners</h3>
+
+<div class="row">
+<span>🥇 Rahul</span>
+<b>250 DC</b>
+</div>
+
+<div class="row">
+<span>🥈 Amit</span>
+<b>180 DC</b>
+</div>
+
+<div class="row">
+<span>🥉 Penal</span>
+<b>140 DC</b>
+</div>
+
+<div class="row">
+<span>🏅 User</span>
+<b>90 DC</b>
+</div>
+
+<div class="row">
+<span>🎖 Member</span>
+<b>50 DC</b>
+</div>
+
+  </div>
 <div id="referEarnBox" style="display:none;">
 <div class="card section">
   <h3>📊 Referral Earnings</h3>
