@@ -653,6 +653,9 @@ if (!pendingByUserId.empty || !pendingByUid.empty) {
 alert("Your previous withdrawal request is still pending");
 return;
 }
+  await db.collection("users").doc(user.uid).update({
+  balance: firebase.firestore.FieldValue.increment(-Number(amount))
+});
   await db.collection("withdrawals").add({
     uid: user.uid,
     userId: user.uid,
@@ -662,7 +665,7 @@ return;
     status: "Pending",
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
-
+document.getElementById("balance").innerText = (walletBalance - Number(amount)).toFixed(2);
   alert("Withdrawal Request Submitted");
   document.getElementById("withdrawAmount").value = "";
   document.getElementById("withdrawUpi").value = "";
