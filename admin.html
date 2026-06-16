@@ -116,7 +116,7 @@ try {
     html += `
       <div class="row">
         <b>Amount:</b> ₹${d.amount}<br>
-        <b>UPI:</b> ${d.upiId}<br>
+        <b>UPI:</b> ${d.upi || d.upiId || "N/A"}<br>
         <b>Name:</b> ${userName}<br>
 <b>Member ID:</b> ${memberId}<br>
         <b>User ID:</b> ${d.userId}<br>
