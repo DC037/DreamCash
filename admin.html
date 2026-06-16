@@ -275,60 +275,43 @@ loadActivationRequests();
 
   }
 async function approveWithdraw(id){
-try{
-const withdrawRef = db.collection("withdrawals").doc(id);
-const withdrawDoc = await withdrawRef.get();
-const w = withdrawDoc.data();
+  try{
+    await db.collection("withdrawals").doc(id).update({
+      status: "Approved",
+      approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-if(w.status === "Approved"){
-alert("Already Approved");
-return;
-}
-
-await withdrawRef.update({
-status: "Approved",
-approvedAt: firebase.firestore.FieldValue.serverTimestamp()
-});
-
-alert("Withdrawal Approved");
-loadWithdrawals();
-
-}catch(error){
-alert("Approve Failed: " + error.message);
-}
+    alert("Withdrawal Approved");
+    loadWithdrawals();
+  }catch(error){
+    alert("Approve Failed: " + error.message);
+  }
 }
 
 async function rejectWithdraw(id){
-try{
-const reqRef = db.collection("withdrawals").doc(id);
-const reqDoc = await reqRef.get();
-const reqData = reqDoc.data();
+  try{
+    const reqRef = db.collection("withdrawals").doc(id);
+    const reqDoc = await reqRef.get();
+    const reqData = reqDoc.data();
 
-if(reqData.status === "Rejected"){
-alert("Already Rejected");
-return;
-}
+    if(reqData.status === "Pending"){
+      const userId = reqData.userId || reqData.uid;
 
-if(reqData.status === "Pending"){
-const userId = reqData.userId || reqData.uid;
+      await db.collection("users").doc(userId).update({
+        balance: firebase.firestore.FieldValue.increment(Number(reqData.amount))
+      });
+    }
 
-await db.collection("users").doc(userId).update({
-balance: firebase.firestore.FieldValue.increment(Number(reqData.amount))
-});
-}
+    await reqRef.update({
+      status: "Rejected",
+      rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-await reqRef.update({
-status: "Rejected",
-rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
-});
-
-alert("Withdrawal Rejected & Balance Refunded");
-loadWithdrawals();
-
-}catch(error){
-alert("Reject Failed: " + error.message);
-}
-}
+    alert("Withdrawal Rejected & Balance Refunded");
+    loadWithdrawals();
+  }catch(error){
+    alert("Reject Failed: " + error.message);
+  }
 
   let html = "";
 
