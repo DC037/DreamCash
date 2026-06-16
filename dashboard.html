@@ -1180,7 +1180,19 @@ alert("Daily Check-In Success! You won " + reward + " DC");
   const box = document.getElementById("rankRewardList");
   if(!box) return;
 
-  let html = "";
+  let html = `
+<div class="overall-rank-progress">
+  <div class="rank-step done">Bronze ✔</div>
+  <div class="rank-line done"></div>
+  <div class="rank-step done">Silver ✔</div>
+  <div class="rank-line active"></div>
+  <div class="rank-step active">Gold 🔥</div>
+  <div class="rank-line"></div>
+  <div class="rank-step">Diamond</div>
+  <div class="rank-line"></div>
+  <div class="rank-step">Crown</div>
+</div>
+`;
 
   rankRewards.forEach(rank => {
     const achieved = refs >= rank.refs && team >= rank.team;
