@@ -275,43 +275,36 @@ loadActivationRequests();
 
   }
 async function approveWithdraw(id){
-  try{
-    await db.collection("withdrawals").doc(id).update({
-      status: "Approved",
-      approvedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+  await db.collection("withdrawals").doc(id).update({
+    status: "Approved",
+    approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
 
-    alert("Withdrawal Approved");
-    loadWithdrawals();
-  }catch(error){
-    alert("Approve Failed: " + error.message);
-  }
+  alert("Withdrawal Approved");
+  loadWithdrawals();
 }
 
 async function rejectWithdraw(id){
-  try{
-    const reqRef = db.collection("withdrawals").doc(id);
-    const reqDoc = await reqRef.get();
-    const reqData = reqDoc.data();
+  const reqRef = db.collection("withdrawals").doc(id);
+  const reqDoc = await reqRef.get();
+  const reqData = reqDoc.data();
 
-    if(reqData.status === "Pending"){
-      const userId = reqData.userId || reqData.uid;
+  if(reqData.status === "Pending"){
+    const userId = reqData.userId || reqData.uid;
 
-      await db.collection("users").doc(userId).update({
-        balance: firebase.firestore.FieldValue.increment(Number(reqData.amount))
-      });
-    }
-
-    await reqRef.update({
-      status: "Rejected",
-      rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+    await db.collection("users").doc(userId).update({
+      balance: firebase.firestore.FieldValue.increment(Number(reqData.amount))
     });
-
-    alert("Withdrawal Rejected & Balance Refunded");
-    loadWithdrawals();
-  }catch(error){
-    alert("Reject Failed: " + error.message);
   }
+
+  await reqRef.update({
+    status: "Rejected",
+    rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  alert("Withdrawal Rejected & Balance Refunded");
+  loadWithdrawals();
+}
 async function loadRankRewardClaims(){
 const box = document.getElementById("rankRewardClaimsList");
 box.innerHTML = "Loading...";
