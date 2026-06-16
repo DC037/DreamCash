@@ -216,6 +216,58 @@ color:white !important;
   box-shadow:0 0 10px #ffffff;
   transform:scale(1.08);
   }
+  .overall-rank-progress{
+display:flex;
+align-items:center;
+justify-content:center;
+flex-wrap:wrap;
+gap:6px;
+margin-top:15px;
+padding:10px;
+}
+
+.rank-step{
+background:#2b2b2b;
+color:white;
+padding:8px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+}
+
+.rank-step.done{
+background:#16a34a;
+}
+
+.rank-step.active{
+background:#ff9800;
+box-shadow:0 0 15px #ff9800;
+animation:rankGlow 1.5s infinite alternate;
+}
+
+.rank-line{
+width:30px;
+height:4px;
+background:#555;
+border-radius:10px;
+}
+
+.rank-line.done{
+background:#16a34a;
+}
+
+.rank-line.active{
+background:#ff9800;
+}
+
+@keyframes rankGlow{
+from{
+box-shadow:0 0 5px #ff9800;
+}
+to{
+box-shadow:0 0 20px #ff9800;
+}
+}
 </style>
 </head>
 
@@ -298,7 +350,19 @@ color:white !important;
 <div id="rankRewardBox" style="display:none;">
   <div class="card section">
     <h3>🏆 Rank Rewards</h3>
-    <div id="rankRewardList"></div>
+    <div id="rankRewardList">
+  <div class="overall-rank-progress">
+    <div class="rank-step done">Bronze ✔</div>
+    <div class="rank-line done"></div>
+    <div class="rank-step done">Silver ✔</div>
+    <div class="rank-line active"></div>
+    <div class="rank-step active">Gold 🔥</div>
+    <div class="rank-line"></div>
+    <div class="rank-step">Diamond</div>
+    <div class="rank-line"></div>
+    <div class="rank-step">Crown</div>
+  </div>
+    </div>
   </div>
 </div>
 <div id="referEarnBox" style="display:none;">
