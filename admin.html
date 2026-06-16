@@ -274,7 +274,7 @@ alert("Activation Request Rejected");
 loadActivationRequests();
 
   }
-async function approveWithdrawal(id){
+async function approveWithdraw(id){
 
   const withdrawRef = db.collection("withdrawals").doc(id);
   const withdrawDoc = await withdrawRef.get();
@@ -285,30 +285,15 @@ async function approveWithdrawal(id){
     return;
   }
 
-  const userRef = db.collection("users").doc(w.userId);
-
-  await db.runTransaction(async (transaction) => {
-
-    const userDoc = await transaction.get(userRef);
-    const userData = userDoc.data();
-
-    const currentBalance = Number(userData.balance || 0);
-    const newBalance = currentBalance - Number(w.amount);
-
-    transaction.update(userRef,{
-      balance: newBalance
-    });
-
-    transaction.update(withdrawRef,{
-      status: "Approved",
-      deducted: true
-    });
-    
+  await withdrawRef.update({
+    status: "Approved",
+    approvedAt: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  alert("Withdrawal Approved & Balance Deducted");
+  alert("Withdrawal Approved");
   loadWithdrawals();
 }
+  
 async function rejectWithdraw(id){
   const reqRef = db.collection("withdrawals").doc(id);
   const reqDoc = await reqRef.get();
