@@ -1177,6 +1177,56 @@ document.getElementById("balance").innerText =
 
 alert("Daily Check-In Success! You won " + reward + " DC");
   }
+  async function getActiveRankCounts(rootData){
+  let activeDirect = 0;
+  let activeTeam = 0;
+  const visited = new Set();
+
+  async function getMemberData(member){
+    if(member.uid){
+      const doc = await db.collection("users").doc(member.uid).get();
+      return doc.exists ? doc.data() : null;
+    }
+
+    if(member.whatsapp){
+      const snap = await db.collection("users")
+        .where("whatsapp", "==", member.whatsapp)
+        .limit(1)
+        .get();
+
+      if(!snap.empty) return snap.docs[0].data();
+    }
+
+    return null;
+  }
+
+  async function countTeam(members, level){
+    if(!members || !Array.isArray(members)) return;
+
+    for(const member of members){
+      const memberData = await getMemberData(member);
+      if(!memberData) continue;
+
+      const key = member.uid || memberData.email || member.whatsapp;
+      if(visited.has(key)) continue;
+      visited.add(key);
+
+      if(memberData.isActive === true){
+        activeTeam++;
+        if(level === 1) activeDirect++;
+      }
+
+      await countTeam(memberData.joinedUsers || [], level + 1);
+    }
+  }
+
+  await countTeam(rootData.joinedUsers || [], 1);
+
+  return {
+    direct: activeDirect,
+    team: activeTeam
+  };
+}
   function loadRankRewards(refs, team){
   const box = document.getElementById("rankRewardList");
   if(!box) return;
