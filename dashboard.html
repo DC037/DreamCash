@@ -596,9 +596,10 @@ data.memberId || "DC1001";
     document.getElementById("totalRefer").innerText =
       data.referralCount || 0;
     document.getElementById("refCount").innerText = data.referralCount || 0;
-    loadRankRewards(
-  data.referralCount || 0,
-  data.totalTeam || 0
+    const activeRankCounts = await getActiveRankCounts(data);
+loadRankRewards(
+  activeRankCounts.direct,
+  activeRankCounts.team
 );
 document.getElementById("refIncome").innerText = Number(data.referralIncome || 0).toFixed(2) + "DC";
 const accountStatus = document.getElementById("accountStatus");
