@@ -309,12 +309,30 @@ async function approveWithdrawal(id){
   alert("Withdrawal Approved & Balance Deducted");
   loadWithdrawals();
 }
-async function rejectWithdrawal(id){
-  await db.collection("withdrawals").doc(id).update({
+async function rejectWithdraw(id){
+  const reqRef = db.collection("withdrawals").doc(id);
+  const reqDoc = await reqRef.get();
+  const reqData = reqDoc.data();
+
+  if (reqData.status === "Rejected") {
+    alert("Already Rejected");
+    return;
+  }
+
+  if (reqData.status === "Pending") {
+    const userId = reqData.userId || reqData.uid;
+
+    await db.collection("users").doc(userId).update({
+      balance: firebase.firestore.FieldValue.increment(Number(reqData.amount))
+    });
+  }
+
+  await reqRef.update({
     status: "Rejected"
   });
-  alert("Withdrawal Rejected");
-loadWithdrawals();
+
+  alert("Withdrawal Rejected & Balance Refunded");
+  loadWithdrawals();
 }
 async function loadRankRewardClaims(){
   const box = document.getElementById("rankRewardClaimsList");
