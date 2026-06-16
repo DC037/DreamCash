@@ -1180,19 +1180,24 @@ alert("Daily Check-In Success! You won " + reward + " DC");
   const box = document.getElementById("rankRewardList");
   if(!box) return;
 
-  let html = `
-<div class="overall-rank-progress">
-  <div class="rank-step done">Bronze ✔</div>
-  <div class="rank-line done"></div>
-  <div class="rank-step done">Silver ✔</div>
-  <div class="rank-line active"></div>
-  <div class="rank-step active">Gold 🔥</div>
-  <div class="rank-line"></div>
-  <div class="rank-step">Diamond</div>
-  <div class="rank-line"></div>
-  <div class="rank-step">Crown</div>
-</div>
-`;
+  let html = `<div class="overall-rank-progress">`;
+
+rankRewards.forEach((rank, index) => {
+  const completed = refs >= rank.refs && team >= rank.team;
+  const nextRank = rankRewards[index + 1];
+  const nextCompleted = nextRank ? refs >= nextRank.refs && team >= nextRank.team : false;
+  const active = !completed && (index === 0 || (rankRewards[index - 1] && refs >= rankRewards[index - 1].refs));
+
+  html += `<div class="rank-step ${completed ? 'done' : active ? 'active' : ''}">
+    ${rank.name.replace(" Rank","")} ${completed ? '✔' : active ? '🔥' : ''}
+  </div>`;
+
+  if(index < rankRewards.length - 1){
+    html += `<div class="rank-line ${nextCompleted ? 'done' : active ? 'active' : ''}"></div>`;
+  }
+});
+
+html += `</div>`;
 
   rankRewards.forEach(rank => {
     const achieved = refs >= rank.refs && team >= rank.team;
