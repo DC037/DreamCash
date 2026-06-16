@@ -312,7 +312,18 @@ async function rejectWithdraw(id){
   }catch(error){
     alert("Reject Failed: " + error.message);
   }
+async function loadRankRewardClaims(){
+const box = document.getElementById("rankRewardClaimsList");
+box.innerHTML = "Loading...";
 
+const snap = await db.collection("rankRewardClaims")
+.orderBy("createdAt", "desc")
+.get();
+
+if(snap.empty){
+box.innerHTML = "No rank reward claims found.";
+return;
+}
   let html = "";
 
   for (const doc of snap.docs) {
