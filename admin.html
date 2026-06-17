@@ -154,13 +154,28 @@ for (const doc of snap.docs) {
 const d = doc.data();
 let userName = "Unknown";
 let memberId = "N/A";
+let userDoc = null;
 
 try {
-  const userDoc = await db.collection("users").doc(d.userId).get();
+  if (d.userId) {
+    userDoc = await db.collection("users").doc(d.userId).get();
+  }
 
-  if (userDoc.exists) {
-    userName = userDoc.data().name || "Unknown";
-    memberId = userDoc.data().memberId || "N/A";
+  if ((!userDoc || !userDoc.exists) && d.email) {
+    const userSnap = await db.collection("users")
+      .where("email", "==", d.email)
+      .limit(1)
+      .get();
+
+    if (!userSnap.empty) {
+      userDoc = userSnap.docs[0];
+    }
+  }
+
+  if (userDoc && userDoc.exists) {
+    const u = userDoc.data();
+    userName = u.fullName || u.name || "Unknown";
+    memberId = u.memberId || "N/A";
   }
 } catch (e) {}
 html += `
