@@ -806,6 +806,7 @@ async function countAllTeamUsers(userData, maxLevel = 5){
 
     return total;
 }
+  const levelTeamCache = {};
 async function showLevelTeam(level){
   const box = document.getElementById("myReferrals");
   document.querySelectorAll(".levelBtn").forEach(btn => {
@@ -814,12 +815,11 @@ async function showLevelTeam(level){
 
 document.getElementById("levelBtn" + level)?.classList.add("activeLevel");
   box.innerHTML = "Loading Level " + level + " Team...";
-
+if (levelTeamCache[level]) {
+box.innerHTML = levelTeamCache[level];
+return;
+}
   const user = auth.currentUser;
-  if(!user){
-    box.innerHTML = "Please login first";
-    return;
-  }
 
   const userDoc = await db.collection("users").doc(user.uid).get();
   const userData = userDoc.data();
