@@ -916,9 +916,9 @@ async function viewIncomeHistory() {
   snap.forEach(doc => {
     const d = doc.data();
 
-    const dt = d.createdAt
-  ? d.createdAt.toDate().toLocaleString()
-  : "Date Not Available";
+    const dt = d.createdAt && d.createdAt.toDate
+? d.createdAt.toDate().toLocaleString()
+: "Date Not Available";
 
 text +=
 d.type + " : " + d.amount + " DC" +
