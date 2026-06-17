@@ -770,7 +770,42 @@ function showReferEarn() {
 function showMyReferrals() {
   document.getElementById("myReferralsBox").style.display = "block";
 }
+async function countAllTeamUsers(userData, maxLevel = 5){
+    let total = 0;
+    let currentLevelUsers = userData.joinedUsers || [];
 
+    for(let i = 1; i <= maxLevel; i++){
+        total += currentLevelUsers.length;
+
+        let nextLevelUsers = [];
+
+        for(const member of currentLevelUsers){
+            let memberDoc = null;
+
+            if(member.uid){
+                memberDoc = await db.collection("users").doc(member.uid).get();
+            } else if(member.whatsapp){
+                const snap = await db.collection("users")
+                    .where("whatsapp", "==", member.whatsapp)
+                    .limit(1)
+                    .get();
+
+                if(!snap.empty){
+                    memberDoc = snap.docs[0];
+                }
+            }
+
+            if(memberDoc && memberDoc.exists){
+                const memberData = memberDoc.data();
+                nextLevelUsers = nextLevelUsers.concat(memberData.joinedUsers || []);
+            }
+        }
+
+        currentLevelUsers = nextLevelUsers;
+    }
+
+    return total;
+}
 async function showLevelTeam(level){
   const box = document.getElementById("myReferrals");
   document.querySelectorAll(".levelBtn").forEach(btn => {
