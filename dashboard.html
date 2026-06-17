@@ -669,17 +669,6 @@ async function submitActivationRequest() {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    await fetch("https://api.telegram.org/bot8949948417:AAF-EUqzNxu7pp5ex9qBLi735Q-PAUWeTik/sendMessage", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    chat_id: "1191019633",
-    text: "🔔 New Activation Request\n\n👤 User: " + user.email + "\n\n💰 Amount: ₹" + amount + "\n\n🧾 UTR: " + transactionId + "\n\nDream Cash Admin Alert"
-})
-});
-
 alert("Activation Request Submitted");
     document.getElementById("depositAmount").value = "";
     document.getElementById("transactionId").value = "";
