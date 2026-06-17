@@ -56,8 +56,8 @@ body{min-height:100vh;background:linear-gradient(135deg,#0f766e,#0ea5e9);display
     <input id="email" class="input" type="email" placeholder="Email ID">
     <input id="password" class="input" type="password" placeholder="Password">
     <input id="confirmPassword" class="input" type="password" placeholder="Confirm Password">
-    <input id="referralCode" class="input" type="text" placeholder="Referral Code">
-
+    <input id="referralCode" class="input" type="text" placeholder="Referral Code" oninput="checkUplineName()">
+<div id="uplineName" style="font-size:13px;color:green;font-weight:bold;margin:-8px 0 10px 8px;"></div>
     <label class="check">
       <input id="terms" type="checkbox">
       <span>I agree to the Terms & Conditions of Dream Cash.</span>
@@ -101,11 +101,34 @@ function showRegister(){
 
 const params = new URLSearchParams(window.location.search);
 const refCode = params.get("ref");
+async function checkUplineName(){
+  const code = document.getElementById("referralCode").value.trim();
+  const box = document.getElementById("uplineName");
 
+  if(!code){
+    box.innerText = "";
+    return;
+  }
+
+  const snap = await db.collection("users")
+    .where("myReferralCode","==",code)
+    .limit(1)
+    .get();
+
+  if(!snap.empty){
+    const data = snap.docs[0].data();
+    box.innerText = "Upline: " + (data.fullName || "User") + " ✅";
+    box.style.color = "green";
+  }else{
+    box.innerText = "Invalid Referral Code";
+    box.style.color = "red";
+  }
+}
 if(refCode){
     setTimeout(function(){
         showRegister();
         document.getElementById("referralCode").value = refCode;
+      checkUplineName();
     }, 500);
 }
 
