@@ -260,12 +260,12 @@ await db.collection("users").doc(uplineDoc.id).update({
 });
 
 await db.collection("incomeHistory").add({
-uid: uplineDoc.id,
-fromUserId: userId,
-type: "Level " + (i + 1) + " Income",
-amount: amount,
-note: "Income from account activation",
-createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  uid: uplineDoc.id,
+  fromUserId: userId,
+  type: "Level " + (i + 1) + " Joining Income",
+  amount: amount,
+  note: "Level " + (i + 1) + " income from new member activation",
+  createdAt: firebase.firestore.FieldValue.serverTimestamp()
 });
 
 uplineCode = uplineData.referredBy;
