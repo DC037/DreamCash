@@ -1038,7 +1038,7 @@ async function claimAfterScratch(){
       type: "Scratch Card",
       amount: scratchRewardValue,
       note: "Scratch Card Reward",
-      createdAt: Date.now()
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     document.getElementById("balance").innerText =
