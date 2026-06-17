@@ -1143,7 +1143,7 @@ function startSpin(){
   type: "Lucky Spin",
   amount: parseFloat(reward),
   note: "Lucky Spin Reward",
-  createdAt: Date.now()
+  createdAt: firebase.firestore.FieldValue.serverTimestamp()
 
 });
   }
