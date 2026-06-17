@@ -332,7 +332,9 @@ box-shadow:0 0 20px #ff9800;
     <button class="btn blue" onclick="viewCheckInHistory()">Check-In History</button>
   </div>
   <div class="box scratchGreen"><div class="icon">🎁</div><h3>Scratch Card</h3><p>5 scratch cards per day.</p><button class="btn orange" onclick="checkScratchAccess()">Scratch</button></div>
+  <button class="btn blue" onclick="viewScratchHistory()">Scratch History</button>
   <button class="btn blue" onclick="showReferEarn()" style="font-size:20px;font-weight:bold;">🤝 Refer & Earn</button>
+  <button class="btn blue" onclick="viewReferHistory()">Refer History</button>
   <div class="box offerPurple"><div class="icon">📋</div><h3>Offer Wall</h3><p>Complete tasks and earn.</p></div>
   
 </div>
@@ -431,6 +433,7 @@ Submit Request
   <button class="btn" onclick="submitWithdraw()">
       Submit Withdraw
   </button>
+  <button class="btn blue" onclick="viewPaymentHistory()">Withdrawal History</button>
 </div>
 
 <div class="card section">
@@ -438,18 +441,7 @@ Submit Request
   <div class="dashed" id="myCode">Loading...</div>
   <button class="btn blue" onclick="copyReferral()">Copy Link</button>
 </div>
-<div class="grid">
-
-  <div class="box payment-history">
-    <div class="icon">💳</div>
-    <h3>Payment History</h3>
-    <p>View your withdrawal requests.</p>
-   <button class="btn blue" onclick="viewPaymentHistory()">View</button>
-  </div>
-
-    <p>View your earning records.</p>
-    <button class="btn" onclick="viewIncomeHistory()">View</button>
-  </div>
+  
 <div class="card section" style="width:100%;grid-column:1 / -1;">
   🌐 Official DreamCash Community
 
