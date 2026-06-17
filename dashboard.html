@@ -883,10 +883,17 @@ box.innerHTML = html;
   snap.forEach(doc => {
     const d = doc.data();
 
-    text +=
-      "Amount: ₹" + d.amount +
-      "\nStatus: " + d.status +
-      "\n\n";
+    const dt = d.createdAt
+  ? d.createdAt.toDate().toLocaleString()
+  : "Date Not Available";
+
+text +=
+"Amount: ₹" + d.amount +
+"\nStatus: " + d.status +
+"\n🔵━━━━━━━━━━━━🔵" +
+"\n📅 " + dt +
+"\n🔵━━━━━━━━━━━━🔵" +
+"\n\n";
   });
 
   if (text === "") {
@@ -909,10 +916,17 @@ async function viewIncomeHistory() {
   snap.forEach(doc => {
     const d = doc.data();
 
-    text +=
-      d.type + " : " + d.amount + " DC" +
-      "\n" + d.note +
-      "\n\n";
+    const dt = d.createdAt
+  ? d.createdAt.toDate().toLocaleString()
+  : "Date Not Available";
+
+text +=
+d.type + " : " + d.amount + " DC" +
+"\n" + d.note +
+"\n🟢━━━━━━━━━━━━🟢" +
+"\n📅 " + dt +
+"\n🟢━━━━━━━━━━━━🟢" +
+"\n\n";
   });
 
   if (text === "") {
