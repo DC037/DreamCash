@@ -670,6 +670,24 @@ async function submitActivationRequest() {
     });
 
     alert("Activation Request Submitted");
+    fetch("https://api.telegram.org/bot8949948417:AAF-EUqzNxu7pp5ex9qBLi735Q-PAUWeTik/sendMessage", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    chat_id: "1191019633",
+    text: `🔔 New Activation Request
+
+👤 User: ${user.email}
+
+💰 Amount: ₹${amount}
+
+🧾 UTR: ${transactionId}
+
+Dream Cash Admin Alert`
+  })
+});
     document.getElementById("depositAmount").value = "";
     document.getElementById("transactionId").value = "";
 
