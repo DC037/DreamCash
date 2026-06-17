@@ -909,7 +909,6 @@ async function viewIncomeHistory() {
 
   const snap = await db.collection("incomeHistory")
 .where("uid", "==", user.uid)
-.orderBy("createdAt", "desc")
 .limit(100)
 .get();
 
