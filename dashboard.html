@@ -1182,7 +1182,7 @@ uid: user.uid,
 type: "Daily Check-In",
 amount: parseFloat(reward),
 note: "Daily Check-In Reward",
-createdAt: Date.now()
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
 });
 
 document.getElementById("balance").innerText =
