@@ -324,20 +324,36 @@ box-shadow:0 0 20px #ff9800;
 </div>
 
 <div class="grid">
+
   <div class="box dailyPink">
-  <div class="icon">✅</div>
-  <h3>Daily Check-In</h3>
-  <p>Claim your daily reward.</p>
-  <button class="btn" onclick="dailyCheckIn()">Claim</button>
+    <div class="icon">✅</div>
+    <h3>Daily Check-In</h3>
+    <p>Claim your daily reward.</p>
+    <button class="btn" onclick="dailyCheckIn()">Claim</button>
     <button class="btn blue" onclick="viewCheckInHistory()">Check-In History</button>
   </div>
-  <div class="box scratchGreen"><div class="icon">🎁</div><h3>Scratch Card</h3><p>5 scratch cards per day.</p><button class="btn orange" onclick="checkScratchAccess()">Scratch</button><button class="btn blue" onclick="viewScratchHistory()">Scratch History</button></div>
-  
-  <button class="btn blue" onclick="showReferEarn()" style="font-size:20px;font-weight:bold;">🤝 Refer & Earn</button><button class="btn blue" onclick="viewReferHistory()">Refer History</button>
-  
-  <div class="box offerPurple"><div class="icon">📋</div><h3>Offer Wall</h3><p>Complete tasks and earn.</p></div>
-  
+
+  <div class="box scratchGreen">
+    <div class="icon">🎁</div>
+    <h3>Scratch Card</h3>
+    <p>5 scratch cards per day.</p>
+    <button class="btn orange" onclick="checkScratchAccess()">Scratch</button>
+    <button class="btn blue" onclick="viewScratchHistory()">Scratch History</button>
+  </div>
+
+  <div class="box referBlue">
+    <button class="btn blue" onclick="showReferEarn()" style="font-size:20px;font-weight:bold;">🤝 Refer & Earn</button>
+    <button class="btn blue" onclick="viewReferHistory()">Refer History</button>
+  </div>
+
+  <div class="box offerPurple">
+    <div class="icon">📋</div>
+    <h3>Offer Wall</h3>
+    <p>Complete tasks and earn.</p>
+  </div>
+
 </div>
+  
 <button class="btn orange rankBtn" onclick="showRankReward()">🏆 Rank Rewards</button>
   <button class="btn blue rankBtn" onclick="showLevelIncome()">💰 5 Level Income</button>
 <div id="levelIncomeBox" style="display:none;">
