@@ -666,6 +666,7 @@ function addBalance(amount){
 
 async function loadDashboard(){
   const saved = getUser();
+  console.log("saved user:", saved);
 
   const { data, error } = await supabaseClient
     .from("users")
