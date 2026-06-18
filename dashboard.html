@@ -1526,12 +1526,7 @@ auth2.onAuthStateChanged(async function(user){
       document.getElementById("accountStatus").innerText = "🔴 Account Status: Inactive";
       document.getElementById("walletMemberStatus").innerText = "🔴 Inactive Member";
     window.checkScratchAccess = function(){
-  if(document.getElementById("status").innerText.toLowerCase() !== "active"){
-    alert("Please Active ID");
-    return;
-  }
-
-  document.getElementById("scratchPopup").style.display = "flex";
+  alert("Scratch feature coming soon");
 };
 
   window.checkSpinAccess = function(){
