@@ -104,7 +104,7 @@ left:150%;
 .bottom{position:fixed;bottom:0;left:0;width:100%;background:white;display:flex;justify-content:space-around;padding:8px 0;box-shadow:0 -2px 10px rgba(0,0,0,.12)}
 .bottom a{text-decoration:none;color:#087568;font-size:12px;text-align:center;font-weight:bold}
 .bottom span{font-size:23px;display:block}
-}.luckySpinCard{
+.luckySpinCard{
   background:linear-gradient(135deg,#ff1493,#ff69b4,#ffb6c1);
   color:white;
   text-align:center;
@@ -642,13 +642,9 @@ data.memberId || "DC1001";
     document.getElementById("balance").innerText =
       Number(data.balance || 0).toFixed(2);
 
-    const totalTeamCount = await countAllTeamUsers(data, 5);
-document.getElementById("totalRefer").innerText = totalTeamCount;
-    document.getElementById("refCount").innerText = data.referralCount || 0;
-    loadRankRewards(
-  data.referralCount || 0,
-  data.teamCount || 0
-);
+    document.getElementById("totalRefer").innerText = data.referralCount || 0;
+document.getElementById("refCount").innerText = data.referralCount || 0;
+loadRankRewards(data.referralCount || 0, data.teamCount || 0);
 document.getElementById("refIncome").innerText = Number(data.referralIncome || 0).toFixed(2) + "DC";
 const accountStatus = document.getElementById("accountStatus");
 if (data.isBanned === true) {
