@@ -157,6 +157,16 @@ if (refCode) {
     alert(authError.message);
     return;
   }
+    const { data: existingUser } = await supabaseClient
+  .from("users")
+  .select("*")
+  .eq("mobile", whatsapp)
+  .limit(1);
+
+if(existingUser && existingUser.length > 0){
+  alert("Mobile number already registered");
+  return;
+}
 const newMemberId = "DC" + Date.now().toString().slice(-6);
 const { error } = await supabaseClient
   .from("users")
