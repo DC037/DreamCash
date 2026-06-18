@@ -1465,7 +1465,7 @@ await userRef.update(updateData);
       <div id="scratchReward" class="scratchReward">0.00 DC</div>
       <canvas id="scratchCanvas" width="260" height="150"></canvas>
     </div>
-    <button class="btn orange" onclick="closeScratchPopup()">Close</button>
+    <button class="btn orange" onclick="document.getElementById('scratchPopup').style.display='none'; return false;">Close</button>
   </div>
   </div>
   <div id="spinPopup" class="spinPopup">
@@ -1531,18 +1531,7 @@ auth2.onAuthStateChanged(async function(user){
     return;
   }
 
-  document.getElementById("scratchPopup").style.display = "flex";
-    setTimeout(function(){
-    canvas = document.getElementById("scratchCanvas");
-    ctx = canvas.getContext("2d");
-    isDrawing = false;
-    rewardClaimed = false;
-
-    ctx.globalCompositeOperation = "source-over";
-    ctx.clearRect(0,0,260,150);
-    ctx.fillStyle = "orange";
-    ctx.fillRect(0,0,260,150);
-},100);
+    openScratchPopup();
 };
 window.checkSpinAccess = function(){
   if(document.getElementById("status").innerText.toLowerCase() !== "active"){
