@@ -136,7 +136,32 @@ left:150%;
   padding:20px;
   text-align:center;
 }
+#spinHistoryList{
+margin-top:15px;
+padding:10px;
+}
 
+.spinHistoryItem{
+background:#ffffff;
+border:2px solid #ffb300;
+border-radius:15px;
+padding:10px;
+margin-bottom:10px;
+box-shadow:0 0 10px rgba(255,179,0,0.25);
+}
+
+.spinReward{
+font-size:13px;
+font-weight:700;
+color:#222;
+}
+
+.spinDate{
+font-size:10px;
+color:#777;
+margin-top:4px;
+}
+  
 .wheel{
   width:230px;
   height:230px;
@@ -1174,7 +1199,24 @@ function updateSpinText(){
   let data = getSpinData();
   document.getElementById("spinLeftText").innerText = "Today Spins Left: " + data.spinsLeft;
 }
+function saveSpinHistory(reward){
 
+let history =
+JSON.parse(localStorage.getItem("spinHistory")) || [];
+
+history.unshift({
+reward: reward,
+date: new Date().toLocaleDateString(),
+time: new Date().toLocaleTimeString()
+});
+
+localStorage.setItem(
+"spinHistory",
+JSON.stringify(history)
+);
+
+}
+  
 function startSpin(){
   let data = getSpinData();
 
@@ -1209,8 +1251,32 @@ function startSpin(){
 
   document.getElementById("balance").innerText =
   (parseFloat(document.getElementById("balance").innerText) + parseFloat(reward)).toFixed(2);
-
+saveSpinHistory(reward);
   alert("Congratulations! You won " + reward + " DC");
+  
+  function showSpinHistory(){
+
+let history =
+JSON.parse(localStorage.getItem("spinHistory")) || [];
+
+let html = "<h3>🎡 Spin History</h3>";
+
+if(history.length === 0){
+html += "<p>No Spin History Found</p>";
+}else{
+history.forEach(item => {
+html += `
+<div class="spinHistoryItem">
+<div class="spinReward">🎁 ${item.reward} DC Won</div>
+<div class="spinDate">📅 ${item.date} • ⏰ ${item.time}</div>
+</div>
+`;
+});
+}
+
+document.getElementById("spinHistoryList").innerHTML = html;
+
+  }
     }
   
 async function dailyCheckIn(){
@@ -1411,8 +1477,9 @@ await userRef.update(updateData);
     <div id="spinWheel" class="wheel">SPIN</div>
     <p id="spinLeftText">Today Spins Left: 5</p>
     <button class="btn blue" onclick="startSpin()">Spin</button>
-    <button class="btn orange" onclick="closeSpinWheel()">Close</button>
+    <button class="btn orange" onclick="closeSpinWheel(); showSpinHistory();">Close</button>
   </div>
   </div>
+  <div id="spinHistoryList"></div>
 </body>
 </html>
