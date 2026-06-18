@@ -1531,7 +1531,7 @@ auth2.onAuthStateChanged(async function(user){
     return;
   }
 
-  openScratchPopup();
+  document.getElementById("scratchPopup").style.display = "flex";
 };
 window.checkSpinAccess = function(){
   if(document.getElementById("status").innerText.toLowerCase() !== "active"){
