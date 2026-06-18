@@ -668,13 +668,13 @@ function loadDashboard(){
   if(el("refIncome")) el("refIncome").innerText = data.referralIncome.toFixed(2) + "DC";
     if(data.isActive){
     el("status").innerText = "Active";
-    el("accountStatus").innerText = "ðŸŸ¢ Account Status: Active";
-    el("walletMemberStatus").innerText = "âœ… Active Member";
+    el("accountStatus").innerText = "🟢 Account Status: Active";
+    el("walletMemberStatus").innerText = "✅ Active Member";
     el("activationBox").style.display = "none";
   }else{
     el("status").innerText = "Inactive";
-    el("accountStatus").innerText = "ðŸ”´ Account Status: Inactive";
-    el("walletMemberStatus").innerText = "ðŸ”´ Inactive Member";
+    el("accountStatus").innerText = "🔴 Account Status: Inactive";
+    el("walletMemberStatus").innerText = "🔴 Inactive Member";
     el("activationBox").style.display = "block";
   }
 
