@@ -665,7 +665,7 @@ function loadDashboard(){
   if(el("profileCode")) el("profileCode").innerText = data.myReferralCode;
   if(el("profileJoinedBy")) el("profileJoinedBy").innerText = data.referredBy;
   if(el("refCount")) el("refCount").innerText = data.referralCount;
-  if(el("refIncome")) el("refIncome").innerText = data.
+  if(el("refIncome")) el("refIncome").innerText = data.referralIncome.toFixed(2) + "DC";
     if(data.isActive){
     el("status").innerText = "Active";
     el("accountStatus").innerText = "ðŸŸ¢ Account Status: Active";
