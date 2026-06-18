@@ -1,1 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dream Cash Dashboard</title>
 
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f1f5f9;color:#111;padding-bottom:75px}
+.header{background:linear-gradient(135deg,#00796b,#03a9f4);color:white;padding:18px;border-radius:0 0 18px 18px}
+.header h2{font-size:23px}
+.header p{font-size:13px;margin-top:5px}
+.bonus{margin:12px;background:#fff4e6;color:#8a3b13;padding:12px;border-radius:10px;text-align:center;font-weight:bold;font-size:14px}
+.card{background:white;margin:12px;padding:15px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.user{display:flex;align-items:center;gap:12px}
+.avatar{width:50px;height:50px;border-radius:50%;background:#16aeea;display:flex;align-items:center;justify-content:center;font-size:28px}
+.small{font-size:12px;color:#666;margin-top:3px}
+.wallet{
+  text-align:left;
+  background:linear-gradient(135deg,#006bff,#00a8ff);
+  color:white;
+  border-radius:20px;
+  padding:22px;
+  box-shadow:0 8px 22px rgba(0,107,255,0.25);
+  position:relative;
+  overflow:hidden;
+}
+
+.wallet h4{
+  color:white;
+  margin-bottom:8px;
+  font-size:17px;
+}
+
+.wallet h1{
+  font-size:38px;
+  color:white;
+  margin:12px 0;
+}
+
+.wallet .small{
+  color:#eaf6ff;
+  font-weight:bold;
+}
+  .wallet::before{
+content:'';
+position:absolute;
+top:0;
+left:-100%;
+width:60%;
+height:100%;
+background:linear-gradient(
+90deg,
+transparent,
+rgba(255,255,255,0.35),
+transparent
+);
+transform:skewX(-25deg);
+animation:walletShine 3s infinite;
+}
+
+@keyframes walletShine{
+0%{
+left:-100%;
+}
+100%{
+left:150%;
+}
+}
+.btn{border:none;border-radius:20px;padding:10px 20px;background:linear-gradient(135deg,#0aa35c,#18c76e);color:white;font-weight:bold;margin-top:10px}
+.blue{background:linear-gradient(135deg,#1976d2,#29b6f6)}
+.orange{background:linear-gradient(135deg,#ff7a00,#ffb300)}
+.spin{background:linear-gradient(135deg,#ff7a00,#ffd51e);text-align:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px}
+.box{background:white;padding:18px 8px;border-radius:14px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.box.referBlue{
+  background: linear-gradient(135deg,#001a66,#0033cc) !important;
+  color:white !important;
+}
+
+.icon{
+  font-size:34px;
+  margin-bottom:8px;
+  display:inline-block;
+  animation: iconMove 2s infinite ease-in-out;
+}
+  @keyframes iconMove {
+  0% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-4px) rotate(-5deg); }
+  50% { transform: translateY(-8px) rotate(0deg); }
+  75% { transform: translateY(-4px) rotate(5deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+  }
+.box h3{font-size:15px;margin-bottom:6px}
+.box p{font-size:12px;color:#666}
+.section h3{color:#075e7a;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:10px 0;font-size:14px}
+.green{color:#0b8f4d;font-weight:bold}
+.red{color:#c62828;font-weight:bold}
+.input{width:100%;padding:13px;border:1px solid #ddd;border-radius:12px;margin-top:10px}
+.dashed{border:2px dashed #0e9ec7;background:#effcff;text-align:center;padding:13px;border-radius:12px;font-weight:bold;color:#075e7a}
+.note{text-align:center;font-size:11px;color:#777;margin:18px}
+.bottom{position:fixed;bottom:0;left:0;width:100%;background:white;display:flex;justify-content:space-around;padding:8px 0;box-shadow:0 -2px 10px rgba(0,0,0,.12)}
+.bottom a{text-decoration:none;color:#087568;font-size:12px;text-align:center;font-weight:bold}
+.bottom span{font-size:23px;display:block}
+.luckySpinCard{
+  background:linear-gradient(135deg,#ff1493,#ff69b4,#ffb6c1);
+  color:white;
+  text-align:center;
+}
+
+.luckySpinCard h2{
+  font-size:28px;
+  font-weight:800;
+}
+
+.spinPopup{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  z-index:9999;
+  justify-content:center;
+  align-items:center;
+}
+
+.spinBox{
+  background:white;
+  width:90%;
+  max-width:360px;
+  border-radius:20px;
+  padding:20px;
+  text-align:center;
+}
+#spinHistoryList{
+margin-top:15px;
+padding:10px;
+}
+
+.spinHistoryItem{
+background:#ffffff;
+border:2px solid #ffb300;
+border-radius:15px;
+padding:10px;
+margin-bottom:10px;
+box-shadow:0 0 10px rgba(255,179,0,0.25);
+}
+
+.spinReward{
+font-size:13px;
+font-weight:700;
+color:#222;
+}
+
+.spinDate{
+font-size:10px;
+color:#777;
+margin-top:4px;
+}
+  
+.wheel{
+  width:230px;
+  height:230px;
+  border-radius:50%;
+  margin:15px auto;
+  border:8px solid #ff1493;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  font-weight:bold;
+  color:#0b7a75;
+  background:conic-gradient(#ffeb3b 0 60deg,#ff9800 60deg 120deg,#4caf50 120deg 180deg,#03a9f4 180deg 240deg,#e91e63 240deg 300deg,#9c27b0 300deg 360deg);
+}
+  .dailyPink{
+  background:#ff4da6 !important;
+  color:white !important;
+}
+
+.dailyPink h3,
+.dailyPink p{
+  color:white !important;
+}
+  .scratchGreen{
+  background:#12b76a !important;
+  color:white !important;
+}
+
+.scratchGreen h3,
+.scratchGreen p{
+  color:white !important;
+}
+  .scratchPopup{
+  display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.7);z-index:99999;justify-content:center;align-items:center;
+}
+.scratchBox{
+  background:white;width:90%;max-width:340px;border-radius:18px;padding:18px;text-align:center;
+}
+.scratchArea{
+  position:relative;width:260px;height:150px;margin:15px auto;border-radius:15px;overflow:hidden;background:#fff3cd;
+}
+#scratchReward{
+ position:absolute;top:0;left:0;width:100%;height:100%;
+ display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:bold;color:#0b7a75;
+ z-index:1;
+ pointer-events:none;
+}
+#scratchCanvas{
+ position:absolute;top:0;left:0;width:100%;height:100%;background:transparent;touch-action:none;
+ z-index:2;
+ pointer-events:auto;
+}
+  .payment-history{
+    background: linear-gradient(135deg,#6b003f,#a0005b) !important;
+    color:white !important;
+}
+
+.income-history{
+    background: linear-gradient(135deg,#0a7a35,#16a34a) !important;
+    color:white !important;
+}
+
+.payment-history h3,
+.payment-history p,
+.income-history h3,
+.income-history p{
+    color:white !important;
+}
+  .offerPurple{
+background:linear-gradient(135deg,#6a0dad,#9c27b0) !important;
+color:white !important;
+}
+
+.offerPurple h3,
+.offerPurple p{
+color:white !important;
+}
+  .rankBtn{
+    padding:10px 18px !important;
+    font-size:14px !important;
+    margin:2px;
+  }
+  .levelBtn.activeLevel{
+  border:3px solid #ffffff !important;
+  box-shadow:0 0 10px #ffffff;
+  transform:scale(1.08);
+  }
+  .overall-rank-progress{
+display:flex;
+align-items:center;
+justify-content:center;
+flex-wrap:wrap;
+gap:6px;
+margin-top:15px;
+padding:10px;
+}
+
+.rank-step{
+background:#2b2b2b;
+color:white;
+padding:8px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+}
+
+.rank-step.done{
+background:#16a34a;
+}
+
+.rank-step.active{
+background:#ff9800;
+box-shadow:0 0 15px #ff9800;
+animation:rankGlow 1.5s infinite alternate;
+}
+
+.rank-line{
+width:30px;
+height:4px;
+background:#555;
+border-radius:10px;
+}
+
+.rank-line.done{
+background:#16a34a;
+}
+
+.rank-line.active{
+background:#ff9800;
+}
+
+@keyframes rankGlow{
+from{
+box-shadow:0 0 5px #ff9800;
+}
+to{
+box-shadow:0 0 20px #ff9800;
+}
+}
+  .referBlue{
+  background: linear-gradient(135deg,#001a66,#0033cc) !important;
+  color:white !important;
+}
+
+.referBlue h3,
+.referBlue .icon{
+  color:white !important;
+}
+  
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h2>💸 Dream Cash</h2>
+  <p>Spin, Scratch, Refer & Earn Rewards</p>
+</div>
+
+<div class="bonus">Wellcome 🇮🇳India is Best Earn Money & Trusted Platform</div>
+
+<div class="card user">
+  <div class="avatar">👤</div>
+  <div>
+    <h3>Hello, <span id="userName">User</span></h3>
+    <p class="small">Member ID: <span id="memberId">DC1001</span> | Status: <span id="status">Loading...</span>
+  </div>
+</div>
+
+<div class="card wallet">
+  <h4>1 DC - ₹1 🇮🇳 DC Wallet</h4>
+  <div class="small" id="walletMemberStatus">🔴 Inactive Member</div>
+  <h1><span id="balance">0.00</span>DC</h1>
+  <button class="btn">💰 My Wallet</button>
+</div>
+<div class="card wallet" onclick="showMyReferrals()">
+  <h4>👥 Total Refer</h4>
+  <h1><span id="totalRefer">0</span></h1>
+</div>
+  <div id="myReferralsBox" style="display:none;">
+  <div class="card section">
+    <h3>👥 My Team</h3>
+
+   <button id="levelBtn1" class="levelBtn" onclick="showLevelTeam(1)" style="background:#28a745;color:white;border:none;padding:8px 12px;border-radius:8px;">Level 1</button>
+
+<button id="levelBtn2" class="levelBtn" onclick="showLevelTeam(2)" style="background:#ff9800;color:white;border:none;padding:8px 12px;border-radius:8px;">Level 2</button>
+
+<button id="levelBtn3" class="levelBtn" onclick="showLevelTeam(3)" style="background:#2196f3;color:white;border:none;padding:8px 12px;border-radius:8px;">Level 3</button>
+
+<button id="levelBtn4" class="levelBtn" onclick="showLevelTeam(4)" style="background:#000;color:white;border:none;padding:8px 12px;border-radius:8px;">Level 4</button>
+
+<button id="levelBtn5" class="levelBtn" onclick="showLevelTeam(5)" style="background:#ffd700;color:black;border:none;padding:8px 12px;border-radius:8px;">Level 5</button>
+    </div>
+
+    <div id="myReferrals">Level select karein...</div>
+  </div>
+  </div>
+<div class="card spin luckySpinCard">
+  <h2>🎡 Lucky Spin</h2>
+  <p class="small">Active users get 5 free spins every 24 hours.</p>
+  <button class="btn blue" onclick="checkSpinAccess()">Spin Now</button>
+  <button class="btn blue" onclick="showSpinHistory(); return false;">Spin History</button>
+</div>
+
+<div class="grid">
+
+  <div class="box dailyPink">
+    <div class="icon">✅</div>
+    <h3>Daily Check-In</h3>
+    <p>Claim your daily reward.</p>
+    <button class="btn" onclick="dailyCheckIn()">Claim</button>
+    <button class="btn blue" onclick="viewCheckInHistory()">Check-In History</button>
+  </div>
+
+  <div class="box scratchGreen">
+    <div class="icon">🎁</div>
+    <h3>Scratch Card</h3>
+    <p>5 scratch cards per day.</p>
+    <button class="btn orange" onclick="checkScratchAccess()">Scratch</button>
+    <button class="btn blue" onclick="viewScratchHistory()">Scratch History</button>
+  </div>
+
+  <div class="box referBlue">
+  <div class="icon">🤝</div>
+  <h3>Refer & Earn</h3>
+  <button class="btn blue" onclick="showReferEarn()">Refer & Earn</button>
+  <button class="btn blue" onclick="viewReferHistory()">Refer History</button>
+  </div>
+
+  <div class="box offerPurple">
+    <div class="icon">📋</div>
+    <h3>Offer Wall</h3>
+    <p>Complete tasks and earn.</p>
+  </div>
+
+</div>
+<button class="btn orange rankBtn" onclick="showRankReward()">🏆 Rank Rewards</button>
+  <button class="btn blue rankBtn" onclick="showLevelIncome()">💰 5 Level Income</button>
+<div id="levelIncomeBox" style="display:none;">
+  <div class="card section">
+    <h3>🌐 5 Level Joining Income</h3>
+    <div class="row"><span>Level 1 Joining Income</span><b class="green">25DC</b></div>
+<div class="row"><span>Level 2 Joining Income</span><b class="green">10DC</b></div>
+<div class="row"><span>Level 3 Joining Income</span><b class="green">5DC</b></div>
+<div class="row"><span>Level 4 Joining Income</span><b class="green">5DC</b></div>
+<div class="row"><span>Level 5 Joining Income</span><b class="green">5DC</b></div>
+  </div>
+</div>
+
+<div id="rankRewardBox" style="display:none;">
+  <div class="card section">
+    <h3>🏆 Rank Rewards</h3>
+    <div id="rankRewardList">
+  <div class="overall-rank-progress">
+    <div class="rank-step done">Bronze ✔</div>
+    <div class="rank-line done"></div>
+    <div class="rank-step done">Silver ✔</div>
+    <div class="rank-line active"></div>
+    <div class="rank-step active">Gold 🔥</div>
+    <div class="rank-line"></div>
+    <div class="rank-step">Diamond</div>
+    <div class="rank-line"></div>
+    <div class="rank-step">Crown</div>
+  </div>
+    </div>
+  </div>
+</div>
+<div id="referEarnBox" style="display:none;">
+<div class="card section">
+  <h3>📊 Referral Earnings</h3>
+  <div class="row"><span>Total Referrals</span><b id="refCount">0</b></div>
+  <div class="row"><span>Referral Income</span><b class="green" id="refIncome">0.00DC</b></div>
+  <div class="row"><span>Direct Referral Bonus</span><b class="green">20DC</b></div>
+</div>
+</div>
+<div class="card section" id="activationBox">
+
+<h3>✅ Activate Account</h3>
+<p id="accountStatus">Account Status: Loading...</p>
+<div class="dashed">
+Activation Amount: ₹99 One Time
+</div>
+<button class="btn blue" onclick="openUPIPayment()">Pay ₹99 Now</button>
+<input
+id="depositAmount"
+class="input"
+type="number"
+placeholder="Enter Deposit Amount">
+
+<input
+id="transactionId"
+class="input"
+type="text"
+placeholder="Enter UTR / Reference Number">
+<div class="dashed" style="margin-top:10px;">
+  📩 Payment screenshot Aratt Support पर भेजें
+  <br>
+  <b>@dream_cash_support</b>
+</div>
+
+<a href="https://aratt.ai/user/@dream_cash_support" target="_blank">
+    <button type="button" class="btn blue">Open Support</button>
+</a>
+<button
+class="btn"
+onclick="submitActivationRequest()">
+
+Submit Request
+
+</button>
+
+<p id="activationStatus"></p>
+
+</div>
+
+<div class="card section">
+  <h3>🏦 Withdrawal</h3>
+
+  <input id="withdrawAmount"
+         class="input"
+         type="number"
+         placeholder="Enter withdrawal amount">
+
+  <input id="withdrawUpi"
+         class="input"
+         type="text"
+         placeholder="Enter UPI ID">
+
+  <button class="btn" onclick="submitWithdraw()">
+      Submit Withdraw
+  </button>
+  <button class="btn blue" onclick="viewPaymentHistory()">Withdrawal History</button>
+</div>
+
+<div class="card section">
+  <h3>🔗 Your Referral Link</h3>
+  <div class="dashed" id="myCode">Loading...</div>
+  <button class="btn blue" onclick="copyReferral()">Copy Link</button>
+</div>
+  
+<div class="card section" style="width:100%;grid-column:1 / -1;">
+  🌐 Official DreamCash Community
+
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid #eee;">
+  <span style="font-size:16px;">
+    <img src="https://i.ibb.co/C5kzDDC6/image-search-1781316793040.jpg" width="28" height="28" style="vertical-align:middle;">
+    YouTube Channel
+  </span>
+  <a href="https://youtube.com/@dreamcashofficial?si=RRRnSpqtbtFwlGuS" target="_blank">
+    <button style="background:#ff0000;color:white;border:none;padding:10px 18px;border-radius:20px;">Open</button>
+  </a>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid #eee;">
+  <span style="font-size:16px;">
+    <img src="https://i.ibb.co/VYSJJ6v1/image-search-1781702834311.png" width="28" height="28" style="vertical-align:middle;border-radius:50%;object-fit:cover;">
+    Arattai Channel
+  </span>
+  <a href="https://aratt.ai/@dreamcash" target="_blank">
+    <button style="background:#FFC107;color:black;border:none;padding:10px 18px;border-radius:20px;">Join</button>
+  </a>
+</div>
+
+<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid #eee;">
+  <span style="font-size:16px;">
+    <img src="https://i.ibb.co/GQyNZFB9/image-search-1781172886391.jpg" width="28" height="28" style="vertical-align:middle;margin-right:8px;">
+    Support Chat
+  </span>
+  <a href="https://aratt.ai/user/@dream_cash_support" target="_blank">
+    <button style="background:#ff9800;color:white;border:none;padding:10px 18px;border-radius:20px;">Help</button>
+  </a>
+</div>
+
+<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;">
+  <span style="font-size:16px;">
+    <img src="https://i.ibb.co/N245dGwt/pdf-4919559-1280.png" width="28" height="28" style="vertical-align:middle;">
+    Plan PDF
+  </span>
+  <a href="https://dc037.github.io/DreamCash/DreamCash-Plan.pdf" target="_blank" style="text-decoration:none;">
+  <button style="background:#00a8ff;color:white;border:none;padding:10px 18px;border-radius:20px;">Open</button>
+  </a>
+  </div>
+
+</div>
+
+<p class="note">Note: This is frontend demo. Real login, database, wallet, referral tracking, rank rewards and payment system will be added later.</p>
+
+<div class="card" id="adminBox" style="display:none;">
+  <h3>⚙️ Admin Panel</h3>
+  <p>Manage withdrawal requests.</p>
+  <a href="admin.html">
+    <button class="btn red">Open Admin Panel</button>
+  </a>
+</div>
+
+<div class="card section" id="profileBox" style="display:none;">
+  <h3>👤 My Profile</h3>
+
+  <div class="row"><span>Name</span><b id="profileName">--</b></div>
+  <div class="row"><span>Email</span><b id="profileEmail">--</b></div>
+  <div class="row"><span>My Refer Code</span><b id="profileCode">--</b></div>
+  <div class="row"><span>Joined By Code</span><b id="profileJoinedBy">--</b></div>
+
+  <button class="btn red" onclick="logoutUser()">Logout</button>
+</div>
+
+<div class="bottom">
+  <a href="#" onclick="showHome();return false;"><span>🏠</span>Home</a>
+  <a href="#"><span>🎡</span>Spin</a>
+  <a href="#"><span>👥</span>Refer</a>
+  <a href="#"><span>🏆</span>Rank</a>
+  <a href="#" onclick="showProfile()"><span>👤</span>Profile</a>
+</div>
+  
+</div>
+
+
+<div id="scratchPopup" class="scratchPopup">
+  <div class="scratchBox">
+    <h2>🎁 Scratch Card</h2>
+    <div class="scratchArea">
+      <div id="scratchReward">0.00 DC</div>
+      <canvas id="scratchCanvas" width="260" height="150"></canvas>
+    </div>
+    <button class="btn orange" onclick="closeScratchPopup()">Close</button>
+  </div>
+</div>
+
+<div id="spinPopup" class="spinPopup">
+  <div class="spinBox">
+    <h2>🎡 Lucky Spin</h2>
+    <div id="spinWheel" class="wheel">SPIN</div>
+    <p id="spinLeftText">Today Spins Left: 5</p>
+    <button class="btn blue" onclick="startSpin()">Spin</button>
+    <button class="btn orange" onclick="closeSpinWheel()">Close</button>
+  </div>
+</div>
+
+<div id="spinHistoryList"></div>
+
+<script>
+(function(){
+"use strict";
+
+const REF_LINK = "https://dc037.github.io/DreamCash/login.html?register=1&ref=DC1001";
+let referralCode = REF_LINK;
+let scratchRewardValue = 0;
+let scratchDataNow = null;
+let canvas = null;
+let ctx = null;
+let isDrawing = false;
+let rewardClaimed = false;
+
+function el(id){ return document.getElementById(id); }
+
+function getUser(){
+  const saved = JSON.parse(localStorage.getItem("dreamUser") || "{}");
+  return {
+    fullName: saved.fullName || "User",
+    memberId: saved.memberId || "DC1001",
+    balance: Number(saved.balance || 0),
+    referralCount: Number(saved.referralCount || 0),
+    referralIncome: Number(saved.referralIncome || 0),
+    myReferralCode: saved.myReferralCode || "DC1001",
+    isActive: saved.isActive === true,
+    email: saved.email || "-",
+    referredBy: saved.referredBy || "Direct Join"
+  };
+}
+
+function saveUser(data){
+  localStorage.setItem("dreamUser", JSON.stringify(data));
+}
+
+function setBalance(amount){
+  const user = getUser();
+  user.balance = Number(amount || 0);
+  saveUser(user);
+  if(el("balance")) el("balance").innerText = user.balance.toFixed(2);
+}
+
+function addBalance(amount){
+  const user = getUser();
+  user.balance = Number(user.balance || 0) + Number(amount || 0);
+  saveUser(user);
+  if(el("balance")) el("balance").innerText = user.balance.toFixed(2);
+}
+
+function loadDashboard(){
+  const data = getUser();
+  referralCode = "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + data.myReferralCode;
+
+  el("userName").innerText = data.fullName;
+  el("memberId").innerText = data.memberId;
+  el("balance").innerText = data.balance.toFixed(2);
+  el("totalRefer").innerText = data.referralCount;
+  el("myCode").innerText = referralCode;
+
+  if(el("profileName")) el("profileName").innerText = data.fullName;
+  if(el("profileEmail")) el("profileEmail").innerText = data.email;
+  if(el("profileCode")) el("profileCode").innerText = data.myReferralCode;
+  if(el("profileJoinedBy")) el("profileJoinedBy").innerText = data.referredBy;
+  if(el("refCount")) el("refCount").innerText = data.referralCount;
+  if(el("refIncome")) el("refIncome").innerText = data.
+    if(data.isActive){
+    el("status").innerText = "Active";
+    el("accountStatus").innerText = "ðŸŸ¢ Account Status: Active";
+    el("walletMemberStatus").innerText = "âœ… Active Member";
+    el("activationBox").style.display = "none";
+  }else{
+    el("status").innerText = "Inactive";
+    el("accountStatus").innerText = "ðŸ”´ Account Status: Inactive";
+    el("walletMemberStatus").innerText = "ðŸ”´ Inactive Member";
+    el("activationBox").style.display = "block";
+  }
+
+  updateSpinText();
+}
+
+function isActiveUser(){
+  return (el("status").innerText || "").trim().toLowerCase() === "active";
+}
+
+window.openUPIPayment = function(){
+  window.location.href = "upi://pay?pa=Q361153102@ybl&pn=DreamCash&am=99&cu=INR";
+};
+
+window.submitActivationRequest = function(){
+  const amount = el("depositAmount").value.trim();
+  const transactionId = el("transactionId").value.trim();
+
+  if(!amount || !transactionId){
+    alert("Please enter amount and UTR / Reference Number");
+    return;
+  }
+
+  const requests = JSON.parse(localStorage.getItem("activationRequests") || "[]");
+  requests.unshift({
+    amount: Number(amount),
+    transactionId,
+    status: "Pending",
+    date: new Date().toLocaleString()
+  });
+  localStorage.setItem("activationRequests", JSON.stringify(requests));
+
+  el("activationStatus").innerText = "Activation request submitted. Support approval pending.";
+  el("depositAmount").value = "";
+  el("transactionId").value = "";
+  alert("Activation Request Submitted");
+};
+
+window.submitWithdraw = function(){
+  const amount = Number(el("withdrawAmount").value);
+  const upi = el("withdrawUpi").value.trim();
+  const balance = Number(el("balance").innerText || 0);
+
+  if(!amount || !upi){
+    alert("Please enter amount and UPI ID");
+    return;
+  }
+  if(amount < 200){
+    alert("Minimum withdrawal amount is â‚¹200");
+    return;
+  }
+  if(amount > balance){
+    alert("Insufficient wallet balance");
+    return;
+  }
+
+  const withdrawals = JSON.parse(localStorage.getItem("withdrawHistory") || "[]");
+  withdrawals.unshift({
+    amount,
+    upi,
+    status: "Pending",
+    date: new Date().toLocaleString()
+  });
+  localStorage.setItem("withdrawHistory", JSON.stringify(withdrawals));
+  setBalance(balance - amount);
+
+  el("withdrawAmount").value = "";
+  el("withdrawUpi").value = "";
+  alert("Withdrawal Request Submitted");
+};
+
+window.viewPaymentHistory = function(){
+  const withdrawals = JSON.parse(localStorage.getItem("withdrawHistory") || "[]");
+  if(withdrawals.length === 0){
+    alert("No withdrawal history found");
+    return;
+  }
+  alert(withdrawals.map(w => "Amount: â‚¹" + w.amount + "\nUPI: " + w.upi + "\nStatus: " + w.status + "\nðŸ“… " + w.date).join("\n\n"));
+};
+
+window.copyReferral = function(){
+  navigator.clipboard.writeText(referralCode).then(function(){
+    alert("Referral Link Copied");
+  }).catch(function(){
+    alert(referralCode);
+  });
+};
+
+window.logoutUser = function(){
+  window.location.href = "login.html";
+};
+
+window.showProfile = function(){
+  el("profileBox").style.display = "block";
+  window.scrollTo({top: el("profileBox").offsetTop, behavior:"smooth"});
+};
+
+window.showHome = function(){
+  el("profileBox").style.display = "none";
+};
+
+window.showRankReward = function(){
+  const box = el("rankRewardBox");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+};
+
+window.showLevelIncome = function(){
+  const box = el("levelIncomeBox");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+};
+
+window.showReferEarn = function(){
+  const box = el("referEarnBox");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+};
+
+window.showMyReferrals = function(){
+  const box = el("myReferralsBox");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+};
+
+window.showLevelTeam = function(level){
+  document.querySelectorAll(".levelBtn").forEach(btn => btn.classList.remove("activeLevel"));
+  const btn = el("levelBtn" + level);
+  if(btn) btn.classList.add("activeLevel");
+  el("myReferrals").innerHTML = "No Level " + level + " Team Found";
+};
+
+window.viewReferHistory = function(){
+  alert("No refer history found");
+};
+
+function getSpinData(){
+  let data = JSON.parse(localStorage.getItem("dreamSpinData") || "{}");
+  const now = Date.now();
+  if(!data.lastTime || now - data.lastTime >= 86400000){
+    data = {spinsLeft:5,lastTime:now};
+    localStorage.setItem("dreamSpinData", JSON.stringify(data));
+  }
+  return data;
+}
+window.getSpinData = getSpinData;
+
+function updateSpinText(){
+  const text = el("spinLeftText");
+  if(!text) return;
+  const data = getSpinData();
+  text.innerText = "Today Spins Left: " + data.spinsLeft;
+}
+window.updateSpinText = updateSpinText;
+
+window.checkSpinAccess = function(){
+  if(!isActiveUser()){
+    alert("Please Active ID");
+    return;
+  }
+  openSpinWheel();
+};
+
+window.openSpinWheel = function(){
+  el("spinPopup").style.display = "flex";
+  updateSpinText();
+};
+
+window.closeSpinWheel = function(){
+  el("spinPopup").style.display = "none";
+};
+
+function saveSpinHistory(reward){
+  const history = JSON.parse(localStorage.getItem("spinHistory") || "[]");
+  history.unshift({
+    reward,
+    date: new Date().toLocaleDateString(),
+    time: new Date().toLocaleTimeString()
+  });
+  localStorage.setItem("spinHistory", JSON.stringify(history.slice(0,20)));
+}
+
+window.startSpin = function(){
+  const data = getSpinData();
+  if(data.spinsLeft <= 0){
+    alert("No spins left today. Come back tomorrow.");
+    return;
+  }
+
+  data.spinsLeft--;
+  localStorage.setItem("dreamSpinData", JSON.stringify(data));
+  updateSpinText();
+
+  const rewards = [0.10,0.20,0.30,0.50,1.00];
+  const reward = rewards[Math.floor(Math.random()*rewards.length)];
+  addBalance(reward);
+  saveSpinHistory(reward);
+  showSpinHistory();
+  alert("Congratulations! You won " + reward.toFixed(2) + " DC");
+};
+
+window.showSpinHistory = function(){
+  const history = JSON.parse(localStorage.getItem("spinHistory") || "[]");
+  let html = "<div class='card section'><h3>ðŸŽ¡ Spin History</h3>";
+  if(history.length === 0){
+    html += "<p class='small'>No Spin History Found</p>";
+  }else{
+    history.forEach(item => {
+      html += `<div class="spinHistoryItem">
+        <div class="spinReward">ðŸŽ ${item.reward} DC Won</div>
+        <div class="spinDate">ðŸ“… ${item.date} â€¢ â° ${item.time}</div>
+      </div>`;
+    });
+  }
+  html += "</div>";
+  el("spinHistoryList").innerHTML = html;
+  window.scrollTo({top: el("spinHistoryList").offsetTop, behavior:"smooth"});
+};
+
+window.dailyCheckIn = function(){
+  if(!isActiveUser()){
+    alert("Please Active ID");
+    return;
+  }
+
+  const data = JSON.parse(localStorage.getItem("dailyCheckIn") || "{}");
+  const now = Date.now();
+
+  if(data.lastClaim && now - data.lastClaim < 86400000){
+    alert("Daily reward already claimed. Come back after 24 hours.");
+    return;
+  }
+
+  const reward = Number((Math.random() * 0.40 + 0.10).toFixed(2));
+  data.lastClaim = now;
+  data.history = data.history || [];
+  data.history.unshift({reward, date:new Date().toLocaleString()});
+  localStorage.setItem("dailyCheckIn", JSON.stringify(data));
+  addBalance(reward);
+  alert("Daily Check-In Success! You won " + reward.toFixed(2) + " DC");
+};
+
+window.viewCheckInHistory = function(){
+  const data = JSON.parse(localStorage.getItem("dailyCheckIn") || "{}");
+  const history = data.history || [];
+  if(history.length === 0){
+    alert("No Check-In History Found");
+    return;
+  }
+  alert(history.map(x => "Reward: " + x.reward + " DC\nðŸ“… " + x.date).join("\n\n"));
+};
+
+const scratchRewards = [0.10,0.20,0.30,0.50,0.75];
+
+window.checkScratchAccess = function(){
+  if(!isActiveUser()){
+    alert("Please Active ID");
+    return;
+  }
+  openScratchPopup();
+};
+
+window.openScratchPopup = function(){
+  scratchDataNow = JSON.parse(localStorage.getItem("scratchCardData") || "{}");
+  const now = Date.now();
+
+  if(!scratchDataNow.lastTime || now - scratchDataNow.lastTime >= 86400000){
+    scratchDataNow = {left:5,lastTime:now};
+  }
+
+  if(scratchDataNow.left <= 0){
+    alert("Your 5 scratch cards are finished. Come back after 24 hours.");
+    return;
+  }
+
+  scratchRewardValue = scratchRewards[Math.floor(Math.random()*scratchRewards.length)];
+  el("scratchReward").innerText = scratchRewardValue.toFixed(2) + " DC";
+  el("scratchPopup").style.display = "flex";
+
+  canvas = el("scratchCanvas");
+  ctx = canvas.getContext("2d");
+  isDrawing = false;
+  rewardClaimed = false;
+
+  ctx.globalCompositeOperation = "source-over";
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "orange";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+};
+
+window.closeScratchPopup = function(){
+  el("scratchPopup").style.display = "none";
+};
+
+function scratchMove(e){
+  if(!isDrawing || !ctx) return;
+  e.preventDefault();
+  ctx.globalCompositeOperation = "destination-out";
+  const rect = canvas.getBoundingClientRect();
+  const point = e.touches ? e.touches[0] : e;
+  const x = (point.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (point.clientY - rect.top) * (canvas.height / rect.height);
+  ctx.beginPath();
+  ctx.arc(x,y,30,0,Math.PI*2);
+  ctx.fill();
+}
+
+function claimAfterScratch(){
+  if(rewardClaimed || !scratchDataNow) return;
+  rewardClaimed = true;
+
+  scratchDataNow.left--;
+  scratchDataNow.history = scratchDataNow.history || [];
+  scratchDataNow.history.unshift({
+    reward: scratchRewardValue,
+    date: new Date().toLocaleString()
+  });
+  localStorage.setItem("scratchCardData", JSON.stringify(scratchDataNow));
+  addBalance(scratchRewardValue);
+  alert("You Won " + scratchRewardValue.toFixed(2) + " DC | Scratch Left: " + scratchDataNow.left);
+}
+
+window.viewScratchHistory = function(){
+  const data = JSON.parse(localStorage.getItem("scratchCardData") || "{}");
+  const history = data.history || [];
+  if(history.length === 0){
+    alert("No Scratch History Found");
+    return;
+  }
+  alert(history.map(x => "Reward: " + x.reward + " DC\nðŸ“… " + x.date).join("\n\n"));
+};
+
+document.addEventListener("DOMContentLoaded", function(){
+  loadDashboard();
+
+  const c = el("scratchCanvas");
+  if(c){
+    c.addEventListener("touchstart", function(e){ isDrawing = true; e.preventDefault(); }, {passive:false});
+    c.addEventListener("touchmove", scratchMove, {passive:false});
+    c.addEventListener("touchend", function(e){ isDrawing = false; e.preventDefault(); claimAfterScratch(); }, {passive:false});
+    c.addEventListener("mousedown", function(){ isDrawing = true; });
+    c.addEventListener("mousemove", scratchMove);
+    c.addEventListener("mouseup", function(){ isDrawing = false; claimAfterScratch(); });
+    c.addEventListener("mouseleave", function(){ isDrawing = false; });
+  }
+});
+  
