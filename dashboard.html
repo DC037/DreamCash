@@ -1525,7 +1525,14 @@ auth2.onAuthStateChanged(async function(user){
     alert(e.message);
   }
 });
-window.checkScratchAccess = checkScratchAccess;
+  window.checkScratchAccess = function(){
+  if(document.getElementById("status").innerText.toLowerCase() !== "active"){
+    alert("Please Active ID");
+    return;
+  }
+
+  openScratchPopup();
+};
 window.checkSpinAccess = function(){
   if(document.getElementById("status").innerText.toLowerCase() !== "active"){
     alert("Please Active ID");
