@@ -1086,16 +1086,17 @@ canvas.addEventListener("mouseup", function(){
 }); }
 
 function scratchMove(e){
-  if(!isDrawing) return;
-e.preventDefault();
-ctx.globalCompositeOperation = "destination-out";
+  e.preventDefault();
+
+  ctx.globalCompositeOperation = "destination-out";
+
   let rect = canvas.getBoundingClientRect();
   let touch = e.touches ? e.touches[0] : e;
   let x = touch.clientX - rect.left;
   let y = touch.clientY - rect.top;
 
   ctx.beginPath();
-  ctx.arc(x, y, 22, 0, Math.PI * 2);
+  ctx.arc(x, y, 30, 0, Math.PI * 2);
   ctx.fill();
 }
 
