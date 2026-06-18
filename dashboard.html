@@ -601,8 +601,22 @@ Submit Request
 </div>
 
 <div id="spinHistoryList"></div>
-
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script>
+  const firebaseConfig = {
+  apiKey: "AIzaSyCVIHJ66pEI6A3HmSma0LNsFanatv-yhic",
+  authDomain: "dreamcash-dafb4.firebaseapp.com",
+  projectId: "dreamcash-dafb4",
+  storageBucket: "dreamcash-dafb4.firebasestorage.app",
+  messagingSenderId: "66002195487",
+  appId: "1:66002195487:web:6fb777fca2630c466a312a"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 (function(){
 "use strict";
 
