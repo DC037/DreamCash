@@ -1498,27 +1498,18 @@ if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
 (function(){
 
-  const data = JSON.parse(localStorage.getItem("dreamUser")) || {};
+  document.getElementById("userName").innerText = "User";
+document.getElementById("memberId").innerText = "DC1001";
+document.getElementById("balance").innerText = "0.00";
+document.getElementById("totalRefer").innerText = "0";
 
-document.getElementById("userName").innerText = data.fullName || "User";
-document.getElementById("memberId").innerText = data.memberId || "DC1001";
-document.getElementById("balance").innerText = Number(data.balance || 0).toFixed(2);
-document.getElementById("totalRefer").innerText = data.referralCount || 0;
+document.getElementById("status").innerText = "Inactive";
+document.getElementById("accountStatus").innerText = "🔴 Account Status: Inactive";
+document.getElementById("walletMemberStatus").innerText = "🔴 Inactive Member";
 
 document.getElementById("myCode").innerText =
-  "https://dc037.github.io/DreamCash/login.html?register=1&ref=" +
-  (data.myReferralCode || "DC1001");
-
-if(data.isActive === true){
-  document.getElementById("status").innerText = "Active";
-  document.getElementById("accountStatus").innerText = "🟢 Account Status: Active";
-  document.getElementById("walletMemberStatus").innerText = "✅ Active Member";
-  document.getElementById("activationBox").style.display = "none";
-}else{
-  document.getElementById("status").innerText = "Inactive";
-  document.getElementById("accountStatus").innerText = "🔴 Account Status: Inactive";
-  document.getElementById("walletMemberStatus").innerText = "🔴 Inactive Member";
-}
+  "https://dc037.github.io/DreamCash/login.html?register=1&ref=DC1001";
+  document.getElementById("activationBox").style.display = "block";
 
   window.checkSpinAccess = function(){
   if(document.getElementById("status").innerText.toLowerCase() !== "active"){
