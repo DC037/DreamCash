@@ -665,48 +665,64 @@ function addBalance(amount){
 }
 
 async function loadDashboard(){
-  const memberId = localStorage.getItem("member_id");
-
-  if(!memberId){
-    alert("Please login again");
-    window.location.href = "login.html";
-    return;
+  function setText(id, value){
+    const x = document.getElementById(id);
+    if(x) x.innerText = value;
   }
 
-  const { data, error } = await supabaseClient
-    .from("users")
-    .select("*")
-    .eq("member_id", memberId)
-    .maybeSingle();
-
-  if(error || !data){
-    console.log("Dashboard error:", error);
-    alert("User data not found. Please login again.");
-    window.location.href = "login.html";
-    return;
+  function setDefault(){
+    setText("userName", "User");
+    setText("memberId", "DC1001");
+    setText("status", "Inactive");
+    setText("walletMemberStatus", "🔴 Inactive Member");
+    setText("accountStatus", "🔴 Account Status: Inactive");
+    setText("balance", "0.00DC");
+    setText("totalRefer", "0");
+    setText("myCode", "Please login again");
   }
 
-  const finalMemberId = data.member_id;
-  const referralCode = "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + finalMemberId;
+  try{
+    const memberId = localStorage.getItem("member_id");
 
-  el("userName").innerText = data.name || "User";
-  el("memberId").innerText = finalMemberId;
-  el("balance").innerText = Number(data.wallet || 0).toFixed(2) + "DC";
-  el("totalRefer").innerText = data.referral_count || data.referralCount || 0;
-  el("myCode").innerText = referralCode;
+    if(!memberId){
+      setDefault();
+      return;
+    }
 
-  const userStatus = data.status || "Inactive";
+    const { data, error } = await supabaseClient
+      .from("users")
+      .select("*")
+      .eq("member_id", memberId)
+      .maybeSingle();
 
-  el("status").innerText = userStatus;
-  el("accountStatus").innerText =
-    userStatus === "Active" ? "🟢 Account Status: Active" : "🔴 Account Status: Inactive";
-  el("walletMemberStatus").innerText =
-    userStatus === "Active" ? "✅ Active Member" : "🔴 Inactive Member";
-  el("activationBox").style.display =
-    userStatus === "Active" ? "none" : "block";
+    if(error || !data){
+      console.log("Dashboard error:", error);
+      setDefault();
+      return;
+    }
 
-  if(typeof updateSpinText === "function"){
-    updateSpinText();
+    const referralCode =
+      "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + data.member_id;
+
+    setText("userName", data.name || "User");
+    setText("memberId", data.member_id || "DC1001");
+    setText("status", data.status || "Inactive");
+    setText("walletMemberStatus", data.status === "Active" ? "✅ Active Member" : "🔴 Inactive Member");
+    setText("accountStatus", data.status === "Active" ? "🟢 Account Status: Active" : "🔴 Account Status: Inactive");
+    setText("balance", Number(data.wallet || 0).toFixed(2) + "DC");
+    setText("totalRefer", data.referral_count || data.referralCount || 0);
+    setText("myCode", referralCode);
+
+    const box = document.getElementById("activationBox");
+    if(box) box.style.display = data.status === "Active" ? "none" : "block";
+
+    if(typeof updateSpinText === "function"){
+      updateSpinText();
+    }
+
+  }catch(e){
+    console.log("loadDashboard failed:", e);
+    setDefault();
   }
 }
 
