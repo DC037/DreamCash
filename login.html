@@ -157,18 +157,18 @@ if (refCode) {
     alert(authError.message);
     return;
   }
-
-  const { error } = await supabaseClient
-    .from("users")
-    .insert([{
-      id: Date.now(),
-      name: fullName,
-      email: email,
-      mobile: whatsapp,
-      sponsor_id: document.getElementById("referralCode").value.trim(),
-      wallet: 0,
-      status: "Inactive"
-    }]);
+const { error } = await supabaseClient
+  .from("users")
+  .insert([{
+  id: Date.now(),
+member_id: "DC" + Date.now().toString().slice(-6),
+name: fullName,
+email: email,
+mobile: whatsapp,
+sponsor_id: document.getElementById("referralCode").value.trim(),
+wallet: 0,
+status: "Inactive"
+  }]);
 
   if(error){
     alert(error.message);
@@ -190,7 +190,7 @@ if (refCode) {
 
   const { data, error } = await supabaseClient
     .from("users")
-    .select("email, mobile")
+    .select("email, mobile, member_id, name, wallet, status")
     .eq("mobile", mobile)
     .limit(1);
 
@@ -210,7 +210,7 @@ if (refCode) {
     alert(loginError.message);
     return;
   }
-
+localStorage.setItem("member_id", data[0].member_id);
   window.location.href = "dashboard.html";
 }
 
