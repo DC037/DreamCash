@@ -1156,7 +1156,7 @@ canvas.addEventListener("mouseup", function(){
 function closeScratchPopup(){
   document.getElementById("scratchPopup").style.display = "none";
   }
-
+window.closeScratchPopup = closeScratchPopup;
 const spinRewards = [0.10, 0.25, 0.40, 0.55, 0.75, 1];
 function checkSpinAccess() {
 
@@ -1532,6 +1532,17 @@ auth2.onAuthStateChanged(async function(user){
   }
 
   document.getElementById("scratchPopup").style.display = "flex";
+    setTimeout(function(){
+    canvas = document.getElementById("scratchCanvas");
+    ctx = canvas.getContext("2d");
+    isDrawing = false;
+    rewardClaimed = false;
+
+    ctx.globalCompositeOperation = "source-over";
+    ctx.clearRect(0,0,260,150);
+    ctx.fillStyle = "orange";
+    ctx.fillRect(0,0,260,150);
+},100);
 };
 window.checkSpinAccess = function(){
   if(document.getElementById("status").innerText.toLowerCase() !== "active"){
