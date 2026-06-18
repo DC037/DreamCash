@@ -161,6 +161,7 @@ if (refCode) {
   const { error } = await supabaseClient
     .from("users")
     .insert([{
+      id: Date.now(),
       name: fullName,
       email: email,
       mobile: whatsapp,
