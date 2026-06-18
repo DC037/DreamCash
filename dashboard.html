@@ -665,18 +665,15 @@ function addBalance(amount){
 }
 
 async function loadDashboard(){
-  const saved = getUser();
-  console.log("saved user:", saved);
-
   const { data, error } = await supabaseClient
     .from("users")
     .select("*")
-    .eq("mobile", saved.mobile || saved.whatsapp || saved.mobileNumber)
+    .order("created_at", { ascending: false })
+    .limit(1)
     .single();
 
   if(error || !data){
-    alert("User data not found");
-    window.location.href = "login.html";
+    console.log("User data not found", error);
     return;
   }
 
@@ -687,17 +684,19 @@ async function loadDashboard(){
   el("balance").innerText = Number(data.wallet || 0).toFixed(2);
   el("totalRefer").innerText = data.referralCount || 0;
   el("myCode").innerText = referralCode;
-if(data.status === "Active"){
-  el("status").innerText = "Active";
-  el("accountStatus").innerText = "🟢 Account Status: Active";
-  el("walletMemberStatus").innerText = "✅ Active Member";
-  el("activationBox").style.display = "none";
-}else{
-  el("status").innerText = "Inactive";
-  el("accountStatus").innerText = "🔴 Account Status: Inactive";
-  el("walletMemberStatus").innerText = "🔴 Inactive Member";
-  el("activationBox").style.display = "block";
-}
+
+  if(data.status === "Active"){
+    el("status").innerText = "Active";
+    el("accountStatus").innerText = "🟢 Account Status: Active";
+    el("walletMemberStatus").innerText = "✅ Active Member";
+    el("activationBox").style.display = "none";
+  }else{
+    el("status").innerText = "Inactive";
+    el("accountStatus").innerText = "🔴 Account Status: Inactive";
+    el("walletMemberStatus").innerText = "🔴 Inactive Member";
+    el("activationBox").style.display = "block";
+  }
+
   updateSpinText();
 }
 
