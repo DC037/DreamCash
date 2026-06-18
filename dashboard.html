@@ -635,7 +635,7 @@ function getUser(){
   const saved = JSON.parse(localStorage.getItem("dreamUser") || "{}");
   return {
     fullName: saved.fullName || "User",
-    memberId: saved.memberId || "DC1001",
+    memberId: saved.member_id || saved.memberId || "DC1001",
     balance: Number(saved.balance || 0),
     referralCount: Number(saved.referralCount || 0),
     referralIncome: Number(saved.referralIncome || 0),
@@ -669,7 +669,7 @@ function loadDashboard(){
   referralCode = "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + data.myReferralCode;
 
   el("userName").innerText = data.fullName;
-  el("memberId").innerText = data.memberId;
+  el("memberId").innerText = data.member_id || data.memberId;
   el("balance").innerText = data.balance.toFixed(2);
   el("totalRefer").innerText = data.referralCount;
   el("myCode").innerText = referralCode;
