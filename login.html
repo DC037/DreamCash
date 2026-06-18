@@ -161,6 +161,7 @@ const newMemberId = "DC" + Date.now().toString().slice(-6);
 const { error } = await supabaseClient
   .from("users")
   .insert([{
+    id: newId,
   member_id: newMemberId,
 name: fullName,
 email: email,
