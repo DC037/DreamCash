@@ -664,34 +664,39 @@ function addBalance(amount){
   if(el("balance")) el("balance").innerText = user.balance.toFixed(2);
 }
 
-function loadDashboard(){
-  const data = getUser();
-  referralCode = "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + data.myReferralCode;
+async function loadDashboard(){
+  const saved = getUser();
 
-  el("userName").innerText = data.name;
-  el("memberId").innerText = data.member_id || data.memberId;
-  el("balance").innerText = data.balance.toFixed(2);
-  el("totalRefer").innerText = data.referralCount;
-  el("myCode").innerText = referralCode;
+  const { data, error } = await supabaseClient
+    .from("users")
+    .select("*")
+    .eq("mobile", saved.mobile)
+    .single();
 
-  if(el("profileName")) el("profileName").innerText = data.fullName;
-  if(el("profileEmail")) el("profileEmail").innerText = data.email;
-  if(el("profileCode")) el("profileCode").innerText = data.myReferralCode;
-  if(el("profileJoinedBy")) el("profileJoinedBy").innerText = data.referredBy;
-  if(el("refCount")) el("refCount").innerText = data.referralCount;
-  if(el("refIncome")) el("refIncome").innerText = data.referralIncome.toFixed(2) + "DC";
-    if(data.isActive){
-    el("status").innerText = "Active";
-    el("accountStatus").innerText = "🟢 Account Status: Active";
-    el("walletMemberStatus").innerText = "✅ Active Member";
-    el("activationBox").style.display = "none";
-  }else{
-    el("status").innerText = "Inactive";
-    el("accountStatus").innerText = "🔴 Account Status: Inactive";
-    el("walletMemberStatus").innerText = "🔴 Inactive Member";
-    el("activationBox").style.display = "block";
+  if(error || !data){
+    alert("User data not found");
+    window.location.href = "login.html";
+    return;
   }
 
+  referralCode = "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + data.member_id;
+
+  el("userName").innerText = data.name;
+  el("memberId").innerText = data.member_id;
+  el("balance").innerText = Number(data.wallet || 0).toFixed(2);
+  el("totalRefer").innerText = data.referralCount || 0;
+  el("myCode").innerText = referralCode;
+if(data.status === "Active"){
+  el("status").innerText = "Active";
+  el("accountStatus").innerText = "🟢 Account Status: Active";
+  el("walletMemberStatus").innerText = "✅ Active Member";
+  el("activationBox").style.display = "none";
+}else{
+  el("status").innerText = "Inactive";
+  el("accountStatus").innerText = "🔴 Account Status: Inactive";
+  el("walletMemberStatus").innerText = "🔴 Inactive Member";
+  el("activationBox").style.display = "block";
+}
   updateSpinText();
 }
 
