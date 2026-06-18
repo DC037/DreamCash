@@ -668,7 +668,7 @@ function loadDashboard(){
   const data = getUser();
   referralCode = "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + data.myReferralCode;
 
-  el("userName").innerText = data.fullName;
+  el("userName").innerText = data.name;
   el("memberId").innerText = data.member_id || data.memberId;
   el("balance").innerText = data.balance.toFixed(2);
   el("totalRefer").innerText = data.referralCount;
