@@ -162,6 +162,7 @@ if (refCode) {
     .from("users")
     .insert([{
       id: Date.now(),
+      member_id: "DC" + Date.now(),
       name: fullName,
       email: email,
       mobile: whatsapp,
