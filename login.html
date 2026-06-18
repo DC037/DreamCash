@@ -96,6 +96,40 @@ function showRegister(){
   document.getElementById("registerTab").classList.add("active");
   document.getElementById("loginTab").classList.remove("active");
 }
+  const params = new URLSearchParams(window.location.search);
+const refCode = params.get("ref");
+
+async function checkUplineName() {
+  const code = document.getElementById("referralCode").value.trim();
+  const box = document.getElementById("uplineName");
+
+  if (!code) {
+    box.innerText = "";
+    return;
+  }
+
+  const { data } = await supabaseClient
+    .from("users")
+    .select("name")
+    .eq("member_id", code)
+    .limit(1);
+
+  if (data && data.length > 0) {
+    box.innerText = "Upline: " + data[0].name + " ✅";
+    box.style.color = "green";
+  } else {
+    box.innerText = "Invalid Referral Code";
+    box.style.color = "red";
+  }
+}
+
+if (refCode) {
+  setTimeout(() => {
+    showRegister();
+    document.getElementById("referralCode").value = refCode;
+    checkUplineName();
+  }, 500);
+}
   async function registerUser(){
 
   const fullName = document.getElementById("fullName").value.trim();
@@ -130,6 +164,7 @@ function showRegister(){
       name: fullName,
       email: email,
       mobile: whatsapp,
+      sponsor_id: document.getElementById("referralCode").value.trim(),
       wallet: 0,
       status: "Inactive"
     }]);
