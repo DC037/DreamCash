@@ -689,9 +689,10 @@ async function loadDashboard(){
     console.log("Supabase load error:", e);
   }
 
-  const referralCode =
-    "https://dc037.github.io/DreamCash/login.html?register=1&ref=" +
-    (data.member_id || localUser.member_id);
+  const finalMemberId = data.member_id || data.memberId || localUser.member_id || localUser.memberId || "DC1001";
+
+const referralCode =
+  "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + finalMemberId;
 
   el("userName").innerText = data.name || "User";
   el("memberId").innerText = data.member_id || localUser.member_id || "DC1001";
