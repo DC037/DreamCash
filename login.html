@@ -157,11 +157,11 @@ if (refCode) {
     alert(authError.message);
     return;
   }
+const newMemberId = "DC" + Date.now().toString().slice(-6);
 const { error } = await supabaseClient
   .from("users")
   .insert([{
-  id: Date.now(),
-member_id: "DC" + Date.now().toString().slice(-6),
+  member_id: newMemberId,
 name: fullName,
 email: email,
 mobile: whatsapp,
@@ -174,7 +174,7 @@ status: "Inactive"
     alert(error.message);
     return;
   }
-
+localStorage.setItem("member_id", newMemberId);
   alert("Registration Successful");
     window.location.href = "dashboard.html";
   }
