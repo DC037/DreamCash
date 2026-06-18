@@ -1531,42 +1531,9 @@ auth2.onAuthStateChanged(async function(user){
     return;
   }
 
-  openScratchPopup();
-
-  setTimeout(function(){
-    canvas = document.getElementById("scratchCanvas");
-    ctx = canvas.getContext("2d");
-
-    ctx.globalCompositeOperation = "source-over";
-    ctx.clearRect(0,0,260,150);
-    ctx.fillStyle = "orange";
-    ctx.fillRect(0,0,260,150);
-
-    canvas.ontouchstart = function(e){
-      isDrawing = true;
-      e.preventDefault();
-    };
-
-    canvas.ontouchmove = function(e){
-      e.preventDefault();
-      let rect = canvas.getBoundingClientRect();
-      let touch = e.touches[0];
-      let x = touch.clientX - rect.left;
-      let y = touch.clientY - rect.top;
-
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.beginPath();
-      ctx.arc(x, y, 30, 0, Math.PI * 2);
-      ctx.fill();
-    };
-
-    canvas.ontouchend = function(e){
-      isDrawing = false;
-      e.preventDefault();
-      claimAfterScratch();
-    };
-  },200);
+  document.getElementById("scratchPopup").style.display = "flex";
 };
+
   window.checkSpinAccess = function(){
   if(document.getElementById("status").innerText.toLowerCase() !== "active"){
     alert("Please Active ID");
