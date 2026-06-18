@@ -664,28 +664,29 @@ function addBalance(amount){
   if(el("balance")) el("balance").innerText = user.balance.toFixed(2);
 }
 
-const memberId = localStorage.getItem("member_id");
+async function loadDashboard(){
+  const memberId = localStorage.getItem("member_id");
 
-if(!memberId){
-  window.location.href = "login.html";
-  return;
-}
+  if(!memberId){
+    window.location.href = "login.html";
+    return;
+  }
 
-const { data, error } = await supabaseClient
-  .from("users")
-  .select("*")
-  .eq("member_id", memberId)
-  .single();
+  const { data, error } = await supabaseClient
+    .from("users")
+    .select("*")
+    .eq("member_id", memberId)
+    .single();
 
-if(error || !data){
-  console.log(error);
-  return;
-}
+  if(error || !data){
+    console.log(error);
+    return;
+  }
 
   const finalMemberId = data.member_id;
 
-const referralCode =
-  "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + finalMemberId;
+  const referralCode =
+    "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + finalMemberId;
 
   el("userName").innerText = data.name || "User";
   el("memberId").innerText = finalMemberId;
