@@ -68,163 +68,76 @@ body{min-height:100vh;background:linear-gradient(135deg,#0f766e,#0ea5e9);display
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCVIHJ66pEI6A3HmSma0LNsFanatv-yhic",
-  authDomain: "dreamcash-dafb4.firebaseapp.com",
-  projectId: "dreamcash-dafb4",
-  storageBucket: "dreamcash-dafb4.firebasestorage.app",
-  messagingSenderId: "66002195487",
-  appId: "1:66002195487:web:6fb777fca2630c466a312a"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-  
+
+const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
 function showLogin(){
-  document.getElementById("loginForm").style.display = "block";
-  document.getElementById("registerForm").style.display = "none";
-  document.getElementById("loginTab").classList.add("active");
-  document.getElementById("registerTab").classList.remove("active");
+  document.getElementById("loginForm").style.display="block";
+  document.getElementById("registerForm").style.display="none";
 }
 
 function showRegister(){
-    document.getElementById("registerForm").style.display = "block";
-    document.getElementById("loginForm").style.display = "none";
-    document.getElementById("registerTab").classList.add("active");
-    document.getElementById("loginTab").classList.remove("active");
-}
-
-const params = new URLSearchParams(window.location.search);
-const refCode = params.get("ref");
-async function checkUplineName(){
-  const code = document.getElementById("referralCode").value.trim();
-  const box = document.getElementById("uplineName");
-
-  if(!code){
-    box.innerText = "";
-    return;
+  document.getElementById("registerForm").style.display="block";
+  document.getElementById("loginForm").style.display="none";
   }
+  async function registerUser(){
 
-  const snap = await db.collection("users")
-    .where("myReferralCode","==",code)
-    .limit(1)
-    .get();
-
-  if(!snap.empty){
-    const data = snap.docs[0].data();
-    box.innerText = "Upline: " + (data.fullName || "User") + " ✅";
-    box.style.color = "green";
-  }else{
-    box.innerText = "Invalid Referral Code";
-    box.style.color = "red";
-  }
-}
-if(refCode){
-    setTimeout(function(){
-        showRegister();
-        document.getElementById("referralCode").value = refCode;
-      checkUplineName();
-    }, 500);
-}
-
-async function registerUser(){
   const fullName = document.getElementById("fullName").value.trim();
   const whatsapp = document.getElementById("whatsapp").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
-  const referralCode = document.getElementById("referralCode").value.trim();
-  const terms = document.getElementById("terms").checked;
 
-  if(!fullName || !whatsapp || !email || !password || !confirmPassword){
+  if(!fullName || !whatsapp || !email || !password){
     alert("Please fill all details");
     return;
   }
 
   if(password !== confirmPassword){
-    alert("Password and Confirm Password not match");
+    alert("Passwords do not match");
     return;
   }
 
-  if(!terms){
-    alert("Please accept Terms & Conditions");
+  const { error: authError } = await supabaseClient.auth.signUp({
+    email: email,
+    password: password
+  });
+
+  if(authError){
+    alert(authError.message);
     return;
   }
 
-  try{
-    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-    const uid = userCredential.user.uid;
-    const myReferralCode = (whatsapp.slice(-6) + uid.slice(0,4)).toUpperCase();
-const counterRef = db.collection("settings").doc("memberCounter");
+  const { error } = await supabaseClient
+    .from("users")
+    .insert([{
+      name: fullName,
+      email: email,
+      mobile: whatsapp,
+      wallet: 0,
+      status: "Inactive"
+    }]);
 
-const memberId = await db.runTransaction(async (transaction) => {
-  const counterDoc = await transaction.get(counterRef);
-
-  let lastNumber = 1000;
-
-  if (counterDoc.exists && counterDoc.data().lastMemberNumber) {
-    lastNumber = Number(counterDoc.data().lastMemberNumber);
-  }
-
-  const nextNumber = lastNumber + 1;
-
-  transaction.set(counterRef, {
-    lastMemberNumber: nextNumber
-  }, { merge: true });
-
-  return "DC" + nextNumber;
-});
-    await db.collection("users").doc(uid).set({
-  fullName: fullName,
-  whatsapp: whatsapp,
-  email: email,
-  memberId: memberId,
-  referredBy: referralCode || "",
-  myReferralCode: myReferralCode,
-  balance: 0,
-  referralCount: 0,
-  referralIncome: 0,
-  joinedUsers: [],
-  status: "Inactive",
-  isActive: false,
-  createdAt: firebase.firestore.FieldValue.serverTimestamp()
-});
-
-if(referralCode){
-  const refSnap = await db.collection("users")
-    .where("myReferralCode", "==", referralCode)
-    .limit(1)
-    .get();
-
-  if(!refSnap.empty){
-    const refDoc = refSnap.docs[0];
-
-    await db.collection("users").doc(refDoc.id).update({
-      referralCount: firebase.firestore.FieldValue.increment(1),
-      joinedUsers: firebase.firestore.FieldValue.arrayUnion({
-        name: fullName,
-        whatsapp: whatsapp,
-        email: email,
-        status: "Inactive",
-        joinedAt: new Date().toISOString()
-      })
-    });
-  }
-}
-
-    alert("Registration successful");
-    window.location.href = "dashboard.html";
-  }catch(error){
+  if(error){
     alert(error.message);
+    return;
   }
-}
 
-async function loginUser(){
+  alert("Registration Successful");
+    window.location.href = "dashboard.html";
+  }
+  async function loginUser(){
+
   const mobile = document.getElementById("loginMobile").value.trim();
   const password = document.getElementById("loginPassword").value;
 
@@ -233,35 +146,44 @@ async function loginUser(){
     return;
   }
 
-  try{
-    const snap = await db.collection("users").where("whatsapp", "==", mobile).limit(1).get();
+  const { data, error } = await supabaseClient
+    .from("users")
+    .select("email, mobile")
+    .eq("mobile", mobile)
+    .limit(1);
 
-    if(snap.empty){
-      alert("Mobile number not registered");
-      return;
-    }
+  if(error || !data || data.length === 0){
+    alert("Mobile number not registered");
+    return;
+  }
 
-    const userData = snap.docs[0].data();
-    await auth.signInWithEmailAndPassword(userData.email, password);
+  const userEmail = data[0].email;
 
-    alert("Login successful");
-    window.location.href = "dashboard.html";
-  }catch(error){
+  const { error: loginError } = await supabaseClient.auth.signInWithPassword({
+    email: userEmail,
+    password: password
+  });
+
+  if(loginError){
+    alert(loginError.message);
+    return;
+  }
+
+  window.location.href = "dashboard.html";
+}
+
+async function forgotPassword(){
+  const email = prompt("Enter your registered Email ID");
+  if(!email) return;
+
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+
+  if(error){
     alert(error.message);
+  }else{
+    alert("Password reset link sent to your email.");
   }
 }
-  async function forgotPassword() {
-  const email = prompt("Enter your registered Email ID");
-
-  if (!email) return;
-
-  try {
-    await auth.sendPasswordResetEmail(email);
-    alert("Password reset link sent to your email.");
-  } catch (error) {
-    alert(error.message);
-  }
-  }
 </script>
 </body>
 </html>
