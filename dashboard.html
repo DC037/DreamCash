@@ -297,6 +297,7 @@ box-shadow:0 0 5px #ff9800;
 to{
 box-shadow:0 0 20px #ff9800;
 }
+}
   .referBlue{
   background: linear-gradient(135deg,#001a66,#0033cc) !important;
   color:white !important;
@@ -1180,7 +1181,8 @@ function openSpinWheel(){
 }
 
 function closeSpinWheel(){
-  document.getElementById("spinPopup").style.display = "none";
+document.getElementById("spinPopup").style.display = "none";
+showSpinHistory();
 }
 
 function getSpinData(){
@@ -1209,6 +1211,8 @@ reward: reward,
 date: new Date().toLocaleDateString(),
 time: new Date().toLocaleTimeString()
 });
+  
+ history = history.slice(0,20);
 
 localStorage.setItem(
 "spinHistory",
@@ -1311,7 +1315,6 @@ createdAt: firebase.firestore.FieldValue.serverTimestamp()
 
 document.getElementById("balance").innerText =
 (parseFloat(document.getElementById("balance").innerText) + parseFloat(reward)).toFixed(2);
-}
 
 alert("Daily Check-In Success! You won " + reward + " DC");
   }
