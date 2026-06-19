@@ -549,7 +549,7 @@ Submit Request
 
 <p class="note">Note: This is frontend demo. Real login, database, wallet, referral tracking, rank rewards and payment system will be added later.</p>
 
-<div class="card" id="adminBox" style="display:block;">
+<div class="card" id="adminBox" style="display:none;">
   <h3>⚙️ Admin Panel</h3>
   <p>Manage withdrawal requests.</p>
   <a href="admin.html">
@@ -760,7 +760,11 @@ if(error || !data){
 setText("profileEmail", data.email || "--");
 setText("profileCode", data.member_id || "--");
 setText("profileJoinedBy", data.sponsor_id || "Direct Join");
-    
+    const adminBox = document.getElementById("adminBox");
+if(adminBox){
+  adminBox.style.display =
+    data.email === "vasimahmad614@gmail.com" ? "block" : "none";
+            }
   setText("walletMemberStatus", data.status === "Active" ? "✅ Active Member" : "🔴 Inactive Member");
   setText("accountStatus", data.status === "Active" ? "🟢 Account Status: Active" : "🔴 Account Status: Inactive");
   setText("balance", Number(data.wallet || 0).toFixed(2));
