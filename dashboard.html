@@ -899,6 +899,10 @@ if(adminBox){
   const teamData = await countTotalTeam(data.member_id);
 
 setText("totalRefer", teamData.total);
+    alert(
+"Direct Active: " + teamData.directActive +
+"\nTeam Active: " + teamData.activeTotal
+);
     const completedRank = getCompletedRank(teamData.directActive, teamData.activeTotal);
 console.log("Rank Data:", teamData, "Completed Rank:", completedRank);
     updateRankProgress(completedRank);
