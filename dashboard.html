@@ -686,8 +686,12 @@ async function loadDashboard(){
   new URLSearchParams(window.location.search).get("member_id") ||
   localStorage.getItem("member_id") ||
   localStorage.getItem("last_member_id");
-  let data, error;
-
+  
+if(memberId){
+  localStorage.setItem("member_id", memberId);
+  localStorage.setItem("last_member_id", memberId);
+}
+    let data, error;
   if(memberId){
     const res = await supabaseClient
       .from("users")
