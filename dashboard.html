@@ -671,22 +671,47 @@ function setBalance(amount){
 }
 
 async function addBalance(amount){
- const user = getUser();
- const memberId = user.memberId || user.member_id || localStorage.getItem("member_id");
+ const memberId =
+   localStorage.getItem("member_id") ||
+   localStorage.getItem("last_member_id") ||
+   el("memberId")?.innerText?.trim();
 
- const oldBalance = Number(user.balance || 0);
- const newBalance = oldBalance + Number(amount || 0);
+ const addAmount = Number(amount || 0);
 
- user.balance = newBalance;
- saveUser(user);
- if(el("balance")) el("balance").innerText = newBalance.toFixed(2);
+ if(!memberId || memberId === "DC1001"){
+   alert("Member ID not found. Please login again.");
+   return;
+ }
 
- if(memberId){
-   await supabaseClient
+ const { data, error } = await supabaseClient
+   .from("users")
+   .select("wallet")
+   .eq("member_id", memberId)
+   .maybeSingle();
+
+ if(error || !data){
+   alert("Wallet fetch error");
+   return;
+ }
+
+ const newBalance = Number(data.wallet || 0) + addAmount;
+
+ const { error: updateError } = await supabaseClient
    .from("users")
    .update({ wallet: newBalance })
    .eq("member_id", memberId);
+
+ if(updateError){
+   alert("Wallet save error");
+   return;
  }
+
+ const user = getUser();
+ user.balance = newBalance;
+ user.memberId = memberId;
+ saveUser(user);
+
+ if(el("balance")) el("balance").innerText = newBalance.toFixed(2);
 }
 async function countTotalTeam(rootId){
   let currentIds = [rootId];
