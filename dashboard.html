@@ -771,20 +771,30 @@ async function addBalance(amount){
 async function countTotalTeam(rootId){
   let currentIds = [rootId];
   let total = 0;
-
+let activeTotal = 0;
+  let directActive = 0;
   for(let level = 1; level <= 5; level++){
     const { data, error } = await supabaseClient
       .from("users")
-      .select("member_id")
+      .select("member_id,status")
       .in("sponsor_id", currentIds);
 
     if(error || !data || data.length === 0) break;
 
     total += data.length;
+    const activeCount = data.filter(u => u.status === "Active").length;
+    if(level === 1){
+  directActive = activeCount;
+    }
+    activeTotal += activeCount;
     currentIds = data.map(u => u.member_id);
   }
 
-  return total;
+  return {
+  total,
+  activeTotal,
+  directActive
+};
 }
 async function loadDashboard(){
   function setText(id, value){
@@ -886,8 +896,12 @@ if(adminBox){
   setText("walletMemberStatus", data.status === "Active" ? "✅ Active Member" : "🔴 Inactive Member");
   setText("accountStatus", data.status === "Active" ? "🟢 Account Status: Active" : "🔴 Account Status: Inactive");
   setText("balance", Number(data.wallet || 0).toFixed(2));
-  const totalTeamCount = await countTotalTeam(data.member_id);
-setText("totalRefer", totalTeamCount);
+  const teamData = await countTotalTeam(data.member_id);
+
+setText("totalRefer", teamData.total);
+    const completedRank = getCompletedRank(teamData.directActive, teamData.activeTotal);
+console.log("Rank Data:", teamData, "Completed Rank:", completedRank);
+    updateRankProgress(completedRank);
   setText("myCode", referralCode);
 
     const box = document.getElementById("activationBox");
@@ -1042,7 +1056,48 @@ window.showRankReward = function(){
   const box = el("rankRewardBox");
   box.style.display = box.style.display === "none" ? "block" : "none";
 };
+const rankPlan = [
+  {name:"Bronze", direct:11, team:0, reward:100},
+  {name:"Silver", direct:25, team:51, reward:500},
+  {name:"Gold", direct:40, team:101, reward:1500},
+  {name:"Diamond", direct:80, team:501, reward:10000},
+  {name:"Crown", direct:222, team:1022, reward:25000}
+];
+  function getCompletedRank(directActive, teamActive){
+  let completed = -1;
 
+  rankPlan.forEach((rank, index) => {
+    if(directActive >= rank.direct && teamActive >= rank.team){
+      completed = index;
+    }
+  });
+
+  return completed;
+  }
+  function updateRankProgress(completedRank){
+  const steps = document.querySelectorAll(".overall-rank-progress .rank-step");
+  const lines = document.querySelectorAll(".overall-rank-progress .rank-line");
+
+  steps.forEach((step, index) => {
+    step.classList.remove("done", "active");
+
+    if(index <= completedRank){
+      step.classList.add("done");
+    }else if(index === completedRank + 1){
+      step.classList.add("active");
+    }
+  });
+
+  lines.forEach((line, index) => {
+    line.classList.remove("done", "active");
+
+    if(index < completedRank){
+      line.classList.add("done");
+    }else if(index === completedRank){
+      line.classList.add("active");
+    }
+  });
+  }
 window.showLevelIncome = function(){
   const box = el("levelIncomeBox");
   box.style.display = box.style.display === "none" ? "block" : "none";
@@ -1089,6 +1144,7 @@ window.showLevelTeam = async function(level){
 
     if(i === level){
       levelUsers = data || [];
+      
     }
 
     currentIds = (data || []).map(x => x.member_id);
