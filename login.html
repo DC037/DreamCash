@@ -203,6 +203,7 @@ async function registerUser(){
   const { error: insertError } = await supabaseClient
     .from("users")
     .insert([{
+      id: authData.user.id,
       member_id: newMemberId,
       name: fullName,
       email: email,
