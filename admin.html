@@ -68,11 +68,15 @@ Refresh Team
 </button>
 
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
+  const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const firebaseConfig = {
   apiKey: "AIzaSyCVIHJ66pEI6A3HmSmaOLNsFanatv-yhic",
   authDomain: "dreamcash-dafb4.firebaseapp.com",
@@ -138,73 +142,54 @@ async function loadActivationRequests(){
 const box = document.getElementById("activationList");
 box.innerHTML = "Loading...";
 
-const snap = await db.collection("activationRequests")
-.orderBy("createdAt","desc")
-.get();
+const { data, error } = await supabaseClient
+.from("activation_requests")
+.select("*")
+.order("created_at", { ascending: false });
 
-if(snap.empty){
+if(error){
+box.innerHTML = error.message;
+return;
+}
+
+if(!data || data.length === 0){
 box.innerHTML = "No activation requests found.";
 return;
 }
 
 let html = "";
 
-for (const doc of snap.docs) {
+data.forEach(d => {
 
-const d = doc.data();
-let userName = "Unknown";
-let memberId = "N/A";
-let userDoc = null;
-
-try {
-  if (d.userId) {
-    userDoc = await db.collection("users").doc(d.userId).get();
-  }
-
-  if ((!userDoc || !userDoc.exists) && d.email) {
-    const userSnap = await db.collection("users")
-      .where("email", "==", d.email)
-      .limit(1)
-      .get();
-
-    if (!userSnap.empty) {
-      userDoc = userSnap.docs[0];
-    }
-  }
-
-  if (userDoc && userDoc.exists) {
-    const u = userDoc.data();
-    userName = u.fullName || u.name || "Unknown";
-    memberId = u.memberId || "N/A";
-  }
-} catch (e) {}
 html += `
 <div class="row">
-<b>Amount:</b> ₹${d.amount}<br>
-<b>Transaction ID:</b> ${d.transactionId}<br>
-<b>Name:</b> ${userName}<br>
-<b>Member ID:</b> ${memberId}<br>
-<b>User ID:</b> ${d.userId}<br>
-<b>Status:</b>
-<span class="status ${d.status === 'Approved' ? 'approved' : d.status === 'Rejected' ? 'rejected' : 'pending'}">
-${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d.status}
-</span><br><br>
 
-<button class="btn green"
-onclick="approveActivation('${doc.id}','${d.userId}')">
+<b>Amount:</b> ₹${d.amount}<br>
+<b>Transaction ID:</b> ${d.transaction_id}<br>
+<b>User ID:</b> ${d.user_id}<br>
+
+<b>Status:</b>
+<span class="status pending">
+${d.status}
+</span>
+
+<br><br>
+
+<button class="btn green" onclick="approveActivation('${d.id}','${d.user_id}')">
 Activate
 </button>
 
-<button class="btn red"
-onclick="rejectActivation('${doc.id}','${d.userId}')">
+<button class="btn red" onclick="rejectActivation('${d.id}','${d.user_id}')">
 Reject
 </button>
 
 </div>
 `;
-}
+
+});
 
 box.innerHTML = html;
+
 }
   async function approveActivation(id,userId){
 const reqRef = db.collection("activationRequests").doc(id);
