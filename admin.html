@@ -232,7 +232,16 @@ async function distributeLevelIncome(userId) {
       .single();
 
     if (!sponsorUser) break;
-
+await supabaseClient
+  .from("income_history")
+  .insert({
+    user_id: sponsorId,
+    from_user_id: userId,
+    level: level,
+    amount: income,
+    income_type: "level_income",
+    status: "approved"
+  });
     const oldWallet = Number(sponsorUser.wallet || 0);
 
     await supabaseClient
