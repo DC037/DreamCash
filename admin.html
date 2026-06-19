@@ -413,7 +413,7 @@ return;
 }
 
 const snap = await db.collection("users")
-.where("memberId","==",memberId)
+.where("member_id", "==", memberId)
 .limit(1)
 .get();
 
