@@ -757,7 +757,7 @@ if(error || !data){
   setText("status", data.status || "Inactive");
   setText("walletMemberStatus", data.status === "Active" ? "✅ Active Member" : "🔴 Inactive Member");
   setText("accountStatus", data.status === "Active" ? "🟢 Account Status: Active" : "🔴 Account Status: Inactive");
-  setText("balance", Number(data.wallet || 0).toFixed(2) + " DC");
+  setText("balance", Number(data.wallet || 0).toFixed(2));
   setText("totalRefer", data.referral_count || data.referralCount || 0);
   setText("myCode", referralCode);
 
