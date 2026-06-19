@@ -808,7 +808,7 @@ if(!currentUserId){
   return;
 }
   
-const { data: oldRequest, error: checkError } = await supabase
+const { data: oldRequest, error: checkError } = await supabaseClient
   .from("activation_requests")
   .select("*")
   .eq("user_id", currentUserId)
@@ -827,7 +827,7 @@ if(oldRequest && oldRequest.length > 0){
   return;
 }
 
-const { error } = await supabase
+const { error } = await supabaseClient
   .from("activation_requests")
   .insert([{
     user_id: currentUserId,
