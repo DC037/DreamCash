@@ -181,17 +181,21 @@ async function loadActivationRequests(){
 
 async function approveActivation(id, userId) {
   if (!confirm("Approve this activation request?")) return;
+let finalUserId = userId;
 
+if (userId.includes("ref=")) {
+  finalUserId = userId.split("ref=")[1].split("&")[0];
+}
   const { error: userError } = await supabaseClient
     .from("users")
     .update({ status: "Active" })
-    .eq("member_id", userId);
+    .eq("member_id", finalUserId);
 
   if (userError) {
     alert(userError.message);
     return;
   }
-await distributeLevelIncome(userId);
+await distributeLevelIncome(finalUserId);
   const { error } = await supabaseClient
     .from("activation_requests")
     .update({ status: "Approved" })
