@@ -755,6 +755,12 @@ if(error || !data){
   setText("userName", data.name || "User");
   setText("memberId", data.member_id || "DC1001");
   setText("status", data.status || "Inactive");
+    
+    setText("profileName", data.name || "--");
+setText("profileEmail", data.email || "--");
+setText("profileCode", data.member_id || "--");
+setText("profileJoinedBy", data.sponsor_id || "Direct Join");
+    
   setText("walletMemberStatus", data.status === "Active" ? "✅ Active Member" : "🔴 Inactive Member");
   setText("accountStatus", data.status === "Active" ? "🟢 Account Status: Active" : "🔴 Account Status: Inactive");
   setText("balance", Number(data.wallet || 0).toFixed(2));
