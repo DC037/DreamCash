@@ -429,15 +429,15 @@ const userId = d.member_id;
 
 document.getElementById("memberResult").innerHTML = `
 <div class="row">
-<b>Name:</b> ${d.fullName || "N/A"}<br>
-<b>Member ID:</b> ${d.memberId || "N/A"}<br>
-<b>Mobile:</b> ${d.whatsapp || "N/A"}<br>
+<b>Name:</b> ${d.full_name || d.name || "N/A"}<br>
+<b>Member ID:</b> ${d.member_id || "N/A"}<br>
+<b>Mobile:</b> ${d.mobile || d.whatsapp || "N/A"}<br>
 <b>Email:</b> ${d.email || "N/A"}<br>
-<b>Status:</b> ${d.isActive ? "Active" : "Inactive"}<br>
-<b>Ban Status:</b> ${d.isBanned ? "Banned" : "Not Banned"}<br>
-<b>Balance:</b> ${d.balance || 0} DC<br>
-<b>Total Refer:</b> ${d.referralCount || 0}<br>
-<b>Referral Income:</b> ${d.referralIncome || 0} DC<br>
+<b>Status:</b> ${d.status || "Inactive"}<br>
+<b>Ban Status:</b> ${d.is_banned ? "Banned" : "Not Banned"}<br>
+<b>Balance:</b> ${d.wallet || d.balance || 0} DC<br>
+<b>Total Refer:</b> ${d.referral_count || 0}<br>
+<b>Referral Income:</b> ${d.referral_income || 0} DC<br>
 <br>
 <button class="btn green" onclick="addBalance('${userId}')">Add Balance</button>
 <button class="btn red" onclick="cutBalance('${userId}')">Cut Balance</button>
