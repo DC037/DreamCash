@@ -793,6 +793,7 @@ window.openUPIPayment = function(){
 };
 
 window.submitActivationRequest = async function(){
+  try {
   const amount = el("depositAmount").value.trim();
   const transactionId = el("transactionId").value.trim();
 
@@ -844,6 +845,10 @@ if(error){
   el("depositAmount").value = "";
   el("transactionId").value = "";
   alert("Activation Request Submitted");
+    } catch(e) {
+  alert("Main Error: " + e.message);
+  console.log(e);
+  }
 };
 
 window.submitWithdraw = function(){
