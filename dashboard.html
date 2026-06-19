@@ -682,7 +682,10 @@ async function loadDashboard(){
   }
 
   try{
-  let memberId = localStorage.getItem("member_id");
+  let memberId =
+  new URLSearchParams(window.location.search).get("member_id") ||
+  localStorage.getItem("member_id") ||
+  localStorage.getItem("last_member_id");
   let data, error;
 
   if(memberId){
