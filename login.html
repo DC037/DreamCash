@@ -34,30 +34,29 @@ body{min-height:100vh;background:linear-gradient(135deg,#0f766e,#0ea5e9);display
   </div>
 
   <div class="tabs">
-  <button id="loginTab" class="active" onclick="showLogin()">Login</button>
+    <button id="loginTab" class="active" onclick="showLogin()">Login</button>
+    <button id="registerTab" onclick="showRegister()">Register</button>
+  </div>
 
-  <button id="registerTab" onclick="showRegister()">Register</button>
-</div>
+  <div id="loginForm">
+    <input id="loginMobile" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
+    <input id="loginPassword" class="input" type="password" placeholder="Password">
+    <button class="btn" onclick="loginUser()">Login</button>
+    <p class="note">New user? <span class="link" onclick="showRegister()">Create Account</span></p>
+    <p style="text-align:right;margin-top:8px;">
+      <span class="link" onclick="forgotPassword()">Forgot Password?</span>
+    </p>
+  </div>
 
-<div id="loginForm" class="form active" style="display:block;">
-  <input id="loginMobile" class="input" type="tel" placeholder="Mobile / WhatsApp Number">
-  <input id="loginPassword" class="input" type="password" placeholder="Password">
-  <button class="btn" onclick="loginUser()">Login</button>
-  <p class="note">New user? <span class="link" onclick="showRegister()">Create Account</span></p>
-<p style="text-align:right;margin-top:8px;">
-  <span class="link" onclick="forgotPassword()">Forgot Password?</span>
-</p>
-</div>
-
-<div id="registerForm" class="form" style="display:none;">
-    
+  <div id="registerForm">
     <input id="fullName" class="input" type="text" placeholder="Full Name">
     <input id="whatsapp" class="input" type="tel" placeholder="WhatsApp Number">
     <input id="email" class="input" type="email" placeholder="Email ID">
     <input id="password" class="input" type="password" placeholder="Password">
     <input id="confirmPassword" class="input" type="password" placeholder="Confirm Password">
     <input id="referralCode" class="input" type="text" placeholder="Referral Code" oninput="checkUplineName()">
-<div id="uplineName" style="font-size:13px;color:green;font-weight:bold;margin:-8px 0 10px 8px;"></div>
+    <div id="uplineName" style="font-size:13px;color:green;font-weight:bold;margin:-8px 0 10px 8px;"></div>
+
     <label class="check">
       <input id="terms" type="checkbox">
       <span>I agree to the Terms & Conditions of Dream Cash.</span>
@@ -71,20 +70,18 @@ body{min-height:100vh;background:linear-gradient(135deg,#0f766e,#0ea5e9);display
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-
 const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
-
 const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
 
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function cleanMobile(num){
+  return num.replace(/\D/g, "").slice(-10);
+}
 
 function showLogin(){
   document.getElementById("loginForm").style.display = "block";
   document.getElementById("registerForm").style.display = "none";
-
   document.getElementById("loginTab").classList.add("active");
   document.getElementById("registerTab").classList.remove("active");
 }
@@ -92,54 +89,60 @@ function showLogin(){
 function showRegister(){
   document.getElementById("registerForm").style.display = "block";
   document.getElementById("loginForm").style.display = "none";
-
   document.getElementById("registerTab").classList.add("active");
   document.getElementById("loginTab").classList.remove("active");
 }
-  const params = new URLSearchParams(window.location.search);
-const refCode = params.get("ref");
 
-async function checkUplineName() {
+async function checkUplineName(){
   const code = document.getElementById("referralCode").value.trim();
   const box = document.getElementById("uplineName");
 
-  if (!code) {
+  if(!code){
     box.innerText = "";
     return;
   }
 
-  const { data } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from("users")
     .select("name")
     .eq("member_id", code)
     .limit(1);
 
-  if (data && data.length > 0) {
+  if(!error && data && data.length > 0){
     box.innerText = "Upline: " + data[0].name + " ✅";
     box.style.color = "green";
-  } else {
+  }else{
     box.innerText = "Invalid Referral Code";
     box.style.color = "red";
   }
 }
 
-if (refCode) {
+const params = new URLSearchParams(window.location.search);
+const refCode = params.get("ref");
+
+if(refCode){
   setTimeout(() => {
     showRegister();
     document.getElementById("referralCode").value = refCode;
     checkUplineName();
   }, 500);
 }
-  async function registerUser(){
 
+async function registerUser(){
   const fullName = document.getElementById("fullName").value.trim();
-  const whatsapp = document.getElementById("whatsapp").value.trim();
-  const email = document.getElementById("email").value.trim();
+  const whatsapp = cleanMobile(document.getElementById("whatsapp").value);
+  const email = document.getElementById("email").value.trim().toLowerCase();
   const password = document.getElementById("password").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
+  const sponsorId = document.getElementById("referralCode").value.trim();
 
-  if(!fullName || !whatsapp || !email || !password){
+  if(!fullName || !whatsapp || !email || !password || !confirmPassword){
     alert("Please fill all details");
+    return;
+  }
+
+  if(whatsapp.length !== 10){
+    alert("Please enter valid 10 digit mobile number");
     return;
   }
 
@@ -148,7 +151,44 @@ if (refCode) {
     return;
   }
 
-  const { error: authError } = await supabaseClient.auth.signUp({
+  if(!document.getElementById("terms").checked){
+    alert("Please accept Terms & Conditions");
+    return;
+  }
+
+  const { data: mobileUser, error: mobileError } = await supabaseClient
+    .from("users")
+    .select("member_id")
+    .eq("mobile", whatsapp)
+    .limit(1);
+
+  if(mobileError){
+    alert(mobileError.message);
+    return;
+  }
+
+  if(mobileUser && mobileUser.length > 0){
+    alert("Mobile number already registered");
+    return;
+  }
+
+  const { data: emailUser, error: emailError } = await supabaseClient
+    .from("users")
+    .select("member_id")
+    .eq("email", email)
+    .limit(1);
+
+  if(emailError){
+    alert(emailError.message);
+    return;
+  }
+
+  if(emailUser && emailUser.length > 0){
+    alert("Email already registered");
+    return;
+  }
+
+  const { data: authData, error: authError } = await supabaseClient.auth.signUp({
     email: email,
     password: password
   });
@@ -157,41 +197,33 @@ if (refCode) {
     alert(authError.message);
     return;
   }
-    const { data: existingUser } = await supabaseClient
-  .from("users")
-  .select("*")
-  .eq("mobile", whatsapp)
-  .limit(1);
 
-if(existingUser && existingUser.length > 0){
-  alert("Mobile number already registered");
-  return;
-}
-const newMemberId = "DC" + Date.now().toString().slice(-6);
-const { error } = await supabaseClient
-  .from("users")
-  .insert([{
-    id: newId,
-  member_id: newMemberId,
-name: fullName,
-email: email,
-mobile: whatsapp,
-sponsor_id: document.getElementById("referralCode").value.trim(),
-wallet: 0,
-status: "Inactive"
-  }]);
+  const newMemberId = "DC" + Date.now().toString().slice(-6);
 
-  if(error){
-    alert(error.message);
+  const { error: insertError } = await supabaseClient
+    .from("users")
+    .insert([{
+      member_id: newMemberId,
+      name: fullName,
+      email: email,
+      mobile: whatsapp,
+      sponsor_id: sponsorId,
+      wallet: 0,
+      status: "Inactive"
+    }]);
+
+  if(insertError){
+    alert("Users table error: " + insertError.message);
     return;
   }
-localStorage.setItem("member_id", newMemberId);
-  alert("Registration Successful");
-    window.location.href = "dashboard.html";
-  }
-  async function loginUser(){
 
-  const mobile = document.getElementById("loginMobile").value.trim();
+  localStorage.setItem("member_id", newMemberId);
+  alert("Registration Successful");
+  window.location.href = "dashboard.html";
+}
+
+async function loginUser(){
+  const mobile = cleanMobile(document.getElementById("loginMobile").value);
   const password = document.getElementById("loginPassword").value;
 
   if(!mobile || !password){
@@ -205,15 +237,18 @@ localStorage.setItem("member_id", newMemberId);
     .eq("mobile", mobile)
     .limit(1);
 
-  if(error || !data || data.length === 0){
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  if(!data || data.length === 0){
     alert("Mobile number not registered");
     return;
   }
 
-  const userEmail = data[0].email;
-
   const { error: loginError } = await supabaseClient.auth.signInWithPassword({
-    email: userEmail,
+    email: data[0].email,
     password: password
   });
 
@@ -221,7 +256,8 @@ localStorage.setItem("member_id", newMemberId);
     alert(loginError.message);
     return;
   }
-localStorage.setItem("member_id", data[0].member_id);
+
+  localStorage.setItem("member_id", data[0].member_id);
   window.location.href = "dashboard.html";
 }
 
@@ -229,7 +265,7 @@ async function forgotPassword(){
   const email = prompt("Enter your registered Email ID");
   if(!email) return;
 
-  const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email.trim().toLowerCase());
 
   if(error){
     alert(error.message);
@@ -238,5 +274,6 @@ async function forgotPassword(){
   }
 }
 </script>
+
 </body>
 </html>
