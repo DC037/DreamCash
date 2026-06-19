@@ -687,7 +687,7 @@ async function addBalance(amount){
    .update({ wallet: newBalance })
    .eq("member_id", memberId);
  }
-
+}
 async function countTotalTeam(rootId){
   let currentIds = [rootId];
   let total = 0;
