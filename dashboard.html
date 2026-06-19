@@ -670,12 +670,24 @@ function setBalance(amount){
   if(el("balance")) el("balance").innerText = user.balance.toFixed(2);
 }
 
-function addBalance(amount){
-  const user = getUser();
-  user.balance = Number(user.balance || 0) + Number(amount || 0);
-  saveUser(user);
-  if(el("balance")) el("balance").innerText = user.balance.toFixed(2);
-}
+async function addBalance(amount){
+ const user = getUser();
+ const memberId = user.memberId || user.member_id || localStorage.getItem("member_id");
+
+ const oldBalance = Number(user.balance || 0);
+ const newBalance = oldBalance + Number(amount || 0);
+
+ user.balance = newBalance;
+ saveUser(user);
+ if(el("balance")) el("balance").innerText = newBalance.toFixed(2);
+
+ if(memberId){
+   await supabaseClient
+   .from("users")
+   .update({ wallet: newBalance })
+   .eq("member_id", memberId);
+ }
+
 async function countTotalTeam(rootId){
   let currentIds = [rootId];
   let total = 0;
