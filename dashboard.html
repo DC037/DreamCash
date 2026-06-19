@@ -963,7 +963,7 @@ window.showLevelTeam = async function(level){
 
     const { data, error } = await supabaseClient
       .from("users")
-      .select("member_id,name,status,sponsor_id")
+      .select("member_id,name,mobile,status,sponsor_id")
       .in("sponsor_id", currentIds);
 
     if(error){
