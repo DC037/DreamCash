@@ -138,65 +138,49 @@ ${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d
   box.innerHTML = html;
 }
 async function loadActivationRequests(){
+  const box = document.getElementById("activationList");
+  box.innerHTML = "Loading...";
 
-const box = document.getElementById("activationList");
-box.innerHTML = "Loading...";
+  const { data, error } = await supabaseClient
+    .from("activation_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-const { data, error } = await supabaseClient
-.from("activation_requests")
-.select("*")
-.order("created_at", { ascending: false });
+  if(error){
+    box.innerHTML = error.message;
+    return;
+  }
 
-if(error){
-box.innerHTML = error.message;
-return;
+  if(!data || data.length === 0){
+    box.innerHTML = "No activation requests found.";
+    return;
+  }
+
+  let html = "";
+
+  data.forEach(d => {
+    html += `
+    <div class="row">
+      <b>Amount:</b> ₹${d.amount}<br>
+      <b>Transaction ID:</b> ${d.transaction_id}<br>
+      <b>User ID:</b> ${d.user_id}<br>
+      <b>Status:</b>
+      <span class="status ${d.status === 'Approved' ? 'approved' : d.status === 'Rejected' ? 'rejected' : 'pending'}">
+        ${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d.status}
+      </span>
+      <br><br>
+
+      <button class="btn green" onclick="approveActivation('${d.id}','${d.user_id}')">Activate</button>
+      <button class="btn red" onclick="rejectActivation('${d.id}','${d.user_id}')">Reject</button>
+    </div>
+    `;
+  });
+
+  box.innerHTML = html;
 }
 
-if(!data || data.length === 0){
-box.innerHTML = "No activation requests found.";
-return;
-}
-
-let html = "";
-
-data.forEach(d => {
-
-html += `
-<div class="row">
-
-<b>Amount:</b> ₹${d.amount}<br>
-<b>Transaction ID:</b> ${d.transaction_id}<br>
-<b>User ID:</b> ${d.user_id}<br>
-
-<span class="status ${d.status === 'Approved' ? 'approved' : d.status === 'Rejected' ? 'rejected' : 'pending'}">
-${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d.status}
-</span>
-
-<br><br>
-
-<button class="btn green" onclick="approveActivation('${d.id}','${d.user_id}')">
-Activate
-</button>
-
-<button class="btn red" onclick="rejectActivation('${d.id}','${d.user_id}')">
-Reject
-</button>
-
-</div>
-`;
-
-});
-
-box.innerHTML = html;
-
-}
-  async function approveActivation(id, userId) {
+async function approveActivation(id, userId) {
   if (!confirm("Approve this activation request?")) return;
-
-  // await db.collection("users").doc(userId).update({
-//   isActive: true,
-//   activationDate: firebase.firestore.FieldValue.serverTimestamp()
-// });
 
   const { error } = await supabaseClient
     .from("activation_requests")
@@ -208,62 +192,12 @@ box.innerHTML = html;
     return;
   }
 
-  alert("User Activated Successfully");
-loadActivationRequests();
-
-try {
-  await distributeLevelIncome(userId);
-} catch (e) {
-  console.log(e.message);
-}
-
-async function distributeLevelIncome(userId) {
-  const levelAmounts = [25, 10, 5, 5, 5];
-
-  let userDoc = await db.collection("users").doc(userId).get();
-  let userData = userDoc.data();
-
-  let uplineCode = userData.referredBy;
-
-  for (let i = 0; i < 5; i++) {
-    if (!uplineCode) break;
-
-    const snap = await db.collection("users")
-      .where("myReferralCode", "==", uplineCode)
-      .limit(1)
-      .get();
-
-    if (snap.empty) break;
-
-    const uplineDoc = snap.docs[0];
-    const uplineData = uplineDoc.data();
-    const amount = levelAmounts[i];
-
-    await db.collection("users").doc(uplineDoc.id).update({
-      balance: firebase.firestore.FieldValue.increment(amount),
-      referralIncome: firebase.firestore.FieldValue.increment(amount)
-    });
-
-    await db.collection("incomeHistory").add({
-      uid: uplineDoc.id,
-      fromUserId: userId,
-      type: "Level " + (i + 1) + " Joining Income",
-      amount: amount,
-      note: "Level " + (i + 1) + " income from new member activation",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    uplineCode = uplineData.referredBy;
-  }
+  alert("Activation Request Approved");
+  loadActivationRequests();
 }
 
 async function rejectActivation(id, userId) {
   if (!confirm("Reject this activation request?")) return;
-
-  // await db.collection("users").doc(userId).update({
-//   isActive: true,
-//   activationDate: firebase.firestore.FieldValue.serverTimestamp()
-// });
 
   const { error } = await supabaseClient
     .from("activation_requests")
