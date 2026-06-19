@@ -191,28 +191,32 @@ Reject
 box.innerHTML = html;
 
 }
-  async function approveActivation(id,userId){
-const reqRef = db.collection("activationRequests").doc(id);
-const reqDoc = await reqRef.get();
-const reqData = reqDoc.data();
+  async function approveActivation(id, userId) {
+  if (!confirm("Approve this activation request?")) return;
 
-if(reqData.status === "Approved"){
-  alert("Already Approved");
-  return;
-}
-await db.collection("users").doc(userId).update({
-isActive: true,
-activationDate: firebase.firestore.FieldValue.serverTimestamp()
-});
+  const reqRef = db.collection("activationRequests").doc(id);
+  const reqDoc = await reqRef.get();
+  const reqData = reqDoc.data();
 
-await reqRef.update({
-status: "Approved"
-});
-await distributeLevelIncome(userId);
-alert("User Activated Successfully");
+  if (reqData.status === "Approved") {
+    alert("Already Approved");
+    return;
+  }
 
-loadActivationRequests();
+  await db.collection("users").doc(userId).update({
+    isActive: true,
+    activationDate: firebase.firestore.FieldValue.serverTimestamp()
+  });
 
+  await reqRef.update({
+    status: "Approved",
+    approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  await distributeLevelIncome(userId);
+
+  alert("User Activated Successfully");
+  loadActivationRequests();
   }
   async function distributeLevelIncome(userId){
 
@@ -258,20 +262,22 @@ uplineCode = uplineData.referredBy;
 }
 
   }
-  async function rejectActivation(id,userId){
+  async function rejectActivation(id, userId) {
+  if (!confirm("Reject this activation request?")) return;
 
-await db.collection("users").doc(userId).update({
-isActive: false,
-activationDate: null
-});
+  await db.collection("users").doc(userId).update({
+    isActive: false,
+    activationDate: null
+  });
 
-await db.collection("activationRequests").doc(id).update({
-status: "Rejected"
-});
+  await db.collection("activationRequests").doc(id).update({
+    status: "Rejected",
+    rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
 
-alert("Activation Request Rejected");
-
-loadActivationRequests();
+  alert("Activation Request Rejected");
+  loadActivationRequests();
+  }
 
   }
 async function approveWithdraw(id){
