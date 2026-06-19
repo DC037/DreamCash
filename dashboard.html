@@ -802,7 +802,11 @@ window.submitActivationRequest = async function(){
   }
 
   const currentUserId = (localStorage.getItem("userId") || el("myCode").innerText || "").trim();
-
+if(!currentUserId){
+  alert("User ID not found. Please login again.");
+  return;
+}
+  
 const { data: oldRequest, error: checkError } = await supabase
   .from("activation_requests")
   .select("*")
@@ -811,8 +815,10 @@ const { data: oldRequest, error: checkError } = await supabase
   .limit(1);
 
 if(checkError){
-  alert(checkError.message);
+  alert("Check Error: " + checkError.message);
+  console.log("Check Error:", checkError);
   return;
+  
 }
 
 if(oldRequest && oldRequest.length > 0){
@@ -830,7 +836,8 @@ const { error } = await supabase
   }]);
 
 if(error){
-  alert(error.message);
+  alert("Submit Error: " + error.message);
+  console.log("Submit Error:", error);
   return;
 }
   el("activationStatus").innerText = "Activation request submitted. Support approval pending.";
