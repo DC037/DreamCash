@@ -802,13 +802,17 @@ window.submitActivationRequest = function(){
   }
 
   const requests = JSON.parse(localStorage.getItem("activationRequests") || "[]");
-  const existingRequest = requests.find(r => r.status === "Pending");
+  const currentUserId = (localStorage.getItem("userId") || el("myCode").innerText || "").trim();
 
+const existingRequest = requests.find(r =>
+  r.userId === currentUserId && r.status === "Pending"
+);
 if(existingRequest){
   alert("Request Already Submitted. Please Wait For Admin Approval.");
   return;
  }
   requests.unshift({
+    userId: currentUserId,
     amount: Number(amount),
     transactionId,
     status: "Pending",
