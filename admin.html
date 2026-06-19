@@ -194,10 +194,10 @@ box.innerHTML = html;
   async function approveActivation(id, userId) {
   if (!confirm("Approve this activation request?")) return;
 
-  await db.collection("users").doc(userId).update({
-    isActive: true,
-    activationDate: firebase.firestore.FieldValue.serverTimestamp()
-  });
+  // await db.collection("users").doc(userId).update({
+//   isActive: true,
+//   activationDate: firebase.firestore.FieldValue.serverTimestamp()
+// });
 
   const { error } = await supabaseClient
     .from("activation_requests")
@@ -258,10 +258,10 @@ async function distributeLevelIncome(userId) {
 async function rejectActivation(id, userId) {
   if (!confirm("Reject this activation request?")) return;
 
-  await db.collection("users").doc(userId).update({
-    isActive: false,
-    activationDate: null
-  });
+  // await db.collection("users").doc(userId).update({
+//   isActive: true,
+//   activationDate: firebase.firestore.FieldValue.serverTimestamp()
+// });
 
   const { error } = await supabaseClient
     .from("activation_requests")
