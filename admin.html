@@ -259,8 +259,6 @@ await db.collection("incomeHistory").add({
 
 uplineCode = uplineData.referredBy;
 
-}
-
   }
   async function rejectActivation(id, userId) {
   if (!confirm("Reject this activation request?")) return;
@@ -279,7 +277,6 @@ uplineCode = uplineData.referredBy;
   loadActivationRequests();
   }
 
-  }
 async function approveWithdraw(id){
   await db.collection("withdrawals").doc(id).update({
     status: "Approved",
