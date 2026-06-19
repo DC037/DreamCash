@@ -412,10 +412,20 @@ alert("Enter Member ID");
 return;
 }
 
-const snap = await db.collection("users")
-.where("member_id", "==", memberId)
-.limit(1)
-.get();
+const { data, error } = await supabaseClient
+.from("users")
+.select("*")
+.eq("member_id", memberId)
+.single();
+
+if (error || !data) {
+  document.getElementById("memberResult").innerHTML =
+  "<p style='color:red'>Member Not Found</p>";
+  return;
+}
+
+const d = data;
+const userId = d.member_id;
 
 if(snap.empty){
 document.getElementById("memberResult").innerHTML =
