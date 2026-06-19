@@ -442,6 +442,9 @@ box-shadow:0 0 20px #ff9800;
 
 <h3>✅ Activate Account</h3>
 <p id="accountStatus">Account Status: Loading...</p>
+<h3 id="activeMemberBadge" style="display:none;color:lime;">
+✅ Active Member
+</h3>
 <div class="dashed">
 Activation Amount: ₹99 One Time
 </div>
@@ -773,7 +776,11 @@ if(adminBox){
 
     const box = document.getElementById("activationBox");
     if(box) box.style.display = data.status === "Active" ? "none" : "block";
+const badge = document.getElementById("activeMemberBadge");
 
+if (badge) {
+  badge.style.display = data.status === "Active" ? "block" : "none";
+}
     if(typeof updateSpinText === "function"){
       updateSpinText();
     }
