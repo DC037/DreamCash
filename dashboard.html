@@ -1162,7 +1162,7 @@ window.startSpin = function(){
   const wheel = el("spinWheel");
 wheel.style.transition = "transform 4s ease-out";
 
-const rewards = [0.10,0.20,0.30,0.50,1.00];
+const rewards = [0.10,0.15,0.20,0.25,0.30];
 const reward = rewards[Math.floor(Math.random()*rewards.length)];
 const rotateDeg = 1800 + Math.floor(Math.random() * 360);
 
@@ -1227,7 +1227,7 @@ window.viewCheckInHistory = function(){
   alert(history.map(x => "Reward: " + x.reward + " DC\nðŸ“… " + x.date).join("\n\n"));
 };
 
-const scratchRewards = [0.10,0.20,0.30,0.50,0.75];
+const scratchRewards = [0.10,0.15,0.20,0.25,0.30];
 
 window.checkScratchAccess = function(){
   if(!isActiveUser()){
