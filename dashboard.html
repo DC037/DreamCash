@@ -1020,7 +1020,7 @@ window.showLevelTeam = async function(level){
         ${active ? "🟢" : "🔴"}
         <b>${user.member_id}</b><br>
         ${user.name || "User"}<br>
-Mobile : ${user.mobile || "N/A"}<br>
+${level === 1 ? `Mobile : ${user.mobile || "N/A"}<br>` : ""}
 Status : ${active ? "Active" : "Inactive"}
       </div>
     `;
