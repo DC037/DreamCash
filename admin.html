@@ -208,10 +208,13 @@ box.innerHTML = html;
     return;
   }
 
-  await distributeLevelIncome(userId);
-
   alert("User Activated Successfully");
-  loadActivationRequests();
+loadActivationRequests();
+
+try {
+  await distributeLevelIncome(userId);
+} catch (e) {
+  console.log(e.message);
 }
 
 async function distributeLevelIncome(userId) {
