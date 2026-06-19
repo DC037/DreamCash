@@ -949,8 +949,34 @@ window.showLevelTeam = function(level){
   el("myReferrals").innerHTML = "No Level " + level + " Team Found";
 };
 
-window.viewReferHistory = function(){
-  alert("No refer history found");
+window.viewReferHistory = async function(){
+  const userId = localStorage.getItem("member_id") || el("memberId").innerText;
+
+  const { data, error } = await supabaseClient
+    .from("income_history")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if(error){
+    alert("Income history error: " + error.message);
+    return;
+  }
+
+  if(!data || data.length === 0){
+    alert("No 5 Level Refer Income History Found");
+    return;
+  }
+
+  let msg = "💰 5 Level Refer Income History\n\n";
+
+  data.forEach(item => {
+    msg += "Level " + item.level + " Income: ₹" + item.amount + "\n";
+    msg += "From User: " + item.from_user_id + "\n";
+    msg += "Date: " + new Date(item.created_at).toLocaleString() + "\n\n";
+  });
+
+  alert(msg);
 };
 
 function getSpinData(){
