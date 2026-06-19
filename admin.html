@@ -194,73 +194,68 @@ box.innerHTML = html;
   async function approveActivation(id, userId) {
   if (!confirm("Approve this activation request?")) return;
 
-  const reqRef = db.collection("activationRequests").doc(id);
-  const reqDoc = await reqRef.get();
-  const reqData = reqDoc.data();
-
-  if (reqData.status === "Approved") {
-    alert("Already Approved");
-    return;
-  }
-
   await db.collection("users").doc(userId).update({
     isActive: true,
     activationDate: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  await reqRef.update({
-    status: "Approved",
-    approvedAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
+  const { error } = await supabaseClient
+    .from("activation_requests")
+    .update({ status: "Approved" })
+    .eq("id", id);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
 
   await distributeLevelIncome(userId);
 
   alert("User Activated Successfully");
   loadActivationRequests();
+}
+
+async function distributeLevelIncome(userId) {
+  const levelAmounts = [25, 10, 5, 5, 5];
+
+  let userDoc = await db.collection("users").doc(userId).get();
+  let userData = userDoc.data();
+
+  let uplineCode = userData.referredBy;
+
+  for (let i = 0; i < 5; i++) {
+    if (!uplineCode) break;
+
+    const snap = await db.collection("users")
+      .where("myReferralCode", "==", uplineCode)
+      .limit(1)
+      .get();
+
+    if (snap.empty) break;
+
+    const uplineDoc = snap.docs[0];
+    const uplineData = uplineDoc.data();
+    const amount = levelAmounts[i];
+
+    await db.collection("users").doc(uplineDoc.id).update({
+      balance: firebase.firestore.FieldValue.increment(amount),
+      referralIncome: firebase.firestore.FieldValue.increment(amount)
+    });
+
+    await db.collection("incomeHistory").add({
+      uid: uplineDoc.id,
+      fromUserId: userId,
+      type: "Level " + (i + 1) + " Joining Income",
+      amount: amount,
+      note: "Level " + (i + 1) + " income from new member activation",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    uplineCode = uplineData.referredBy;
   }
-  async function distributeLevelIncome(userId){
+}
 
-const levelAmounts = [25, 10, 5, 5, 5];
-
-let userDoc = await db.collection("users").doc(userId).get();
-let userData = userDoc.data();
-
-let uplineCode = userData.referredBy;
-
-for(let i = 0; i < 5; i++){
-
-if(!uplineCode){ break; }
-
-const snap = await db.collection("users")
-.where("myReferralCode", "==", uplineCode)
-.limit(1)
-.get();
-
-if(snap.empty){ break; }
-
-const uplineDoc = snap.docs[0];
-const uplineData = uplineDoc.data();
-
-const amount = levelAmounts[i];
-
-await db.collection("users").doc(uplineDoc.id).update({
-  balance: firebase.firestore.FieldValue.increment(amount),
-  referralIncome: firebase.firestore.FieldValue.increment(amount)
-});
-
-await db.collection("incomeHistory").add({
-  uid: uplineDoc.id,
-  fromUserId: userId,
-  type: "Level " + (i + 1) + " Joining Income",
-  amount: amount,
-  note: "Level " + (i + 1) + " income from new member activation",
-  createdAt: firebase.firestore.FieldValue.serverTimestamp()
-});
-
-uplineCode = uplineData.referredBy;
-
-  }
-  async function rejectActivation(id, userId) {
+async function rejectActivation(id, userId) {
   if (!confirm("Reject this activation request?")) return;
 
   await db.collection("users").doc(userId).update({
@@ -268,14 +263,19 @@ uplineCode = uplineData.referredBy;
     activationDate: null
   });
 
-  await db.collection("activationRequests").doc(id).update({
-    status: "Rejected",
-    rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
+  const { error } = await supabaseClient
+    .from("activation_requests")
+    .update({ status: "Rejected" })
+    .eq("id", id);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
 
   alert("Activation Request Rejected");
   loadActivationRequests();
-  }
+}
 
 async function approveWithdraw(id){
   await db.collection("withdrawals").doc(id).update({
