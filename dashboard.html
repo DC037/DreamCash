@@ -792,7 +792,7 @@ window.openUPIPayment = function(){
   window.location.href = "upi://pay?pa=Q361153102@ybl&pn=DreamCash&am=99&cu=INR";
 };
 
-window.submitActivationRequest = function(){
+window.submitActivationRequest = async function(){
   const amount = el("depositAmount").value.trim();
   const transactionId = el("transactionId").value.trim();
 
@@ -801,25 +801,38 @@ window.submitActivationRequest = function(){
     return;
   }
 
-  const requests = JSON.parse(localStorage.getItem("activationRequests") || "[]");
   const currentUserId = (localStorage.getItem("userId") || el("myCode").innerText || "").trim();
 
-const existingRequest = requests.find(r =>
-  r.userId === currentUserId && r.status === "Pending"
-);
-if(existingRequest){
+const { data: oldRequest, error: checkError } = await supabase
+  .from("activation_requests")
+  .select("*")
+  .eq("user_id", currentUserId)
+  .eq("status", "Pending")
+  .limit(1);
+
+if(checkError){
+  alert(checkError.message);
+  return;
+}
+
+if(oldRequest && oldRequest.length > 0){
   alert("Request Already Submitted. Please Wait For Admin Approval.");
   return;
- }
-  requests.unshift({
-    userId: currentUserId,
+}
+
+const { error } = await supabase
+  .from("activation_requests")
+  .insert([{
+    user_id: currentUserId,
     amount: Number(amount),
-    transactionId,
-    status: "Pending",
-    date: new Date().toLocaleString()
-  });
-  localStorage.setItem("activationRequests", JSON.stringify(requests));
-localStorage.setItem("activationPending","true");
+    transaction_id: transactionId,
+    status: "Pending"
+  }]);
+
+if(error){
+  alert(error.message);
+  return;
+}
   el("activationStatus").innerText = "Activation request submitted. Support approval pending.";
   el("depositAmount").value = "";
   el("transactionId").value = "";
