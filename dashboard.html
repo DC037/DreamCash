@@ -685,8 +685,14 @@ async function loadDashboard(){
     const memberId = localStorage.getItem("member_id");
 
     if(!memberId){
-      setDefault();
-      return;
+  const lastMemberId = localStorage.getItem("last_member_id");
+  if(lastMemberId){
+    localStorage.setItem("member_id", lastMemberId);
+    location.reload();
+    return;
+  }
+  setDefault();
+  return;
     }
 
     const { data, error } = await supabaseClient
