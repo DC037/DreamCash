@@ -682,42 +682,56 @@ async function loadDashboard(){
   }
 
   try{
-    const memberId = localStorage.getItem("member_id");
+  let memberId = localStorage.getItem("member_id");
+  let data, error;
 
-    if(!memberId){
-  const lastMemberId = localStorage.getItem("last_member_id");
-  if(lastMemberId){
-    localStorage.setItem("member_id", lastMemberId);
-    location.reload();
-    return;
-  }
-  setDefault();
-  return;
-    }
-
-    const { data, error } = await supabaseClient
+  if(memberId){
+    const res = await supabaseClient
       .from("users")
       .select("*")
       .eq("member_id", memberId)
       .maybeSingle();
 
-    if(error || !data){
-      console.log("Dashboard error:", error);
+    data = res.data;
+    error = res.error;
+  }else{
+    const authRes = await supabaseClient.auth.getUser();
+    const userEmail = authRes.data.user?.email;
+
+    if(!userEmail){
       setDefault();
       return;
     }
 
-    const referralCode =
-  "https://dc037.github.io/DreamCash/login.html?ref=" + data.member_id;
+    const res = await supabaseClient
+      .from("users")
+      .select("*")
+      .eq("email", userEmail.toLowerCase())
+      .maybeSingle();
 
-    setText("userName", data.name || "User");
-    setText("memberId", data.member_id || "DC1001");
-    setText("status", data.status || "Inactive");
-    setText("walletMemberStatus", data.status === "Active" ? "✅ Active Member" : "🔴 Inactive Member");
-    setText("accountStatus", data.status === "Active" ? "🟢 Account Status: Active" : "🔴 Account Status: Inactive");
-    setText("balance", Number(data.wallet || 0).toFixed(2) + "DC");
-    setText("totalRefer", data.referral_count || data.referralCount || 0);
-    setText("myCode", referralCode);
+    data = res.data;
+    error = res.error;
+  }
+
+  if(error || !data){
+    setDefault();
+    return;
+  }
+
+  localStorage.setItem("member_id", data.member_id);
+  localStorage.setItem("last_member_id", data.member_id);
+
+  const referralCode =
+    "https://dc037.github.io/DreamCash/login.html?ref=" + data.member_id;
+
+  setText("userName", data.name || "User");
+  setText("memberId", data.member_id || "DC1001");
+  setText("status", data.status || "Inactive");
+  setText("walletMemberStatus", data.status === "Active" ? "✅ Active Member" : "🔴 Inactive Member");
+  setText("accountStatus", data.status === "Active" ? "🟢 Account Status: Active" : "🔴 Account Status: Inactive");
+  setText("balance", Number(data.wallet || 0).toFixed(2) + " DC");
+  setText("totalRefer", data.referral_count || data.referralCount || 0);
+  setText("myCode", referralCode);
 
     const box = document.getElementById("activationBox");
     if(box) box.style.display = data.status === "Active" ? "none" : "block";
