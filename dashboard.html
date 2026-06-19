@@ -779,7 +779,10 @@ if(error || !data){
 
     return;
 }
-
+if(!data || !data.member_id){
+   setDefault();
+   return; 
+}
   localStorage.setItem("member_id", data.member_id);
   localStorage.setItem("last_member_id", data.member_id);
 
@@ -799,6 +802,7 @@ if(adminBox){
   adminBox.style.display =
     data.email === "vasimahmad614@gmail.com" ? "block" : "none";
             }
+    console.log("Dashboard Data:", data);
   setText("walletMemberStatus", data.status === "Active" ? "✅ Active Member" : "🔴 Inactive Member");
   setText("accountStatus", data.status === "Active" ? "🟢 Account Status: Active" : "🔴 Account Status: Inactive");
   setText("balance", Number(data.wallet || 0).toFixed(2));
