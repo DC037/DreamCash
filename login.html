@@ -218,8 +218,9 @@ async function registerUser(){
   }
 
   localStorage.setItem("member_id", newMemberId);
-  alert("Registration Successful");
-  window.location.href = "dashboard.html";
+localStorage.setItem("last_member_id", newMemberId);
+alert("Registration Successful");
+window.location.href = "dashboard.html?member_id=" + newMemberId;
 }
 
 async function loginUser(){
@@ -258,7 +259,8 @@ async function loginUser(){
   }
 
   localStorage.setItem("member_id", data[0].member_id);
-  window.location.href = "dashboard.html";
+  localStorage.setItem("last_member_id", data[0].member_id);
+  window.location.href = "dashboard.html?member_id=" + data[0].member_id;
 }
 
 async function forgotPassword(){
