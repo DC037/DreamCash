@@ -163,6 +163,7 @@ async function loadActivationRequests(){
     <div class="row">
       <b>Amount:</b> ₹${d.amount}<br>
       <b>Transaction ID:</b> ${d.transaction_id}<br>
+      <b>Name:</b> ${d.userName || d.name || d.fullName || "N/A"}<br>
       <b>User ID:</b> ${d.user_id}<br>
       <b>Status:</b>
       <span class="status ${d.status === 'Approved' ? 'approved' : d.status === 'Rejected' ? 'rejected' : 'pending'}">
