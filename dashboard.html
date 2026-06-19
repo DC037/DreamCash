@@ -788,7 +788,8 @@ if(adminBox){
   setText("walletMemberStatus", data.status === "Active" ? "✅ Active Member" : "🔴 Inactive Member");
   setText("accountStatus", data.status === "Active" ? "🟢 Account Status: Active" : "🔴 Account Status: Inactive");
   setText("balance", Number(data.wallet || 0).toFixed(2));
-  setText("totalRefer", data.referral_count || data.referralCount || 0);
+  const totalTeamCount = await countTotalTeam(data.member_id);
+setText("totalRefer", totalTeamCount);
   setText("myCode", referralCode);
 
     const box = document.getElementById("activationBox");
