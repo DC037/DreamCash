@@ -427,14 +427,6 @@ if (error || !data) {
 const d = data;
 const userId = d.member_id;
 
-if(snap.empty){
-document.getElementById("memberResult").innerHTML =
-"<p style='color:red'>Member Not Found</p>";
-return;
-}
-
-const d = snap.docs[0].data();
-const userId = snap.docs[0].id;
 document.getElementById("memberResult").innerHTML = `
 <div class="row">
 <b>Name:</b> ${d.fullName || "N/A"}<br>
