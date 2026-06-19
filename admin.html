@@ -168,9 +168,8 @@ html += `
 <b>Transaction ID:</b> ${d.transaction_id}<br>
 <b>User ID:</b> ${d.user_id}<br>
 
-<b>Status:</b>
-<span class="status pending">
-${d.status}
+<span class="status ${d.status === 'Approved' ? 'approved' : d.status === 'Rejected' ? 'rejected' : 'pending'}">
+${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d.status}
 </span>
 
 <br><br>
