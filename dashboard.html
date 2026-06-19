@@ -802,6 +802,12 @@ window.submitActivationRequest = function(){
   }
 
   const requests = JSON.parse(localStorage.getItem("activationRequests") || "[]");
+  const existingRequest = requests.find(r => r.status === "Pending");
+
+if(existingRequest){
+  alert("Request Already Submitted. Please Wait For Admin Approval.");
+  return;
+ }
   requests.unshift({
     amount: Number(amount),
     transactionId,
@@ -809,7 +815,7 @@ window.submitActivationRequest = function(){
     date: new Date().toLocaleString()
   });
   localStorage.setItem("activationRequests", JSON.stringify(requests));
-
+localStorage.setItem("activationPending","true");
   el("activationStatus").innerText = "Activation request submitted. Support approval pending.";
   el("depositAmount").value = "";
   el("transactionId").value = "";
