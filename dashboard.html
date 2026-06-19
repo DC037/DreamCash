@@ -719,17 +719,26 @@ if(memberId){
     data = res.data;
     error = res.error;
   }
+if(error || !data){
+    if(memberId){
+        const tempReferralCode =
+        "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + memberId;
 
-  if(error || !data){
+        setText("memberId", memberId);
+        setText("myCode", tempReferralCode);
+        return;
+    }
+
     setDefault();
     return;
+}
   }
 
   localStorage.setItem("member_id", data.member_id);
   localStorage.setItem("last_member_id", data.member_id);
 
   const referralCode =
-    "https://dc037.github.io/DreamCash/login.html?ref=" + data.member_id;
+    "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + data.member_id;
 
   setText("userName", data.name || "User");
   setText("memberId", data.member_id || "DC1001");
