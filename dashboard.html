@@ -1390,11 +1390,6 @@ window.viewCheckInHistory = function(){
 
 const scratchRewards = [0.10, 0.15, 0.20, 0.25, 0.30];
 
-let scratchDataNow = null;
-let scratchRewardValue = 0;
-let canvas, ctx;
-let isDrawing = false;
-let rewardClaimed = false;
 
 function getTodayDate(){
   return new Date().toISOString().split("T")[0];
@@ -1420,7 +1415,7 @@ window.checkScratchAccess = async function(){
 
   const today = getTodayDate();
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from("daily_claims")
     .select("*")
     .eq("user_id", userId)
@@ -1495,7 +1490,7 @@ async function claimAfterScratch(){
   const newCount = scratchDataNow.claim_count + 1;
 
   if(scratchDataNow.claimId){
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from("daily_claims")
       .update({
         claim_count: newCount,
@@ -1510,7 +1505,7 @@ async function claimAfterScratch(){
       return;
     }
   }else{
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from("daily_claims")
       .insert([{
         user_id: scratchDataNow.userId,
