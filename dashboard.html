@@ -1337,11 +1337,13 @@ window.dailyCheckIn = function(){
 window.viewCheckInHistory = function(){
   const data = JSON.parse(localStorage.getItem("dailyCheckIn") || "{}");
   const history = data.history || [];
+
   if(history.length === 0){
     alert("No Check-In History Found");
     return;
   }
-"Reward: " + x.reward + " DC\n" + x.date
+
+  alert(history.map(x => "Reward: " + x.reward + " DC\n" + x.date).join("\n\n"));
 };
 
 const scratchRewards = [0.10,0.15,0.20,0.25,0.30];
