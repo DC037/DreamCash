@@ -1608,13 +1608,13 @@ window.viewScratchHistory = function(){
 
   alert(history.map(x => "Reward: " + x.reward + " DC\n" + x.date).join("\n\n"));
 };
-function openQRPopup(){
+window.openQRPopup = function(){
   document.getElementById("qrPopup").style.display = "block";
-}
+};
 
-function closeQRPopup(){
+window.closeQRPopup = function(){
   document.getElementById("qrPopup").style.display = "none";
-}
+};
 document.addEventListener("DOMContentLoaded", function(){
   loadDashboard();
 
