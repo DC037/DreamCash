@@ -1388,30 +1388,71 @@ window.viewCheckInHistory = function(){
   alert(history.map(x => "Reward: " + x.reward + " DC\n" + x.date).join("\n\n"));
 };
 
-const scratchRewards = [0.10,0.15,0.20,0.25,0.30];
+const scratchRewards = [0.10, 0.15, 0.20, 0.25, 0.30];
 
-window.checkScratchAccess = function(){
+let scratchDataNow = null;
+let scratchRewardValue = 0;
+let canvas, ctx;
+let isDrawing = false;
+let rewardClaimed = false;
+
+function getTodayDate(){
+  return new Date().toISOString().split("T")[0];
+}
+
+function getScratchUserId(){
+  const u = JSON.parse(localStorage.getItem("activeUser") || "{}");
+  return u.member_id || u.id || localStorage.getItem("member_id");
+}
+
+window.checkScratchAccess = async function(){
   if(!isActiveUser()){
     alert("Please Active ID");
     return;
   }
+
+  const userId = getScratchUserId();
+
+  if(!userId){
+    alert("User ID not found. Please login again.");
+    return;
+  }
+
+  const today = getTodayDate();
+
+  const { data, error } = await supabase
+    .from("daily_claims")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("task_type", "scratch")
+    .eq("claim_date", today)
+    .maybeSingle();
+
+  if(error){
+    alert("Scratch check error");
+    console.log(error);
+    return;
+  }
+
+  if(data && Number(data.claim_count) >= 5){
+    alert("Your 5 scratch cards are finished today. Come back tomorrow.");
+    return;
+  }
+
+  scratchDataNow = {
+    userId: userId,
+    today: today,
+    claimId: data ? data.id : null,
+    left: data ? 5 - Number(data.claim_count) : 5,
+    claim_count: data ? Number(data.claim_count) : 0
+  };
+
   openScratchPopup();
 };
 
 window.openScratchPopup = function(){
-  scratchDataNow = JSON.parse(localStorage.getItem("scratchCardData") || "{}");
-  const now = Date.now();
+  scratchRewardValue = scratchRewards[Math.floor(Math.random() * scratchRewards.length)];
 
-  if(!scratchDataNow.lastTime || now - scratchDataNow.lastTime >= 86400000){
-    scratchDataNow = {left:5,lastTime:now};
-  }
-
-  if(scratchDataNow.left <= 0){
-    alert("Your 5 scratch cards are finished. Come back after 24 hours.");
-    return;
-  }
-
-  scratchRewardValue = scratchRewards[Math.floor(Math.random()*scratchRewards.length)];
   el("scratchReward").innerText = scratchRewardValue.toFixed(2) + " DC";
   el("scratchPopup").style.display = "flex";
 
@@ -1421,9 +1462,9 @@ window.openScratchPopup = function(){
   rewardClaimed = false;
 
   ctx.globalCompositeOperation = "source-over";
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "orange";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 };
 
 window.closeScratchPopup = function(){
@@ -1432,39 +1473,82 @@ window.closeScratchPopup = function(){
 
 function scratchMove(e){
   if(!isDrawing || !ctx) return;
+
   e.preventDefault();
   ctx.globalCompositeOperation = "destination-out";
+
   const rect = canvas.getBoundingClientRect();
   const point = e.touches ? e.touches[0] : e;
+
   const x = (point.clientX - rect.left) * (canvas.width / rect.width);
   const y = (point.clientY - rect.top) * (canvas.height / rect.height);
+
   ctx.beginPath();
-  ctx.arc(x,y,30,0,Math.PI*2);
+  ctx.arc(x, y, 30, 0, Math.PI * 2);
   ctx.fill();
 }
 
-function claimAfterScratch(){
+async function claimAfterScratch(){
   if(rewardClaimed || !scratchDataNow) return;
   rewardClaimed = true;
 
-  scratchDataNow.left--;
-  scratchDataNow.history = scratchDataNow.history || [];
-  scratchDataNow.history.unshift({
-    reward: scratchRewardValue,
+  const newCount = scratchDataNow.claim_count + 1;
+
+  if(scratchDataNow.claimId){
+    const { error } = await supabase
+      .from("daily_claims")
+      .update({
+        claim_count: newCount,
+        points: scratchRewardValue
+      })
+      .eq("id", scratchDataNow.claimId);
+
+    if(error){
+      alert("Scratch claim error");
+      console.log(error);
+      rewardClaimed = false;
+      return;
+    }
+  }else{
+    const { error } = await supabase
+      .from("daily_claims")
+      .insert([{
+        user_id: scratchDataNow.userId,
+        task_type: "scratch",
+        claim_date: scratchDataNow.today,
+        points: scratchRewardValue,
+        claim_count: 1
+      }]);
+
+    if(error){
+      alert("Scratch claim error");
+      console.log(error);
+      rewardClaimed = false;
+      return;
+    }
+  }
+
+  addBalance(scratchRewardValue);
+
+  const history = JSON.parse(localStorage.getItem("scratchHistory") || "[]");
+  history.unshift({
+    reward: scratchRewardValue.toFixed(2),
     date: new Date().toLocaleString()
   });
-  localStorage.setItem("scratchCardData", JSON.stringify(scratchDataNow));
-  addBalance(scratchRewardValue);
-  alert("You Won " + scratchRewardValue.toFixed(2) + " DC | Scratch Left: " + scratchDataNow.left);
+  localStorage.setItem("scratchHistory", JSON.stringify(history));
+
+  alert("You Won " + scratchRewardValue.toFixed(2) + " DC");
+  closeScratchPopup();
 }
 
 window.viewScratchHistory = function(){
-  const data = JSON.parse(localStorage.getItem("scratchCardData") || "{}");
-  const history = data.history || [];
+  const history = JSON.parse(localStorage.getItem("scratchHistory") || "[]");
+
   if(history.length === 0){
     alert("No Scratch History Found");
     return;
   }
+
   alert(history.map(x => "Reward: " + x.reward + " DC\n" + x.date).join("\n\n"));
 };
 
