@@ -1353,32 +1353,87 @@ window.showSpinHistory = function(){
   window.scrollTo({top: el("spinHistoryList").offsetTop, behavior:"smooth"});
 };
 
-window.dailyCheckIn = function(){
+window.dailyCheckIn = async function(){
   if(!isActiveUser()){
     alert("Please Active ID");
     return;
   }
 
-  const data = JSON.parse(localStorage.getItem("dailyCheckIn") || "{}");
-  const now = Date.now();
+  const userId = getMemberId();
+  const today = getTodayDate();
 
-  if(data.lastClaim && now - data.lastClaim < 86400000){
-    alert("Daily reward already claimed. Come back after 24 hours.");
+  if(!userId || userId === "DC1001"){
+    alert("User ID not found. Please login again.");
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("daily_claims")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("task_type", "checkin")
+    .eq("claim_date", today)
+    .maybeSingle();
+
+  if(error){
+    alert("Check-In error: " + error.message);
+    return;
+  }
+
+  if(data && Number(data.claim_count) >= 1){
+    alert("Daily reward already claimed today. Come back tomorrow.");
     return;
   }
 
   const reward = Number((Math.random() * 0.40 + 0.10).toFixed(2));
-  data.lastClaim = now;
-  data.history = data.history || [];
-  data.history.unshift({reward, date:new Date().toLocaleString()});
-  localStorage.setItem("dailyCheckIn", JSON.stringify(data));
+
+  const saveData = {
+    user_id: userId,
+    task_type: "checkin",
+    claim_date: today,
+    points: Math.round(reward * 100),
+    claim_count: 1
+  };
+
+  let saveError = null;
+
+  if(data && data.id){
+    const res = await supabaseClient
+      .from("daily_claims")
+      .update({
+        points: Math.round(reward * 100),
+        claim_count: 1
+      })
+      .eq("id", data.id);
+
+    saveError = res.error;
+  }else{
+    const res = await supabaseClient
+      .from("daily_claims")
+      .insert([saveData]);
+
+    saveError = res.error;
+  }
+
+  if(saveError){
+    alert("Check-In save error: " + saveError.message);
+    return;
+  }
+
   addBalance(reward);
+
+  const history = JSON.parse(localStorage.getItem("checkInHistory") || "[]");
+  history.unshift({
+    reward: reward.toFixed(2),
+    date: new Date().toLocaleString()
+  });
+  localStorage.setItem("checkInHistory", JSON.stringify(history));
+
   alert("Daily Check-In Success! You won " + reward.toFixed(2) + " DC");
 };
 
 window.viewCheckInHistory = function(){
-  const data = JSON.parse(localStorage.getItem("dailyCheckIn") || "{}");
-  const history = data.history || [];
+  const history = JSON.parse(localStorage.getItem("checkInHistory") || "[]");
 
   if(history.length === 0){
     alert("No Check-In History Found");
