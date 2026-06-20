@@ -1494,7 +1494,7 @@ async function claimAfterScratch(){
       .from("daily_claims")
       .update({
         claim_count: newCount,
-        points: scratchRewardValue
+        points: Math.round(scratchRewardValue * 100)
       })
       .eq("id", scratchDataNow.claimId);
 
@@ -1511,7 +1511,7 @@ async function claimAfterScratch(){
         user_id: scratchDataNow.userId,
         task_type: "scratch",
         claim_date: scratchDataNow.today,
-        points: scratchRewardValue,
+        points: Math.round(scratchRewardValue * 100)
         claim_count: 1
       }]);
 
