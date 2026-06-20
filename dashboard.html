@@ -1219,36 +1219,42 @@ window.viewReferHistory = async function(){
   alert(msg);
 };
 
-function getSpinData(){
-  let data = JSON.parse(localStorage.getItem("dreamSpinData") || "{}");
-  const now = Date.now();
-  if(!data.lastTime || now - data.lastTime >= 86400000){
-    data = {spinsLeft:5,lastTime:now};
-    localStorage.setItem("dreamSpinData", JSON.stringify(data));
-  }
-  return data;
+function getMemberId(){
+  return localStorage.getItem("member_id") ||
+         localStorage.getItem("last_member_id") ||
+         el("memberId")?.innerText?.trim();
 }
-window.getSpinData = getSpinData;
 
-function updateSpinText(){
+async function getSpinData(){
+  const memberId = getMemberId();
+  const today = new Date().toISOString().split("T")[0];
+
+  const { data } = await supabaseClient
+    .from("daily_claims")
+    .select("*")
+    .eq("user_id", memberId)
+    .eq("task_type", "spin")
+    .eq("claim_date", today)
+    .maybeSingle();
+
+  const used = data ? Number(data.claim_count || 0) : 0;
+  return { spinsLeft: 5 - used, claimRow: data };
+}
+
+async function updateSpinText(){
   const text = el("spinLeftText");
   if(!text) return;
-  const data = getSpinData();
+  const data = await getSpinData();
   text.innerText = "Today Spins Left: " + data.spinsLeft;
 }
-window.updateSpinText = updateSpinText;
 
-window.checkSpinAccess = function(){
+window.checkSpinAccess = async function(){
   if(!isActiveUser()){
     alert("Please Active ID");
     return;
   }
-  openSpinWheel();
-};
-
-window.openSpinWheel = function(){
   el("spinPopup").style.display = "flex";
-  updateSpinText();
+  await updateSpinText();
 };
 
 window.closeSpinWheel = function(){
@@ -1258,24 +1264,60 @@ window.closeSpinWheel = function(){
 function saveSpinHistory(reward){
   const history = JSON.parse(localStorage.getItem("spinHistory") || "[]");
   history.unshift({
-    reward,
+    reward: reward,
     date: new Date().toLocaleDateString(),
     time: new Date().toLocaleTimeString()
   });
   localStorage.setItem("spinHistory", JSON.stringify(history.slice(0,20)));
 }
 
-window.startSpin = function(){
-  const data = getSpinData();
-  if(data.spinsLeft <= 0){
+window.startSpin = async function(){
+  const memberId = getMemberId();
+
+  if(!memberId || memberId === "DC1001"){
+    alert("Member ID not found. Please login again.");
+    return;
+  }
+
+  const spinData = await getSpinData();
+
+  if(spinData.spinsLeft <= 0){
     alert("No spins left today. Come back tomorrow.");
     return;
   }
 
-  data.spinsLeft--;
-  localStorage.setItem("dreamSpinData", JSON.stringify(data));
-  updateSpinText();
+  const today = new Date().toISOString().split("T")[0];
 
+  if(spinData.claimRow){
+    const newCount = Number(spinData.claimRow.claim_count || 0) + 1;
+
+    const { error } = await supabaseClient
+      .from("daily_claims")
+      .update({ claim_count: newCount })
+      .eq("id", spinData.claimRow.id);
+
+    if(error){
+      alert("Spin claim save error");
+      return;
+    }
+  }else{
+    const { error } = await supabaseClient
+      .from("daily_claims")
+      .insert({
+        user_id: memberId,
+        task_type: "spin",
+        claim_date: today,
+        points: 0,
+        claim_count: 1
+      });
+
+    if(error){
+      alert("Spin claim save error");
+      return;
+    }
+  }
+
+  await updateSpinText();
   const wheel = el("spinWheel");
 wheel.style.transition = "transform 4s ease-out";
 
