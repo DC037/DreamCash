@@ -1295,14 +1295,14 @@ setTimeout(function(){
 
 window.showSpinHistory = function(){
   const history = JSON.parse(localStorage.getItem("spinHistory") || "[]");
-  let html = "<div class='card section'><h3>ðŸŽ¡ Spin History</h3>";
+  let html = "<div class='card section'><h3>Spin History</h3>";
   if(history.length === 0){
     html += "<p class='small'>No Spin History Found</p>";
   }else{
     history.forEach(item => {
       html += `<div class="spinHistoryItem">
-        <div class="spinReward">ðŸŽ ${item.reward} DC Won</div>
-        <div class="spinDate">ðŸ“… ${item.date} â€¢ â° ${item.time}</div>
+        <div class="spinReward">${item.reward} DC Won</div>
+        <div class="spinDate">${item.date} - ${item.time}</div>
       </div>`;
     });
   }
@@ -1341,7 +1341,7 @@ window.viewCheckInHistory = function(){
     alert("No Check-In History Found");
     return;
   }
-  alert(history.map(x => "Reward: " + x.reward + " DC\nðŸ“… " + x.date).join("\n\n"));
+"Reward: " + x.reward + " DC\n" + x.date
 };
 
 const scratchRewards = [0.10,0.15,0.20,0.25,0.30];
