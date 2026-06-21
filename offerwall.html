@@ -87,18 +87,8 @@ body{
 
 <div class="container">
 
-    <div class="offer-card">
-        <div class="offer-title">Install App</div>
-        <div class="offer-desc">Install the app and complete signup.</div>
-        <div class="offer-reward">Reward: 100 Coins</div>
-        <button class="btn">Start Offer</button>
-    </div>
-
-    <div class="offer-card">
-        <div class="offer-title">Watch Video</div>
-        <div class="offer-desc">Watch full video and earn reward.</div>
-        <div class="offer-reward">Reward: 50 Coins</div>
-        <button class="btn">Start Offer</button>
+    <div id="offersList">
+    Loading offers...
     </div>
 
     <a href="dashboard.html" class="back-btn">
@@ -106,6 +96,39 @@ body{
     </a>
 
 </div>
+<script>
+document.getElementById("offersList").innerHTML = `
+<div class="offer-card">
 
+    <div class="offer-title">
+        YouTube Subscribe
+    </div>
+
+    <div class="offer-desc">
+        Subscribe channel and upload screenshot proof.
+    </div>
+
+    <div class="offer-reward">
+        Reward: 50 Coins
+    </div>
+
+    <button class="btn"
+        onclick="window.open('https://youtube.com','_blank')">
+        Open Task
+    </button>
+
+    <br><br>
+
+    <input type="file" accept="image/*">
+
+    <br><br>
+
+    <button class="btn">
+        Upload Screenshot
+    </button>
+
+</div>
+`;
+</script>
 </body>
 </html>
