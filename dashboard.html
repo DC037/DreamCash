@@ -952,12 +952,25 @@ window.submitActivationRequest = async function(){
     return;
   }
 
-  const currentUserId = (localStorage.getItem("userId") || el("myCode").innerText || "").trim();
+  const currentUserId =
+(localStorage.getItem("member_id") ||
+localStorage.getItem("last_member_id") ||
+el("memberId").innerText ||
+"").trim();
 if(!currentUserId){
   alert("User ID not found. Please login again.");
   return;
 }
-  
+  const { data: activeUserData, error: userDataError } = await supabaseClient
+  .from("users")
+  .select("name, member_id")
+  .eq("member_id", currentUserId)
+  .maybeSingle();
+
+if(userDataError){
+  alert("User data fetch error: " + userDataError.message);
+  return;
+}
 const { data: oldRequest, error: checkError } = await supabaseClient
   .from("activation_requests")
   .select("*")
@@ -981,6 +994,8 @@ const { error } = await supabaseClient
   .from("activation_requests")
   .insert([{
     user_id: currentUserId,
+    name: activeUserData?.name || "N/A",
+member_id: activeUserData?.member_id || currentUserId,
     amount: Number(amount),
     transaction_id: transactionId,
     status: "Pending"
