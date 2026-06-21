@@ -96,39 +96,23 @@ body{
     </a>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-document.getElementById("offersList").innerHTML = `
-<div class="offer-card">
+const SUPABASE_URL = "https://baqiuxvscfmtvhceqk.supabase.co";
 
-    <div class="offer-title">
-        YouTube Subscribe
-    </div>
+const SUPABASE_KEY =
+"sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
 
-    <div class="offer-desc">
-        Subscribe channel and upload screenshot proof.
-    </div>
+const supabaseClient =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-    <div class="offer-reward">
-        Reward: 50 Coins
-    </div>
-
-    <button class="btn"
-        onclick="window.open('https://youtube.com','_blank')">
-        Open Task
-    </button>
-
-    <br><br>
-
-    <input type="file" accept="image/*">
-
-    <br><br>
-
-    <button class="btn">
-        Upload Screenshot
-    </button>
-
-</div>
-`;
+document.getElementById("offersList").innerHTML =
+"Supabase Connected";
 </script>
+
 </body>
 </html>
