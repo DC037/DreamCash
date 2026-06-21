@@ -418,44 +418,17 @@ box-shadow:0 0 20px #ff9800;
   </div>
 
   <div class="box offerPurple">
-    <div class="icon">📋</div>
-    <h3>Offer Wall</h3>
-    <p>Complete tasks and earn.</p>
+  <div class="icon">📋</div>
+  <h3>Offer Wall</h3>
+  <p>Complete tasks and earn.</p>
 
-    <button class="btn orange" onclick="showOfferWall()">Open Offers</button>
-    <button class="btn blue" onclick="viewOfferHistory()">Offer History</button>
-  </div>
-<div id="offerHistoryBox" style="display:none;">
-  <div class="card section">
-    <h3>📋 Offer History</h3>
+  <button class="btn orange" onclick="window.location.href='offerwall.html'">
+    Open Offers
+  </button>
 
-    <button class="btn" onclick="filterOfferHistory('complete')" style="background:green;color:white;">
-      Complete
-    </button>
-
-    <button class="btn" onclick="filterOfferHistory('pending')" style="background:orange;color:white;">
-      Pending
-    </button>
-
-    <button class="btn" onclick="filterOfferHistory('reject')" style="background:red;color:white;">
-      Reject
-    </button>
-
-    <div style="margin-top:15px;">
-
-      <div class="offerTask completeTask" style="background:#e8ffe8;padding:10px;border-radius:8px;margin-bottom:8px;color:green;">
-        ✅ Complete Task
-      </div>
-
-      <div class="offerTask pendingTask" style="background:#fff4d6;padding:10px;border-radius:8px;margin-bottom:8px;color:#cc8800;">
-        ⏳ Pending Task
-      </div>
-
-      <div class="offerTask rejectTask" style="background:#ffe8e8;padding:10px;border-radius:8px;color:red;">
-        ❌ Reject Task
-      </div>
-
-    </div>
+  <button class="btn blue" onclick="window.location.href='offer-history.html'">
+    Offer History
+  </button>
   </div>
 </div>
 </div>
@@ -1680,30 +1653,7 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 });
   })();
-  function showOfferWall() {
-  alert("Offer Wall Coming Soon");
-}
-
-function viewOfferHistory() {
-  document.getElementById("offerHistoryBox").style.display = "block";
-}
-  function filterOfferHistory(type) {
-  document.querySelectorAll(".offerTask").forEach(function(task) {
-    task.style.display = "none";
-  });
-
-  if (type === "complete") {
-    document.querySelector(".completeTask").style.display = "block";
-  }
-
-  if (type === "pending") {
-    document.querySelector(".pendingTask").style.display = "block";
-  }
-
-  if (type === "reject") {
-    document.querySelector(".rejectTask").style.display = "block";
-  }
-  }
+  
 </script>
   <div style="text-align:center;padding:20px 10px 90px 10px;font-size:13px;color:#666;">
 
