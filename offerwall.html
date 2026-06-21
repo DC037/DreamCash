@@ -130,10 +130,12 @@ fetch(SUPABASE_URL + "/rest/v1/offers?status=eq.active&select=*", {
         </button>
 
         <br><br>
-        <input type="file" accept="image/*">
+        <input type="file" accept="image/*" id="file-${offer.id}">
         <br><br>
 
-        <button class="btn">Upload Screenshot</button>
+        <button class="btn" onclick="uploadProof('${offer.id}', ${offer.reward})">
+Upload Screenshot
+</button>
       </div>
     `;
   });
@@ -143,6 +145,17 @@ fetch(SUPABASE_URL + "/rest/v1/offers?status=eq.active&select=*", {
 .catch(err => {
   document.getElementById("offersList").innerHTML = "Error: " + err.message;
 });
+    async function uploadProof(offerId, reward){
+  const fileInput = document.getElementById("file-" + offerId);
+  const file = fileInput.files[0];
+
+  if(!file){
+    alert("Please choose screenshot first");
+    return;
+  }
+
+  alert("Screenshot selected. Upload system next step me connect hoga.");
+    }
 </script>
 
 </body>
