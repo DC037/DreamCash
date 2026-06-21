@@ -425,7 +425,39 @@ box-shadow:0 0 20px #ff9800;
     <button class="btn orange" onclick="showOfferWall()">Open Offers</button>
     <button class="btn blue" onclick="viewOfferHistory()">Offer History</button>
   </div>
+<div id="offerHistoryBox" style="display:none;">
+  <div class="card section">
+    <h3>📋 Offer History</h3>
 
+    <button class="btn" style="background:green;color:white;">
+      Complete
+    </button>
+
+    <button class="btn" style="background:orange;color:white;">
+      Pending
+    </button>
+
+    <button class="btn" style="background:red;color:white;">
+      Reject
+    </button>
+
+    <div style="margin-top:15px;">
+
+      <div style="background:#e8ffe8;padding:10px;border-radius:8px;margin-bottom:8px;color:green;">
+        ✅ Complete Task
+      </div>
+
+      <div style="background:#fff4d6;padding:10px;border-radius:8px;margin-bottom:8px;color:#cc8800;">
+        ⏳ Pending Task
+      </div>
+
+      <div style="background:#ffe8e8;padding:10px;border-radius:8px;color:red;">
+        ❌ Reject Task
+      </div>
+
+    </div>
+  </div>
+</div>
 </div>
 <button class="btn orange rankBtn" onclick="showRankReward()">🏆 Rank Rewards</button>
   <button class="btn blue rankBtn" onclick="showLevelIncome()">💰 5 Level Income</button>
@@ -1653,7 +1685,7 @@ document.addEventListener("DOMContentLoaded", function(){
 }
 
 function viewOfferHistory() {
-  alert("No Offer History Yet");
+  document.getElementById("offerHistoryBox").style.display = "block";
 }
 </script>
   <div style="text-align:center;padding:20px 10px 90px 10px;font-size:13px;color:#666;">
