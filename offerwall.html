@@ -110,8 +110,64 @@ supabase.createClient(
   SUPABASE_KEY
 );
 
+async function loadOffers() {
+
+const { data, error } = await supabaseClient
+.from("offers")
+.select("*")
+.eq("status","active");
+
+if(error){
 document.getElementById("offersList").innerHTML =
-"Supabase Connected";
+"Error Loading Offers";
+return;
+}
+
+let html = "";
+
+data.forEach(offer => {
+
+html += `
+<div class="offer-card">
+
+<div class="offer-title">
+${offer.title}
+</div>
+
+<div class="offer-desc">
+${offer.description}
+</div>
+
+<div class="offer-reward">
+Reward: ${offer.reward} Coins
+</div>
+
+<button class="btn"
+onclick="window.open('${offer.offer_url}','_blank')">
+Open Task
+</button>
+
+<br><br>
+
+<input type="file" accept="image/*">
+
+<br><br>
+
+<button class="btn">
+Upload Screenshot
+</button>
+
+</div>
+`;
+
+});
+
+document.getElementById("offersList").innerHTML = html;
+
+}
+
+loadOffers();
+
 </script>
 
 </body>
