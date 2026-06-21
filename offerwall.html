@@ -115,12 +115,20 @@ async function loadOffers() {
 const { data, error } = await supabaseClient
 .from("offers")
 .select("*")
-.eq("status","active");
+.eq("status","active")
+.order("created_at", { ascending: false });
 
 if(error){
-document.getElementById("offersList").innerHTML =
-"Error Loading Offers";
-return;
+  alert(error.message);
+  document.getElementById("offersList").innerHTML =
+  "Error: " + error.message;
+  return;
+}
+
+if(!data || data.length === 0){
+  document.getElementById("offersList").innerHTML =
+  "No active offers found";
+  return;
 }
 
 let html = "";
