@@ -401,8 +401,8 @@ loadWithdrawals();
   box.innerHTML = "Loading...";
 
   const { data, error } = await supabaseClient
-    .from("users")
-    .select("status, isActive");
+  .from("users")
+  .select("status");
 
   if(error){
     box.innerHTML = "<p style='color:red'>Team load failed</p>";
@@ -415,7 +415,7 @@ loadWithdrawals();
   let inactiveTeam = 0;
 
   data.forEach(u => {
-    if(u.isActive === true || u.status === "Active"){
+    if(u.status === "Active"){
       activeTeam++;
     } else {
       inactiveTeam++;
