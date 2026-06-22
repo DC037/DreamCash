@@ -122,10 +122,18 @@ const auth = firebase.auth();
   const box = document.getElementById("offerList");
   box.innerHTML = "Loading...";
 
-  const { data, error } = await supabaseClient
-  .from("offer_submissions")
-  .select("*")
-  .limit(20);
+  const response = await fetch(
+  SUPABASE_URL + "/rest/v1/offer_submissions?select=*",
+  {
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": "Bearer " + SUPABASE_KEY
+    }
+  }
+);
+
+const data = await response.json();
+const error = null;
     alert(
   "Rows = " + (data ? data.length : 0) +
   "\nError = " + (error ? error.message : "none")
