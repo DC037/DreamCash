@@ -706,7 +706,7 @@ async function approveOffer(submissionId, userId, reward) {
     .from("offer_submissions")
     .select("status")
     .eq("id", submissionId)
-    .single();
+    .maybeSingle();
 
   if (oldReqError) {
     alert("Request check error: " + oldReqError.message);
@@ -722,7 +722,7 @@ async function approveOffer(submissionId, userId, reward) {
     .from("users")
     .select("wallet")
     .eq("member_id", userId)
-    .single();
+    .maybeSingle();
 
   if (userError) {
     alert("User wallet error: " + userError.message);
