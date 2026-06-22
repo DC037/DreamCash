@@ -156,8 +156,8 @@ const error = null;
         <b>Status:</b> ${d.status}<br>
         <a href="${d.screenshot_url}" target="_blank">View Screenshot</a>
         <br><br>
-<button class="approve-btn" onclick="approveOffer('${d.id}', '${d.user_id}', ${d.reward})">Approve</button>
-<button class="reject-btn" onclick="rejectOffer('${d.id}')">Reject</button>
+<button class="btn approve" onclick="alert('Approve click'); approveOffer('${d.id}', '${d.user_id}', ${d.reward})">Approve</button>
+<button class="btn reject" onclick="alert('Reject click'); rejectOffer('${d.id}')">Reject</button>
         <hr>
       </div>
     `;
