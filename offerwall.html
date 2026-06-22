@@ -157,9 +157,20 @@ const { data: oldTask } = await supabaseClient
   .eq("offer_id", offerId)
   .maybeSingle();
 
-if (oldTask) {
-  alert("You already completed this task.");
-  return;
+if (oldTask && oldTask.status === "Approved") {
+    alert("Task already completed.");
+    return;
+}
+
+if (oldTask && oldTask.status === "pending") {
+    alert("Screenshot already submitted. Waiting for admin approval.");
+    return;
+}
+
+if (oldTask && oldTask.status === "Rejected") {
+    alert("This task was rejected. You cannot submit again.");
+    return;
+}
 }
   const fileInput = document.getElementById("file-" + offerId);
   const file = fileInput.files[0];
