@@ -123,9 +123,9 @@ const auth = firebase.auth();
   box.innerHTML = "Loading...";
 
   const { data, error } = await supabaseClient
-    .from("offer_submissions")
-    .select("*")
-    .order("created_at", { ascending: false });
+  .from("offer_submissions")
+  .select("*")
+  .limit(20);
 
   if(error){
     box.innerHTML = error.message;
