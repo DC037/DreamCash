@@ -702,6 +702,46 @@ async function viewUserReferrals(userId) {
 async function approveOffer(submissionId, userId, reward) {
   if (!confirm("Approve this offer request?")) return;
 
+  const { data: oldReq, error: oldReqError } = await supabaseClient
+    .from("offer_submissions")
+    .select("status")
+    .eq("id", submissionId)
+    .single();
+
+  if (oldReqError) {
+    alert("Request check error: " + oldReqError.message);
+    return;
+  }
+
+  if (oldReq.status === "Approved") {
+    alert("Ye offer pehle se Approved hai. Wallet me dobara point add nahi honge.");
+    return;
+  }
+
+  const { data: userData, error: userError } = await supabaseClient
+    .from("users")
+    .select("wallet")
+    .eq("member_id", userId)
+    .single();
+
+  if (userError) {
+    alert("User wallet error: " + userError.message);
+    return;
+  }
+
+  const oldWallet = Number(userData.wallet || 0);
+  const addReward = Number(reward || 0);
+
+  const { error: walletError } = await supabaseClient
+    .from("users")
+    .update({ wallet: oldWallet + addReward })
+    .eq("member_id", userId);
+
+  if (walletError) {
+    alert("Wallet update error: " + walletError.message);
+    return;
+  }
+
   const res = await fetch(
     SUPABASE_URL + "/rest/v1/offer_submissions?id=eq." + submissionId,
     {
@@ -725,7 +765,7 @@ async function approveOffer(submissionId, userId, reward) {
     return;
   }
 
-  alert("Offer Approved Successfully");
+  alert("Offer Approved Successfully & Wallet Updated");
   loadOfferRequests();
 }
 
