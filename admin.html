@@ -45,17 +45,31 @@ margin-right:8px;
   <div id="memberResult"></div>
 </div>
   <div class="card">
+  <button class="btn green" onclick="showAdminSection('offerSection')">Offer Requests</button>
+  <button class="btn" style="background:#2563eb" onclick="showAdminSection('activationSection')">Activation Requests</button>
+  <button class="btn" style="background:#7c3aed" onclick="showAdminSection('withdrawSection')">Withdraw Requests</button>
+  <button class="btn" style="background:#f97316" onclick="showAdminSection('rankSection')">Rank Records</button>
+  <button class="btn" style="background:#111827" onclick="showAdminSection('teamSection')">Users</button>
+  </div>
+  <div id="withdrawSection" class="admin-section">
+  <div class="card">
     <h3>Withdrawal Requests</h3>
     <div id="withdrawalList">Loading...</div>
   </div>
+  </div>
+  <div id="activationSection" class="admin-section" style="display:none;">
 <div class="card">
 <h3>✅ Activation Requests</h3>
 <div id="activationList">Loading...</div>
 </div>
+  </div>
+  <div id="rankSection" class="admin-section" style="display:none;">
   <div class="card">
   <h3>🏆 Rank Reward Claims</h3>
   <div id="rankRewardClaimsList">Loading...</div>
   </div>
+  </div>
+  <div id="teamSection" class="admin-section" style="display:none;">
   <div class="card">
 <h3>👥 DreamCash Team</h3>
 
@@ -66,7 +80,7 @@ Loading...
 <button class="btn green" onclick="loadDreamCashTeam()">
 Refresh Team
 </button>
-
+  </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -89,6 +103,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
+  function showAdminSection(sectionId){
+  document.getElementById("withdrawSection").style.display = "none";
+  document.getElementById("activationSection").style.display = "none";
+  document.getElementById("rankSection").style.display = "none";
+  document.getElementById("teamSection").style.display = "none";
+
+  document.getElementById(sectionId).style.display = "block";
+  }
 async function loadWithdrawals(){
   const box = document.getElementById("withdrawalList");
   box.innerHTML = "Loading...";
@@ -584,6 +606,7 @@ async function viewUserReferrals(userId) {
 
   alert(text);
 }
+ showAdminSection("withdrawSection");
 </script>
 
 </body>
