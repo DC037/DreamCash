@@ -713,7 +713,7 @@ async function approveOffer(submissionId, userId, reward) {
     return;
   }
 
-  if (oldReq.status === "Approved") {
+  if (oldReq && oldReq.status === "Approved") {
     alert("Ye offer pehle se Approved hai. Wallet me dobara point add nahi honge.");
     return;
   }
@@ -728,7 +728,10 @@ async function approveOffer(submissionId, userId, reward) {
     alert("User wallet error: " + userError.message);
     return;
   }
-
+if (!userData) {
+  alert("User not found in users table. Member ID match nahi ho rahi: " + userId);
+  return;
+}
   const oldWallet = Number(userData.wallet || 0);
   const addReward = Number(reward || 0);
 
