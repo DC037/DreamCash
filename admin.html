@@ -160,12 +160,12 @@ ${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d
         <a href="${d.screenshot_url}" target="_blank">View Screenshot</a>
         <br><br>
 <button class="btn green"
-onclick="approveOffer('${d.offer_id}','${d.user_id}',${d.reward})">
+onclick="approveOffer('${d.id}','${d.user_id}',${d.reward})">
 Approve
 </button>
 
 <button class="btn red"
-onclick="rejectOffer('${d.offer_id}','${d.user_id}')">
+onclick="rejectOffer('${d.id}','${d.user_id}')">
 Reject
 </button>
         <hr>
@@ -223,7 +223,7 @@ ${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d
 
   box.innerHTML = html;
 }
-async function loadActivationRequests(){
+  async function loadActivationRequests(){
   const box = document.getElementById("activationList");
   box.innerHTML = "Loading...";
 
@@ -268,11 +268,13 @@ async function loadActivationRequests(){
 
 async function approveActivation(id, userId) {
   if (!confirm("Approve this activation request?")) return;
-let finalUserId = userId;
 
-if (userId.includes("ref=")) {
-  finalUserId = userId.split("ref=")[1].split("&")[0];
-}
+  let finalUserId = userId;
+
+  if (userId.includes("ref=")) {
+    finalUserId = userId.split("ref=")[1].split("&")[0];
+  }
+
   const { error: userError } = await supabaseClient
     .from("users")
     .update({ status: "Active" })
@@ -282,7 +284,9 @@ if (userId.includes("ref=")) {
     alert(userError.message);
     return;
   }
-await distributeLevelIncome(finalUserId);
+
+  await distributeLevelIncome(finalUserId);
+
   const { error } = await supabaseClient
     .from("activation_requests")
     .update({ status: "Approved" })
@@ -296,6 +300,7 @@ await distributeLevelIncome(finalUserId);
   alert("Activation Complete Successfully");
   loadActivationRequests();
 }
+
 async function distributeLevelIncome(userId) {
   const levelAmounts = [25, 10, 5, 5, 5];
   let currentMemberId = userId;
@@ -319,16 +324,18 @@ async function distributeLevelIncome(userId) {
       .single();
 
     if (!sponsorUser) break;
-await supabaseClient
-  .from("income_history")
-  .insert({
-    user_id: sponsorId,
-    from_user_id: userId,
-    level: level,
-    amount: income,
-    income_type: "level_income",
-    status: "approved"
-  });
+
+    await supabaseClient
+      .from("income_history")
+      .insert({
+        user_id: sponsorId,
+        from_user_id: userId,
+        level: level,
+        amount: income,
+        income_type: "level_income",
+        status: "approved"
+      });
+
     const oldWallet = Number(sponsorUser.wallet || 0);
 
     await supabaseClient
@@ -338,7 +345,8 @@ await supabaseClient
 
     currentMemberId = sponsorId;
   }
-      }
+}
+
 async function rejectActivation(id, userId) {
   if (!confirm("Reject this activation request?")) return;
 
@@ -387,18 +395,20 @@ async function rejectWithdraw(id){
   alert("Withdrawal Rejected & Balance Refunded");
   loadWithdrawals();
 }
+
 async function loadRankRewardClaims(){
-const box = document.getElementById("rankRewardClaimsList");
-box.innerHTML = "Loading...";
+  const box = document.getElementById("rankRewardClaimsList");
+  box.innerHTML = "Loading...";
 
-const snap = await db.collection("rankRewardClaims")
-.orderBy("createdAt", "desc")
-.get();
+  const snap = await db.collection("rankRewardClaims")
+    .orderBy("createdAt", "desc")
+    .get();
 
-if(snap.empty){
-box.innerHTML = "No rank reward claims found.";
-return;
-}
+  if(snap.empty){
+    box.innerHTML = "No rank reward claims found.";
+    return;
+  }
+
   let html = "";
 
   for (const doc of snap.docs) {
@@ -456,17 +466,13 @@ async function rejectRankReward(id){
   loadRankRewardClaims();
 }
 
-loadWithdrawals();
-  loadActivationRequests();
-  loadRankRewardClaims();
-  loadDreamCashTeam();
-  async function loadDreamCashTeam(){
+async function loadDreamCashTeam(){
   const box = document.getElementById("teamStats");
   box.innerHTML = "Loading...";
 
   const { data, error } = await supabaseClient
-  .from("users")
-  .select("status");
+    .from("users")
+    .select("status");
 
   if(error){
     box.innerHTML = "<p style='color:red'>Team load failed</p>";
@@ -491,49 +497,49 @@ loadWithdrawals();
     <div class="row"><b>Active Team:</b> ${activeTeam}</div>
     <div class="row"><b>Inactive Team:</b> ${inactiveTeam}</div>
   `;
-  }
+        }
   async function searchMember() {
+  const memberId = document.getElementById("searchMemberId").value.trim();
 
-const memberId = document.getElementById("searchMemberId").value.trim();
+  if(!memberId){
+    alert("Enter Member ID");
+    return;
+  }
 
-if(!memberId){
-alert("Enter Member ID");
-return;
-}
+  const { data, error } = await supabaseClient
+    .from("users")
+    .select("*")
+    .eq("member_id", memberId)
+    .single();
 
-const { data, error } = await supabaseClient
-.from("users")
-.select("*")
-.eq("member_id", memberId)
-.single();
+  if (error || !data) {
+    document.getElementById("memberResult").innerHTML =
+    "<p style='color:red'>Member Not Found</p>";
+    return;
+  }
 
-if (error || !data) {
-  document.getElementById("memberResult").innerHTML =
-  "<p style='color:red'>Member Not Found</p>";
-  return;
-}
+  const d = data;
+  const userId = d.member_id;
 
-const d = data;
-const userId = d.member_id;
-    const { count: liveReferCount } = await supabaseClient
-  .from("users")
-  .select("*", { count: "exact", head: true })
-  .eq("sponsor_id", d.member_id);
+  const { count: liveReferCount } = await supabaseClient
+    .from("users")
+    .select("*", { count: "exact", head: true })
+    .eq("sponsor_id", d.member_id);
 
-const { data: incomeRows } = await supabaseClient
-  .from("income_history")
-  .select("amount")
-  .eq("user_id", d.member_id);
+  const { data: incomeRows } = await supabaseClient
+    .from("income_history")
+    .select("amount")
+    .eq("user_id", d.member_id);
 
-let liveReferralIncome = 0;
+  let liveReferralIncome = 0;
 
-if (incomeRows) {
-  incomeRows.forEach(row => {
-    liveReferralIncome += Number(row.amount || 0);
-  });
-}
+  if (incomeRows) {
+    incomeRows.forEach(row => {
+      liveReferralIncome += Number(row.amount || 0);
+    });
+  }
 
-document.getElementById("memberResult").innerHTML = `
+  document.getElementById("memberResult").innerHTML = `
 <div class="row">
 <b>Name:</b> ${d.full_name || d.name || "N/A"}<br>
 <b>Member ID:</b> ${d.member_id || "N/A"}<br>
@@ -553,12 +559,12 @@ document.getElementById("memberResult").innerHTML = `
 <button class="btn red" onclick="banUser('${userId}')">Ban</button>
 <button class="btn green" onclick="unbanUser('${userId}')">Unban</button>
 <button class="btn green" onclick='viewUserWithdrawals("${userId}")'>View Withdrawals</button>
-
 <button class="btn green" onclick='viewUserReferrals("${userId}")'>View Referrals</button>
 </div>
 `;
 }
-  async function addBalance(userId) {
+
+async function addBalance(userId) {
   const amount = parseFloat(prompt("Enter amount to add"));
   if (!amount) return;
 
@@ -601,7 +607,7 @@ async function makeInactive(userId) {
   alert("User Inactive");
   searchMember();
 }
-  
+
 async function banUser(userId) {
   await db.collection("users").doc(userId).update({
     isBanned: true,
@@ -621,20 +627,21 @@ async function unbanUser(userId) {
   alert("User Unbanned Successfully");
   searchMember();
 }
-  
-async function sendReset(email) {
-    try {
-        if (!email || email === "N/A") {
-            alert("Email not found");
-            return;
-        }
 
-        await auth.sendPasswordResetEmail(email);
-        alert("Password reset link sent successfully");
-    } catch(error) {
-        alert(error.message);
+async function sendReset(email) {
+  try {
+    if (!email || email === "N/A") {
+      alert("Email not found");
+      return;
     }
+
+    await auth.sendPasswordResetEmail(email);
+    alert("Password reset link sent successfully");
+  } catch(error) {
+    alert(error.message);
   }
+}
+
 async function viewUserWithdrawals(userId) {
   try {
     const snap = await db.collection("withdrawals")
@@ -657,11 +664,12 @@ async function viewUserWithdrawals(userId) {
     });
 
     alert(text);
-  
+
   } catch(error) {
     alert(error.message);
   }
 }
+
 async function viewUserReferrals(userId) {
   const userDoc = await db.collection("users").doc(userId).get();
 
@@ -690,32 +698,28 @@ async function viewUserReferrals(userId) {
 
   alert(text);
 }
-  
-  async function approveOffer(offerId, userId, reward) {
-  try {
 
-    const res = await fetch(
-    SUPABASE_URL + "/rest/v1/offer_submissions?offer_id=eq." + encodeURIComponent(offerId),
-      {
-        method: "PATCH",
-        headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer " + SUPABASE_KEY,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          status: "Approved"
-        })
-      }
-    );
-    if (!res.ok) {
-  const err = await res.text();
-  alert("Approve Error: " + err);
-  return;
+async function approveOffer(submissionId, userId, reward) {
+  if (!confirm("Approve this offer request?")) return;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("offer_submissions")
+      .update({ status: "Approved" })
+      .eq("id", submissionId)
+      .select();
+
+    if (error) {
+      alert("Approve Error: " + error.message);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      alert("Approve Error: Row update nahi hui. ID match nahi ho rahi ya RLS policy block kar rahi hai.");
+      return;
     }
 
     alert("Offer Approved Successfully");
-
     loadOfferRequests();
 
   } catch (error) {
@@ -723,43 +727,40 @@ async function viewUserReferrals(userId) {
   }
 }
 
-async function rejectOffer(offerId, userId) {
-  try {
+async function rejectOffer(submissionId, userId) {
+  if (!confirm("Reject this offer request?")) return;
 
-    const res = await fetch(
-    SUPABASE_URL + "/rest/v1/offer_submissions?offer_id=eq." + encodeURIComponent(offerId),
-      {
-        method: "PATCH",
-        headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer " + SUPABASE_KEY,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          status: "Rejected"
-        })
-      }
-    );
-    if (!res.ok) {
-  const err = await res.text();
-  alert("Reject Error: " + err);
-  return;
+  try {
+    const { data, error } = await supabaseClient
+      .from("offer_submissions")
+      .update({ status: "Rejected" })
+      .eq("id", submissionId)
+      .select();
+
+    if (error) {
+      alert("Reject Error: " + error.message);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      alert("Reject Error: Row update nahi hui. ID match nahi ho rahi ya RLS policy block kar rahi hai.");
+      return;
     }
 
     alert("Offer Rejected Successfully");
-
     loadOfferRequests();
 
   } catch (error) {
     alert(error.message);
   }
 }
-  loadOfferRequests();
+
+loadOfferRequests();
 loadWithdrawals();
 loadActivationRequests();
 loadRankRewardClaims();
 loadDreamCashTeam();
- showAdminSection("withdrawSection");
+showAdminSection("withdrawSection");
 </script>
 
 </body>
