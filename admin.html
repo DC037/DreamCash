@@ -160,11 +160,12 @@ ${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d
         <a href="${d.screenshot_url}" target="_blank">View Screenshot</a>
         <br><br>
 <button class="btn green"
-onclick="approveOffer('${d.id}','${d.user_id}',${d.reward})">
+onclick="approveOffer('${d.offer_id}','${d.user_id}',${d.reward})">
 Approve
 </button>
+
 <button class="btn red"
-onclick="rejectOffer('${d.id}')">
+onclick="rejectOffer('${d.offer_id}','${d.user_id}')">
 Reject
 </button>
         <hr>
@@ -690,11 +691,11 @@ async function viewUserReferrals(userId) {
   alert(text);
 }
   
-  async function approveOffer(id, userId, reward) {
+  async function approveOffer(offerId, userId, reward) {
   try {
 
     const res = await fetch(
-      SUPABASE_URL + "/rest/v1/offer_submissions?id=eq." + id,
+    SUPABASE_URL + "/rest/v1/offer_submissions?offer_id=eq." + offerId,
       {
         method: "PATCH",
         headers: {
@@ -722,11 +723,11 @@ async function viewUserReferrals(userId) {
   }
 }
 
-async function rejectOffer(id) {
+async function rejectOffer(offerId, userId) {
   try {
 
     const res = await fetch(
-      SUPABASE_URL + "/rest/v1/offer_submissions?id=eq." + id,
+    SUPABASE_URL + "/rest/v1/offer_submissions?offer_id=eq." + offerId,
       {
         method: "PATCH",
         headers: {
