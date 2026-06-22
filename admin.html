@@ -451,6 +451,23 @@ if (error || !data) {
 
 const d = data;
 const userId = d.member_id;
+    const { count: liveReferCount } = await supabaseClient
+  .from("users")
+  .select("*", { count: "exact", head: true })
+  .eq("sponsor_id", d.member_id);
+
+const { data: incomeRows } = await supabaseClient
+  .from("income_history")
+  .select("amount")
+  .eq("user_id", d.member_id);
+
+let liveReferralIncome = 0;
+
+if (incomeRows) {
+  incomeRows.forEach(row => {
+    liveReferralIncome += Number(row.amount || 0);
+  });
+}
 
 document.getElementById("memberResult").innerHTML = `
 <div class="row">
@@ -461,8 +478,8 @@ document.getElementById("memberResult").innerHTML = `
 <b>Status:</b> ${d.status || "Inactive"}<br>
 <b>Ban Status:</b> ${d.is_banned ? "Banned" : "Not Banned"}<br>
 <b>Balance:</b> ${d.wallet || d.balance || 0} DC<br>
-<b>Total Refer:</b> ${d.referral_count || 0}<br>
-<b>Referral Income:</b> ${d.referral_income || 0} DC<br>
+<b>Total Refer:</b> ${liveReferCount || 0}<br>
+<b>Referral Income:</b> ${liveReferralIncome || 0} DC<br>
 <br>
 <button class="btn green" onclick="addBalance('${userId}')">Add Balance</button>
 <button class="btn red" onclick="cutBalance('${userId}')">Cut Balance</button>
