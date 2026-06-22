@@ -702,57 +702,61 @@ async function viewUserReferrals(userId) {
 async function approveOffer(submissionId, userId, reward) {
   if (!confirm("Approve this offer request?")) return;
 
-  try {
-    const { data, error } = await supabaseClient
-      .from("offer_submissions")
-      .update({ status: "Approved" })
-      .eq("id", submissionId)
-      .select();
-
-    if (error) {
-      alert("Approve Error: " + error.message);
-      return;
+  const res = await fetch(
+    SUPABASE_URL + "/rest/v1/offer_submissions?id=eq." + submissionId,
+    {
+      method: "PATCH",
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify({
+        status: "Approved"
+      })
     }
+  );
 
-    if (!data || data.length === 0) {
-      alert("Approve Error: Row update nahi hui. ID match nahi ho rahi ya RLS policy block kar rahi hai.");
-      return;
-    }
+  const result = await res.text();
 
-    alert("Offer Approved Successfully");
-    loadOfferRequests();
-
-  } catch (error) {
-    alert(error.message);
+  if (!res.ok) {
+    alert("Approve Error: " + result);
+    return;
   }
+
+  alert("Offer Approved Successfully");
+  loadOfferRequests();
 }
 
 async function rejectOffer(submissionId, userId) {
   if (!confirm("Reject this offer request?")) return;
 
-  try {
-    const { data, error } = await supabaseClient
-      .from("offer_submissions")
-      .update({ status: "Rejected" })
-      .eq("id", submissionId)
-      .select();
-
-    if (error) {
-      alert("Reject Error: " + error.message);
-      return;
+  const res = await fetch(
+    SUPABASE_URL + "/rest/v1/offer_submissions?id=eq." + submissionId,
+    {
+      method: "PATCH",
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify({
+        status: "Rejected"
+      })
     }
+  );
 
-    if (!data || data.length === 0) {
-      alert("Reject Error: Row update nahi hui. ID match nahi ho rahi ya RLS policy block kar rahi hai.");
-      return;
-    }
+  const result = await res.text();
 
-    alert("Offer Rejected Successfully");
-    loadOfferRequests();
-
-  } catch (error) {
-    alert(error.message);
+  if (!res.ok) {
+    alert("Reject Error: " + result);
+    return;
   }
+
+  alert("Offer Rejected Successfully");
+  loadOfferRequests();
 }
 
 loadOfferRequests();
