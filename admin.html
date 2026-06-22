@@ -153,7 +153,10 @@ const error = null;
         <b>User ID:</b> ${d.user_id}<br>
         <b>Offer ID:</b> ${d.offer_id}<br>
         <b>Reward:</b> ${d.reward}<br>
-        <b>Status:</b> ${d.status}<br>
+        <b>Status:</b>
+<span class="status ${d.status === 'Approved' ? 'approved' : d.status === 'Rejected' ? 'rejected' : 'pending'}">
+${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d.status}
+</span><br>
         <a href="${d.screenshot_url}" target="_blank">View Screenshot</a>
         <br><br>
 <button class="btn green"
