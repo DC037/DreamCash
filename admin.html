@@ -397,33 +397,36 @@ loadWithdrawals();
   loadRankRewardClaims();
   loadDreamCashTeam();
   async function loadDreamCashTeam(){
+  const box = document.getElementById("teamStats");
+  box.innerHTML = "Loading...";
 
-const box = document.getElementById("teamStats");
+  const { data, error } = await supabaseClient
+    .from("users")
+    .select("status, isActive");
 
-const snap = await db.collection("users").get();
+  if(error){
+    box.innerHTML = "<p style='color:red'>Team load failed</p>";
+    console.log(error);
+    return;
+  }
 
-let totalTeam = 0;
-let activeTeam = 0;
-let inactiveTeam = 0;
+  let totalTeam = data.length;
+  let activeTeam = 0;
+  let inactiveTeam = 0;
 
-snap.forEach(doc => {
-const d = doc.data();
+  data.forEach(u => {
+    if(u.isActive === true || u.status === "Active"){
+      activeTeam++;
+    } else {
+      inactiveTeam++;
+    }
+  });
 
-totalTeam++;
-
-if(d.isActive === true){
-activeTeam++;
-}else{
-inactiveTeam++;
-}
-});
-
-box.innerHTML = `
-<div class="row"><b>Total Team:</b> ${totalTeam}</div>
-<div class="row"><b>Active Team:</b> ${activeTeam}</div>
-<div class="row"><b>Inactive Team:</b> ${inactiveTeam}</div>
-`;
-
+  box.innerHTML = `
+    <div class="row"><b>Total Team:</b> ${totalTeam}</div>
+    <div class="row"><b>Active Team:</b> ${activeTeam}</div>
+    <div class="row"><b>Inactive Team:</b> ${inactiveTeam}</div>
+  `;
   }
   async function searchMember() {
 
