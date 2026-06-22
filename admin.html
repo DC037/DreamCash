@@ -51,6 +51,12 @@ margin-right:8px;
   <button class="btn" style="background:#f97316" onclick="showAdminSection('rankSection')">Rank Records</button>
   <button class="btn" style="background:#111827" onclick="showAdminSection('teamSection')">Users</button>
   </div>
+  <div id="offerSection" class="admin-section" style="display:none;">
+  <div class="card">
+    <h3>📸 Offer Requests</h3>
+    <div id="offerList">Loading...</div>
+  </div>
+  </div>
   <div id="withdrawSection" class="admin-section">
   <div class="card">
     <h3>Withdrawal Requests</h3>
@@ -104,12 +110,49 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
   function showAdminSection(sectionId){
+    document.getElementById("offerSection").style.display = "none";
   document.getElementById("withdrawSection").style.display = "none";
   document.getElementById("activationSection").style.display = "none";
   document.getElementById("rankSection").style.display = "none";
   document.getElementById("teamSection").style.display = "none";
 
   document.getElementById(sectionId).style.display = "block";
+  }
+  async function loadOfferRequests(){
+  const box = document.getElementById("offerList");
+  box.innerHTML = "Loading...";
+
+  const { data, error } = await supabaseClient
+    .from("offer_submissions")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if(error){
+    box.innerHTML = error.message;
+    return;
+  }
+
+  if(!data || data.length === 0){
+    box.innerHTML = "No offer requests found.";
+    return;
+  }
+
+  let html = "";
+
+  data.forEach(d => {
+    html += `
+      <div class="row">
+        <b>User ID:</b> ${d.user_id}<br>
+        <b>Offer ID:</b> ${d.offer_id}<br>
+        <b>Reward:</b> ${d.reward}<br>
+        <b>Status:</b> ${d.status}<br>
+        <a href="${d.screenshot_url}" target="_blank">View Screenshot</a>
+        <hr>
+      </div>
+    `;
+  });
+
+  box.innerHTML = html;
   }
 async function loadWithdrawals(){
   const box = document.getElementById("withdrawalList");
@@ -626,6 +669,11 @@ async function viewUserReferrals(userId) {
 
   alert(text);
 }
+  loadOfferRequests();
+loadWithdrawals();
+loadActivationRequests();
+loadRankRewardClaims();
+loadDreamCashTeam();
  showAdminSection("withdrawSection");
 </script>
 
