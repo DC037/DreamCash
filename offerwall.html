@@ -76,6 +76,7 @@ body{
     padding:12px;
     border-radius:8px;
 }
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </style>
 </head>
 
@@ -96,12 +97,16 @@ body{
     </a>
 
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 document.getElementById("offersList").innerHTML = "JS Started...";
 
 const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 fetch(SUPABASE_URL + "/rest/v1/offers?status=eq.active&select=*", {
   headers: {
