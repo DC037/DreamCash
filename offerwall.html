@@ -146,6 +146,21 @@ Upload Screenshot
   document.getElementById("offersList").innerHTML = "Error: " + err.message;
 });
 async function uploadProof(offerId, reward){
+    const userId =
+  localStorage.getItem("member_id") ||
+  localStorage.getItem("last_member_id");
+
+const { data: oldTask } = await supabaseClient
+  .from("offer_submissions")
+  .select("id,status")
+  .eq("user_id", userId)
+  .eq("offer_id", offerId)
+  .maybeSingle();
+
+if (oldTask) {
+  alert("You already completed this task.");
+  return;
+}
   const fileInput = document.getElementById("file-" + offerId);
   const file = fileInput.files[0];
 
@@ -153,11 +168,6 @@ async function uploadProof(offerId, reward){
     alert("Please choose screenshot first");
     return;
   }
-
-  const userId =
-    localStorage.getItem("member_id") ||
-    localStorage.getItem("last_member_id") ||
-    "guest";
 
   const filePath =
     userId + "/" + offerId + "-" + Date.now() + "-" + file.name;
