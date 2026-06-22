@@ -123,7 +123,7 @@ const auth = firebase.auth();
   box.innerHTML = "Loading...";
 
   const response = await fetch(
-  SUPABASE_URL + "/rest/v1/offer_submissions?select=*",
+  SUPABASE_URL + "/rest/v1/offer_submissions?select=id,user_id,offer_id,reward,status,screenshot_url",
   {
     headers: {
       "apikey": SUPABASE_KEY,
@@ -156,13 +156,8 @@ const error = null;
         <b>Status:</b> ${d.status}<br>
         <a href="${d.screenshot_url}" target="_blank">View Screenshot</a>
         <br><br>
-<button onclick="approveOffer('${d.id}', '${d.user_id}', ${d.reward})">
-  ✅ Approve
-</button>
-
-<button onclick="rejectOffer('${d.id}')">
-  ❌ Reject
-</button>
+<button class="approve-btn" onclick="approveOffer('${d.id}', '${d.user_id}', ${d.reward})">Approve</button>
+<button class="reject-btn" onclick="rejectOffer('${d.id}')">Reject</button>
         <hr>
       </div>
     `;
