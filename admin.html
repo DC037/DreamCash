@@ -134,10 +134,7 @@ const auth = firebase.auth();
 
 const data = await response.json();
 const error = null;
-    alert(
-  "Rows = " + (data ? data.length : 0) +
-  "\nError = " + (error ? error.message : "none")
-);
+    
   if(error){
     box.innerHTML = error.message;
     return;
