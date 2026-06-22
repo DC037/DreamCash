@@ -126,7 +126,10 @@ const auth = firebase.auth();
   .from("offer_submissions")
   .select("*")
   .limit(20);
-
+    alert(
+  "Rows = " + (data ? data.length : 0) +
+  "\nError = " + (error ? error.message : "none")
+);
   if(error){
     box.innerHTML = error.message;
     return;
