@@ -156,8 +156,14 @@ const error = null;
         <b>Status:</b> ${d.status}<br>
         <a href="${d.screenshot_url}" target="_blank">View Screenshot</a>
         <br><br>
-<button class="btn green" onclick="approveOffer('${d.id}', '${d.user_id}', ${d.reward})">Approve</button>
-<button class="btn red" onclick="rejectOffer('${d.id}')">Reject</button>
+<button class="btn green"
+onclick="approveOffer('${d.id}','${d.user_id}',${d.reward})">
+Approve
+</button>
+<button class="btn red"
+onclick="rejectOffer('${d.id}')">
+Reject
+</button>
         <hr>
       </div>
     `;
@@ -679,6 +685,7 @@ async function viewUserReferrals(userId) {
   });
 
   alert(text);
+  
   async function approveOffer(id, userId, reward) {
   try {
 
