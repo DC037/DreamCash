@@ -6,177 +6,120 @@
 <title>DreamCash - Offer Wall</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
-}
-
-body{
-    background:#f5f7fb;
-}
-
-.header{
-    background:#16a34a;
-    color:white;
-    padding:15px;
-    text-align:center;
-    font-size:22px;
-    font-weight:bold;
-}
-
-.container{
-    padding:15px;
-}
-
-.offer-card{
-    background:white;
-    border-radius:12px;
-    padding:15px;
-    margin-bottom:12px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1);
-}
-
-.offer-title{
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:8px;
-}
-
-.offer-desc{
-    color:#666;
-    margin-bottom:10px;
-}
-
-.offer-reward{
-    color:#16a34a;
-    font-weight:bold;
-    margin-bottom:10px;
-}
-
-.btn{
-    width:100%;
-    border:none;
-    padding:12px;
-    border-radius:8px;
-    background:#16a34a;
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.back-btn{
-    display:block;
-    text-align:center;
-    margin-top:20px;
-    text-decoration:none;
-    background:#111827;
-    color:white;
-    padding:12px;
-    border-radius:8px;
-}
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{background:#f5f7fb;}
+.header{background:#16a34a;color:white;padding:15px;text-align:center;font-size:22px;font-weight:bold;}
+.container{padding:15px;}
+.offer-card{background:white;border-radius:12px;padding:15px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.offer-title{font-size:18px;font-weight:bold;margin-bottom:8px;}
+.offer-desc{color:#666;margin-bottom:10px;}
+.offer-reward{color:#16a34a;font-weight:bold;margin-bottom:10px;}
+.btn{width:100%;border:none;padding:12px;border-radius:8px;background:#16a34a;color:white;font-weight:bold;cursor:pointer;}
+.back-btn{display:block;text-align:center;margin-top:20px;text-decoration:none;background:#111827;color:white;padding:12px;border-radius:8px;}
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
-<div class="header">
-    Offer Wall
-</div>
+<div class="header">Offer Wall</div>
 
 <div class="container">
+  <div id="offersList">Loading offers...</div>
 
-    <div id="offersList">
-    Loading offers...
-    </div>
-
-    <a href="dashboard.html" class="back-btn">
-        Back To Dashboard
-    </a>
-
+  <a href="dashboard.html" class="back-btn">
+    Back To Dashboard
+  </a>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-document.getElementById("offersList").innerHTML = "JS Started...";
 
+<script>
 const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
 
-fetch(SUPABASE_URL + "/rest/v1/offers?status=eq.active&select=*", {
-  headers: {
-    "apikey": SUPABASE_KEY,
-    "Authorization": "Bearer " + SUPABASE_KEY
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+loadOffers();
+
+async function loadOffers(){
+  const box = document.getElementById("offersList");
+  box.innerHTML = "Loading offers...";
+
+  try {
+    const res = await fetch(
+      SUPABASE_URL + "/rest/v1/offers?status=eq.active&select=*",
+      {
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": "Bearer " + SUPABASE_KEY
+        }
+      }
+    );
+
+    const data = await res.json();
+
+    if(!data || data.length === 0){
+      box.innerHTML = "No active offers found";
+      return;
+    }
+
+    let html = "";
+
+    data.forEach(offer => {
+      html += `
+        <div class="offer-card">
+          <div class="offer-title">${offer.title}</div>
+          <div class="offer-desc">${offer.description}</div>
+          <div class="offer-reward">Reward: ${offer.reward} Coins</div>
+
+          <button class="btn" onclick="window.open('${offer.offer_url}', '_blank')">
+            Open Task
+          </button>
+
+          <br><br>
+          <input type="file" accept="image/*" id="file-${offer.id}">
+          <br><br>
+
+          <button class="btn" onclick="uploadProof('${offer.id}', ${offer.reward})">
+            Upload Screenshot
+          </button>
+        </div>
+      `;
+    });
+
+    box.innerHTML = html;
+
+  } catch(err) {
+    box.innerHTML = "Error: " + err.message;
   }
-})
-.then(res => res.json())
-.then(data => {
-  if(!data || data.length === 0){
-    document.getElementById("offersList").innerHTML = "No active offers found";
-    return;
-  }
+}
 
-  let html = "";
-
-  data.forEach(offer => {
-    html += `
-      <div class="offer-card">
-        <div class="offer-title">${offer.title}</div>
-        <div class="offer-desc">${offer.description}</div>
-        <div class="offer-reward">Reward: ${offer.reward} Coins</div>
-
-        <button class="btn" onclick="window.open('${offer.offer_url}', '_blank')">
-          Open Task
-        </button>
-
-        <br><br>
-        <input type="file" accept="image/*" id="file-${offer.id}">
-        <br><br>
-
-        <button class="btn" onclick="uploadProof('${offer.id}', ${offer.reward})">
-Upload Screenshot
-</button>
-      </div>
-    `;
-  });
-
-  document.getElementById("offersList").innerHTML = html;
-})
-.catch(err => {
-  document.getElementById("offersList").innerHTML = "Error: " + err.message;
-});
 async function uploadProof(offerId, reward){
-    const userId =
-  localStorage.getItem("member_id") ||
-  localStorage.getItem("last_member_id");
+  const userId =
+    localStorage.getItem("member_id") ||
+    localStorage.getItem("last_member_id");
 
-const { data: oldTask } = await supabaseClient
-  .from("offer_submissions")
-  .select("id,status")
-  .eq("user_id", userId)
-  .eq("offer_id", offerId)
-  .maybeSingle();
-
-if (oldTask && oldTask.status === "Approved") {
-    alert("Task already completed.");
+  if(!userId){
+    alert("User not found. Please login again.");
     return;
-}
+  }
 
-if (oldTask && oldTask.status === "pending") {
-    alert("Screenshot already submitted. Waiting for admin approval.");
-    return;
-}
+  const { data: oldTasks, error: oldError } = await supabaseClient
+    .from("offer_submissions")
+    .select("id,status")
+    .eq("user_id", userId)
+    .eq("offer_id", offerId);
 
-if (oldTask && oldTask.status === "Rejected") {
-    alert("This task was rejected. You cannot submit again.");
+  if(oldError){
+    alert("Check error: " + oldError.message);
     return;
-}
-}
+  }
+
+  if(oldTasks && oldTasks.length > 0){
+    alert("You already submitted this task.");
+    return;
+  }
+
   const fileInput = document.getElementById("file-" + offerId);
   const file = fileInput.files[0];
 
@@ -185,8 +128,7 @@ if (oldTask && oldTask.status === "Rejected") {
     return;
   }
 
-  const filePath =
-    userId + "/" + offerId + "-" + Date.now() + "-" + file.name;
+  const filePath = userId + "/" + offerId + "-" + Date.now() + "-" + file.name;
 
   const uploadRes = await fetch(
     SUPABASE_URL + "/storage/v1/object/offer-screenshots/" + filePath,
@@ -237,6 +179,7 @@ if (oldTask && oldTask.status === "Rejected") {
   }
 
   alert("Screenshot submitted successfully. Waiting for admin approval.");
+  loadOffers();
 }
 </script>
 
