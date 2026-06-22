@@ -695,7 +695,7 @@ async function viewUserReferrals(userId) {
   try {
 
     const res = await fetch(
-    SUPABASE_URL + "/rest/v1/offer_submissions?offer_id=eq." + offerId,
+    SUPABASE_URL + "/rest/v1/offer_submissions?offer_id=eq." + encodeURIComponent(offerId),
       {
         method: "PATCH",
         headers: {
@@ -727,7 +727,7 @@ async function rejectOffer(offerId, userId) {
   try {
 
     const res = await fetch(
-    SUPABASE_URL + "/rest/v1/offer_submissions?offer_id=eq." + offerId,
+    SUPABASE_URL + "/rest/v1/offer_submissions?offer_id=eq." + encodeURIComponent(offerId),
       {
         method: "PATCH",
         headers: {
