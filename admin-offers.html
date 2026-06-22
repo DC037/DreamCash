@@ -32,7 +32,32 @@ border-radius:6px;
 cursor:pointer;
 margin-top:10px;
 }
+.search-box{
+width:100%;
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+margin-bottom:12px;
+}
 
+.admin-menu{
+display:flex;
+gap:8px;
+overflow-x:auto;
+margin-bottom:15px;
+}
+
+.admin-menu button{
+white-space:nowrap;
+color:white;
+font-weight:bold;
+}
+
+.btn-offer{background:#16a34a;}
+.btn-activation{background:#2563eb;}
+.btn-withdraw{background:#7c3aed;}
+.btn-rank{background:#f97316;}
+.btn-users{background:#111827;}
 .approve{
 background:green;
 color:white;
@@ -46,7 +71,19 @@ color:white;
 </head>
 
 <body>
+<input
+  type="text"
+  id="searchBox"
+  class="search-box"
+  placeholder="Search user by ID or name">
 
+<div class="admin-menu">
+  <button class="btn-offer" onclick="loadPending()">Offer Requests</button>
+  <button class="btn-activation" onclick="showSection('Activation Requests')">Activation Requests</button>
+  <button class="btn-withdraw" onclick="showSection('Withdraw Requests')">Withdraw Requests</button>
+  <button class="btn-rank" onclick="showSection('Rank Records')">Rank Records</button>
+  <button class="btn-users" onclick="showSection('Users')">Users</button>
+</div>
 <h2>Pending Offer Submissions</h2>
 
 <div id="list">Loading...</div>
@@ -81,7 +118,10 @@ async function loadPending(){
 
   document.getElementById("list").innerHTML = html || "No pending submissions";
 }
-
+function showSection(name){
+  document.getElementById("list").innerHTML =
+    "<div class='card'><b>" + name + "</b><br>Coming soon...</div>";
+}
 loadPending();
 </script>
 </body>
