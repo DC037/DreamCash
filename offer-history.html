@@ -42,9 +42,8 @@ const SUPABASE_ANON_KEY = "sb_publishable_M-R7UOrWY2JPMeFvZpAQrw_mj1phJ_1";
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const userId =
-    localStorage.getItem("user_id") ||
-    localStorage.getItem("dreamcash_user_id") ||
-    localStorage.getItem("userId");
+  localStorage.getItem("member_id") ||
+  localStorage.getItem("last_member_id");
 
   async function loadHistory(){
     const box = document.getElementById("historyBox");
