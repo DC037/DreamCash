@@ -585,7 +585,7 @@ box-shadow:0 0 20px #ff9800;
     Open Offers
   </button>
 
-  <button class="btn blue" onclick="window.location.href='offer-history.html'">
+  <button class="btn blue" onclick="window.location.href='offer-history.html?member_id=' + encodeURIComponent(localStorage.getItem('member_id') || localStorage.getItem('last_member_id') || '')">
     Offer History
   </button>
   </div>
