@@ -52,7 +52,7 @@ async function loadOffers(){
       .from("offers")
       .select("*")
       .order("created_at", { ascending: false });
-    alert("Total offers found: " + (data ? data.length : 0));
+    alert("VERSION-2 OFFERS: " + (data ? data.length : 0));
 
     if(error){
       box.innerHTML = "Error: " + error.message;
