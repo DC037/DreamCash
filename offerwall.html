@@ -32,7 +32,13 @@ body{background:#f5f7fb;}
     Back To Dashboard
   </a>
 </div>
+.greenBtn{
+  background:linear-gradient(135deg,#16a34a,#22c55e) !important;
+}
 
+.blueBtn{
+  background:linear-gradient(135deg,#0066ff,#33bbff) !important;
+}
 <script>
 const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
@@ -72,7 +78,7 @@ async function loadOffers(){
           <div class="offer-desc">${offer.description}</div>
           <div class="offer-reward">Reward: ${offer.reward} Coins</div>
 
-          <button class="btn" onclick="window.open('${offer.offer_url}', '_blank')">
+          <button class="btn greenBtn" onclick="window.open('${offer.offer_url}','_blank')">
             Open Task
           </button>
 
@@ -80,7 +86,7 @@ async function loadOffers(){
           <input type="file" accept="image/*" id="file-${offer.id}">
           <br><br>
 
-          <button class="btn" onclick="uploadProof('${offer.id}', ${offer.reward})">
+          <button class="btn blueBtn" onclick="uploadProof('${offer.id}', ${offer.reward})">
             Upload Screenshot
           </button>
         </div>
