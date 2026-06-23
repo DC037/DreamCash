@@ -474,7 +474,7 @@ box-shadow:0 0 20px #ff9800;
     0 5px 0 rgba(0,0,0,.18),
     0 8px 14px rgba(0,0,0,.15);
 }
-  }
+  
   .bottom{
   z-index:999999 !important;
   pointer-events:auto !important;
@@ -1427,12 +1427,21 @@ async function updateSpinText(){
 }
 
 window.checkSpinAccess = async function(){
-  if(!isActiveUser()){
-    alert("Please Active ID");
+
+  console.log("Spin Click Working");
+
+  const popup = document.getElementById("spinPopup");
+
+  if(!popup){
+    alert("spinPopup Not Found");
     return;
   }
-  el("spinPopup").style.display = "flex";
-  await updateSpinText();
+
+  popup.style.display = "flex";
+
+  if(typeof updateSpinText === "function"){
+    await updateSpinText();
+  }
 };
 
 window.closeSpinWheel = function(){
