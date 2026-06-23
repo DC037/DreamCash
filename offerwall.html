@@ -50,9 +50,9 @@ async function loadOffers(){
   try {
     const { data, error } = await supabaseClient
       .from("offers")
-      .select("*")
+      .select("id,title,status,reward,offer_url")
       .order("created_at", { ascending: false });
-    alert("VERSION-2 OFFERS: " + (data ? data.length : 0));
+    alert(JSON.stringify(data));
 
     if(error){
       box.innerHTML = "Error: " + error.message;
