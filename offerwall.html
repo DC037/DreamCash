@@ -52,7 +52,7 @@ async function loadOffers(){
       .from("offers")
       .select("id,title,status,reward,offer_url")
       .order("created_at", { ascending: false });
-    alert(JSON.stringify(data));
+  
 
     if(error){
       box.innerHTML = "Error: " + error.message;
