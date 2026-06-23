@@ -41,7 +41,10 @@ const SUPABASE_ANON_KEY = "sb_publishable_M-R7UOrWY2JPMeFvZpAQrw_mj1phJ_1";
 
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const userId =
+  const params = new URLSearchParams(window.location.search);
+
+const userId =
+  params.get("member_id") ||
   localStorage.getItem("member_id") ||
   localStorage.getItem("last_member_id");
 
