@@ -14,15 +14,10 @@ body{background:#f5f7fb;}
 .offer-title{font-size:18px;font-weight:bold;margin-bottom:8px;}
 .offer-desc{color:#666;margin-bottom:10px;}
 .offer-reward{color:#16a34a;font-weight:bold;margin-bottom:10px;}
-.btn{width:100%;border:none;padding:12px;border-radius:8px;background:#16a34a;color:white;font-weight:bold;cursor:pointer;}
+.btn{width:100%;border:none;padding:12px;border-radius:8px;color:white;font-weight:bold;cursor:pointer;}
+.greenBtn{background:linear-gradient(135deg,#16a34a,#22c55e) !important;}
+.blueBtn{background:linear-gradient(135deg,#0066ff,#33bbff) !important;}
 .back-btn{display:block;text-align:center;margin-top:20px;text-decoration:none;background:#111827;color:white;padding:12px;border-radius:8px;}
-  .greenBtn{
-  background:linear-gradient(135deg,#16a34a,#22c55e) !important;
-}
-
-.blueBtn{
-  background:linear-gradient(135deg,#0066ff,#33bbff) !important;
-}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -180,16 +175,16 @@ async function uploadProof(offerId, reward){
   );
 
   if(!saveRes.ok){
-  const errText = await saveRes.text();
+    const errText = await saveRes.text();
 
-  if(saveRes.status === 409 ||
-     errText.includes("unique_user_offer_submission")){
-    alert("You already submitted this task.");
+    if(saveRes.status === 409 ||
+       errText.includes("unique_user_offer_submission")){
+      alert("You already submitted this task.");
+      return;
+    }
+
+    alert("Save error: " + errText);
     return;
-  }
-
-  alert("Save error: " + errText);
-  return;
   }
 
   alert("Screenshot submitted successfully. Waiting for admin approval.");
