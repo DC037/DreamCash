@@ -26,6 +26,80 @@ margin-right:8px;
 .status.approved{color:green;}
 .status.rejected{color:red;}
 .status.pending{color:#e67e22;}
+    /* ===== Admin Panel 3D Glossy Buttons ===== */
+
+button,
+.btn,
+.tab,
+.admin-tab,
+.action-btn,
+.approve-btn,
+.reject-btn{
+  border:none !important;
+  border-radius:20px !important;
+  padding:10px 20px !important;
+  font-weight:900 !important;
+  color:white !important;
+  cursor:pointer !important;
+  position:relative !important;
+  overflow:hidden !important;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.55),
+    inset 0 -5px 9px rgba(0,0,0,.22),
+    0 5px 0 rgba(0,0,0,.18),
+    0 9px 15px rgba(0,0,0,.18) !important;
+  transition:.15s ease !important;
+}
+
+button::before,
+.btn::before,
+.tab::before,
+.admin-tab::before,
+.action-btn::before,
+.approve-btn::before,
+.reject-btn::before{
+  content:"";
+  position:absolute;
+  top:-55%;
+  left:-35%;
+  width:90%;
+  height:100%;
+  background:linear-gradient(135deg,rgba(255,255,255,.65),rgba(255,255,255,.05));
+  transform:rotate(25deg);
+  pointer-events:none;
+}
+
+button:active,
+.btn:active,
+.tab:active,
+.admin-tab:active,
+.action-btn:active,
+.approve-btn:active,
+.reject-btn:active{
+  transform:translateY(4px) scale(.98) !important;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.45),
+    0 2px 0 rgba(0,0,0,.20) !important;
+}
+
+/* Approve green */
+button[onclick*="approve"],
+.approve-btn{
+  background:linear-gradient(135deg,#00b75a,#20df83) !important;
+}
+
+/* Reject red */
+button[onclick*="reject"],
+.reject-btn{
+  background:linear-gradient(135deg,#ff3030,#ff6b5f) !important;
+}
+
+/* Top menu buttons different colors */
+button:nth-of-type(1){background:linear-gradient(135deg,#00b75a,#20df83) !important;}
+button:nth-of-type(2){background:linear-gradient(135deg,#005bea,#29b6ff) !important;}
+button:nth-of-type(3){background:linear-gradient(135deg,#6a11cb,#a855f7) !important;}
+button:nth-of-type(4){background:linear-gradient(135deg,#ff7a00,#ffb300) !important;}
+button:nth-of-type(5){background:linear-gradient(135deg,#071b3d,#111827) !important;}
   </style>
 </head>
 <body>
