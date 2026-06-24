@@ -64,35 +64,33 @@ async function initSpinPage(){
   document.getElementById("statusText").innerText = "Checking...";
   document.getElementById("spinLeftText").innerText = "Loading...";
 
-  const { data:user, error:userError } = await supabaseClient
+  let user = null;
+
+  let res1 = await supabaseClient
     .from("users")
     .select("*")
-    .or("member_id.eq." + currentMemberId + ",email.eq.vasimahmad614@gmail.com")
+    .eq("member_id", "DC642045")
     .maybeSingle();
 
-  if(userError){
-    document.getElementById("statusText").innerText = "❌ Supabase Error";
-    document.getElementById("spinLeftText").innerText = userError.message;
-    return;
+  user = res1.data;
+
+  if(!user){
+    let res2 = await supabaseClient
+      .from("users")
+      .select("*")
+      .eq("email", "vasimahmad614@gmail.com")
+      .maybeSingle();
+
+    user = res2.data;
   }
 
   if(!user){
     document.getElementById("statusText").innerText = "🔴 User Not Found";
-    document.getElementById("spinLeftText").innerText = "Spin Locked";
+    document.getElementById("spinLeftText").innerText = "Check Supabase URL / KEY";
     return;
   }
 
   currentMemberId = user.member_id;
-  currentActive = false;
-
-  const status = String(user.status || "").trim().toLowerCase();
-
-  if(status !== "active" && status !== "approved"){
-    document.getElementById("statusText").innerText = "🔴 Inactive User - Activate ID First";
-    document.getElementById("spinLeftText").innerText = "Spin Locked";
-    return;
-  }
-
   currentActive = true;
 
   const { data:spinRow } = await supabaseClient
