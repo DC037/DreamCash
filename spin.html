@@ -117,8 +117,8 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const rewards = [0.10,0.15,0.20,0.25,0.30];
 
 function getMemberId(){
-const params = new URLSearchParams(window.location.search);
-return params.get("member_id") || "";
+  const params = new URLSearchParams(window.location.search);
+  return params.get("member_id") || params.get("id") || localStorage.getItem("member_id") || "";
 }
 
 function todayDate(){
@@ -180,13 +180,19 @@ document.getElementById("spinLeftText").innerText = "Please Wait...";
 
 const today = todayDate();
 
-const [userRes, spinRes] = await Promise.all([
+let userRes = await supabaseClient
+  .from("users")
+  .select("status, member_id, id")
+  .eq("member_id", memberId)
+  .maybeSingle();
 
-supabaseClient
-.from("users")
-.select("status")
-.eq("member_id", memberId)
-.maybeSingle(),
+if(!userRes.data && /^\d+$/.test(memberId)){
+  userRes = await supabaseClient
+    .from("users")
+    .select("status, member_id, id")
+    .eq("id", Number(memberId))
+    .maybeSingle();
+}
 
 supabaseClient
 .from("daily_claims")
@@ -202,9 +208,7 @@ const status = String(userRes.data?.status || "")
 .trim()
 .toLowerCase();
 
-const active =
-status === "active" ||
-status === "approved";
+const active = ["active", "approved"].includes(status);
 
 if(!active){
 
