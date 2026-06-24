@@ -1974,7 +1974,7 @@ window.closeQRPopup = function(){
 };
 document.addEventListener("DOMContentLoaded", function(){
   loadDashboard();
-
+setTimeout(refreshUserStatus, 1000);
   const c = el("scratchCanvas");
   if(c){
     c.addEventListener("touchstart", function(e){ isDrawing = true; e.preventDefault(); }, {passive:false});
