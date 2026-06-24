@@ -61,7 +61,11 @@ const userId =
       .select("*")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
+alert("Searching for: " + userId);
 
+if(data){
+  alert("Records found: " + data.length);
+}
     if(error){
       box.innerHTML = "<div class='history-card'>Error: " + error.message + "</div>";
       return;
