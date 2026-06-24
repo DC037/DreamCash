@@ -114,7 +114,34 @@ left:150%;
   font-size:28px;
   font-weight:800;
 }
+.topRow{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:12px;
+}
 
+.topEarningCard{
+  background:linear-gradient(135deg,#0f172a,#1e293b,#334155);
+  color:white;
+  text-align:center;
+  border-radius:22px;
+  padding:18px 10px;
+  box-shadow:
+    inset 0 3px 8px rgba(255,255,255,.35),
+    inset 0 -8px 16px rgba(0,0,0,.18),
+    0 8px 18px rgba(0,0,0,.18);
+}
+
+.topEarningCard h3{
+  color:white;
+  margin-bottom:8px;
+}
+
+.topEarningCard p{
+  color:#e2e8f0;
+  font-size:12px;
+}
 .spinPopup{
   display:none;
   position:fixed;
@@ -544,11 +571,39 @@ box-shadow:0 0 20px #ff9800;
     <div id="myReferrals">Level select karein...</div>
   </div>
   </div>
-<div class="card spin luckySpinCard">
-  <h2>🎡 Lucky Spin</h2>
-  <p class="small">Active users get 5 free spins every 24 hours.</p>
-  <button class="btn blue" onclick="checkSpinAccess()">Spin Now</button>
-  <button class="btn blue" onclick="showSpinHistory(); return false;">Spin History</button>
+<div class="topRow">
+
+  <div class="card luckySpinCard">
+    <h2>🎡 Lucky Spin</h2>
+    <p class="small">5 free spins every 24 hours.</p>
+
+    <button
+class="btn"
+style="background:linear-gradient(135deg,#7c3aed,#a855f7,#c084fc);"
+onclick="checkSpinAccess()">
+Spin Now
+</button>
+
+    <button
+      class="btn"
+      style="background:linear-gradient(135deg,#7c3aed,#a855f7,#c084fc);"
+      onclick="showSpinHistory();return false;">
+      Spin History
+    </button>
+  </div>
+
+  <div class="topEarningCard">
+    <h3>🏆 Top Earning</h3>
+    <p>View Top Earners</p>
+
+    <button
+      class="btn"
+      style="background:linear-gradient(135deg,#111827,#374151,#4b5563);"
+      onclick="window.location.href='top-earning.html'">
+      Open
+    </button>
+  </div>
+
 </div>
 
 <div class="grid">
