@@ -5,13 +5,88 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DreamCash Spin</title>
 <style>
-body{margin:0;font-family:Arial;background:#f1f5f9;text-align:center}
-.header{background:#0ea5e9;color:white;padding:18px;font-size:22px;font-weight:bold}
-.card{background:white;margin:20px;padding:20px;border-radius:18px;box-shadow:0 5px 15px #0002}
-.wheel{width:230px;height:230px;border-radius:50%;margin:20px auto;border:8px solid #ff1493;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:bold;background:conic-gradient(#ffeb3b 0 60deg,#ff9800 60deg 120deg,#4caf50 120deg 180deg,#03a9f4 180deg 240deg,#9c27b0 240deg 300deg,#e91e63 300deg 360deg)}
-.btn{padding:12px 22px;border:none;border-radius:25px;background:#7c3aed;color:white;font-weight:bold;margin:5px}
-.back{background:#22c55e}
-.history{background:white;margin:15px;padding:12px;border-radius:12px;text-align:left}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#020617,#111827,#1e1b4b);
+min-height:100vh;
+text-align:center;
+color:#fff;
+}
+
+.header{
+background:linear-gradient(135deg,#06b6d4,#2563eb,#7c3aed);
+padding:20px;
+font-size:24px;
+font-weight:bold;
+box-shadow:0 5px 20px #0006;
+}
+
+.card{
+background:rgba(255,255,255,0.12);
+margin:25px auto;
+padding:25px;
+border-radius:28px;
+max-width:420px;
+box-shadow:0 15px 35px #0008;
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,0.25);
+}
+
+.wheel{
+width:285px;
+height:285px;
+border-radius:50%;
+margin:25px auto;
+border:10px solid #ff2bd6;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:34px;
+font-weight:bold;
+color:#fff;
+text-shadow:0 3px 8px #000;
+box-shadow:0 0 25px #ff2bd6, inset 0 0 20px #0006;
+background:conic-gradient(
+#facc15 0 60deg,
+#fb923c 60deg 120deg,
+#22c55e 120deg 180deg,
+#0ea5e9 180deg 240deg,
+#a855f7 240deg 300deg,
+#ec4899 300deg 360deg
+);
+}
+
+.btn{
+padding:13px 24px;
+border:none;
+border-radius:28px;
+background:linear-gradient(135deg,#7c3aed,#ec4899,#06b6d4);
+color:white;
+font-weight:bold;
+margin:7px;
+box-shadow:0 8px 0 #312e81,0 12px 20px #0007;
+}
+
+.btn:active{
+transform:translateY(5px);
+box-shadow:0 3px 0 #312e81;
+}
+
+.back{
+background:linear-gradient(135deg,#16a34a,#22c55e,#86efac);
+box-shadow:0 8px 0 #166534,0 12px 20px #0007;
+}
+
+.history{
+background:rgba(255,255,255,0.15);
+margin:18px auto;
+padding:15px;
+border-radius:18px;
+max-width:420px;
+text-align:left;
+box-shadow:0 8px 25px #0005;
+}
 </style>
 </head>
 <body>
