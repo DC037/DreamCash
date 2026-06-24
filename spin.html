@@ -43,10 +43,6 @@ function getMemberId(){
   const p = new URLSearchParams(window.location.search);
   let id = p.get("member_id") || p.get("id") || localStorage.getItem("member_id") || "";
 
-  if(!id || id === "null" || id === "undefined"){
-    id = "DC642045";
-  }
-
   return id.trim();
 }
 
@@ -57,6 +53,7 @@ function todayDate(){
 async function initSpinPage(){
 
   currentMemberId = getMemberId();
+  currentMemberId = currentMemberId.trim().toUpperCase();
 
   document.getElementById("statusText").innerText = "Checking...";
   document.getElementById("spinLeftText").innerText = "Loading...";
@@ -64,7 +61,7 @@ async function initSpinPage(){
   const { data:user } = await supabaseClient
     .from("users")
     .select("*")
-    .eq("member_id", currentMemberId.trim())
+    .eq("member_id", currentMemberId.trim().toUpperCase())
     .maybeSingle();
   
   if(!user){
