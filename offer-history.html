@@ -1,43 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DreamCash - Offer History</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DreamCash - Offer History</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-    body{background:#f5f7fb}
-    .header{background:#16a34a;color:#fff;text-align:center;padding:15px;font-size:22px;font-weight:bold}
-    .container{padding:15px}
-    .history-card{background:#fff;border-radius:12px;padding:15px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-    .offer-name{font-size:18px;font-weight:bold}
-    .offer-status{margin-top:8px;font-weight:bold}
-    .approved{color:green}
-    .rejected{color:red}
-    .pending{color:orange}
-    .offer-reward{margin-top:6px;font-weight:bold}
-    .date{margin-top:6px;color:#777;font-size:13px}
-    .back-btn{display:block;text-align:center;text-decoration:none;background:#111827;color:#fff;padding:12px;border-radius:8px;margin-top:20px}
-  </style>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f5f7fb}
+.header{background:#16a34a;color:#fff;text-align:center;padding:15px;font-size:22px;font-weight:bold}
+.container{padding:15px}
+.history-card{background:#fff;border-radius:12px;padding:15px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.offer-name{font-size:18px;font-weight:bold}
+.offer-status{margin-top:8px;font-weight:bold}
+.approved{color:green}
+.rejected{color:red}
+.pending{color:orange}
+.offer-reward{margin-top:6px;font-weight:bold}
+.date{margin-top:6px;color:#777;font-size:13px}
+.back-btn{display:block;text-align:center;text-decoration:none;background:#111827;color:#fff;padding:12px;border-radius:8px;margin-top:20px}
+</style>
 </head>
 
 <body>
 
 <div class="header">Offer History</div>
 
-<div class="container" id="historyBox">
-  Loading...
-</div>
+<div class="container" id="historyBox">Loading...</div>
 
 <div class="container">
-  <a href="dashboard.html" class="back-btn">Back To Dashboard</a>
+<a href="dashboard.html" class="back-btn">Back To Dashboard</a>
 </div>
 
 <script>
 const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
-const SUPABASE_KEY = "sb_publishable_M-R7UOrWY2JPMeFvZpAQrw_mj1phJ_1";
+const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const params = new URLSearchParams(window.location.search);
@@ -59,6 +57,7 @@ async function loadHistory(){
   const { data, error } = await supabaseClient
     .from("offer_submissions")
     .select("*")
+    .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
   if(error){
@@ -66,11 +65,7 @@ async function loadHistory(){
     return;
   }
 
-  const myData = (data || []).filter(item =>
-    String(item.user_id || "").trim() === userId
-  );
-alert(JSON.stringify(myData));
-  if(!myData || myData.length === 0){
+  if(!data || data.length === 0){
     box.innerHTML = `
       <div class="history-card">
         <div class="offer-name">No Offer History Found</div>
@@ -81,7 +76,7 @@ alert(JSON.stringify(myData));
 
   box.innerHTML = "";
 
-  myData.forEach(item => {
+  data.forEach(item => {
     let statusClass = "pending";
     if(item.status === "Approved") statusClass = "approved";
     if(item.status === "Rejected") statusClass = "rejected";
