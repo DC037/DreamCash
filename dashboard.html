@@ -1221,10 +1221,7 @@ referral_count: teamData.total,
 referral_income: totalReferralIncome
 })
 .eq("member_id", data.member_id);
-    alert(
-"Direct Active: " + teamData.directActive +
-"\nTeam Active: " + teamData.activeTotal
-);
+
     const completedRank = getCompletedRank(teamData.directActive, teamData.activeTotal);
 console.log("Rank Data:", teamData, "Completed Rank:", completedRank);
     updateRankProgress(completedRank);
