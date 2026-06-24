@@ -60,34 +60,36 @@ function todayDate(){
 async function initSpinPage(){
 
   currentMemberId = getMemberId();
-  currentMemberId = currentMemberId.trim().toUpperCase();
 
   document.getElementById("statusText").innerText = "Checking...";
   document.getElementById("spinLeftText").innerText = "Loading...";
-  
-  const { data:user } = await supabaseClient
-  .from("users")
-  .select("*")
-  .eq("member_id", currentMemberId)
-  .maybeSingle();
-  
-  if(!user){
-    document.getElementById("statusText").innerText =
-      "🔴 User Not Found";
-    document.getElementById("spinLeftText").innerText =
-      "Spin Locked";
+
+  const { data:user, error:userError } = await supabaseClient
+    .from("users")
+    .select("*")
+    .or("member_id.eq." + currentMemberId + ",email.eq.vasimahmad614@gmail.com")
+    .maybeSingle();
+
+  if(userError){
+    document.getElementById("statusText").innerText = "❌ Supabase Error";
+    document.getElementById("spinLeftText").innerText = userError.message;
     return;
   }
 
-  const status = String(user.status || "")
-    .trim()
-    .toLowerCase();
+  if(!user){
+    document.getElementById("statusText").innerText = "🔴 User Not Found";
+    document.getElementById("spinLeftText").innerText = "Spin Locked";
+    return;
+  }
+
+  currentMemberId = user.member_id;
+  currentActive = false;
+
+  const status = String(user.status || "").trim().toLowerCase();
 
   if(status !== "active" && status !== "approved"){
-    document.getElementById("statusText").innerText =
-      "🔴 Inactive User - Activate ID First";
-    document.getElementById("spinLeftText").innerText =
-      "Spin Locked";
+    document.getElementById("statusText").innerText = "🔴 Inactive User - Activate ID First";
+    document.getElementById("spinLeftText").innerText = "Spin Locked";
     return;
   }
 
@@ -101,15 +103,10 @@ async function initSpinPage(){
     .eq("claim_date", todayDate())
     .maybeSingle();
 
-  const used = spinRow
-    ? Number(spinRow.claim_count || 0)
-    : 0;
+  const used = spinRow ? Number(spinRow.claim_count || 0) : 0;
 
-  document.getElementById("statusText").innerText =
-    "✅ Active User";
-
-  document.getElementById("spinLeftText").innerText =
-    "Today Spins Left: " + (5 - used);
+  document.getElementById("statusText").innerText = "✅ Active User";
+  document.getElementById("spinLeftText").innerText = "Today Spins Left: " + (5 - used);
 }
   
 async function getSpinData(){
