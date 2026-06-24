@@ -230,8 +230,8 @@ document.getElementById("spinLeftText").innerText =
 }
 
 async function startSpin(){
-const active = await isActiveUser();
-
+const active = document.getElementById("statusText").innerText.includes("✅ Active User");
+  
 if(!active){
 alert("Please activate your ID first");
 return;
@@ -345,7 +345,8 @@ html += "<p>Date: " + item.claim_date +
 html += "</div>";
 document.getElementById("historyBox").innerHTML = html;
 }
-
+document.getElementById("statusText").innerText = "Checking ID...";
+document.getElementById("spinLeftText").innerText = "Loading...";
 initSpinPage();
 </script>
 
