@@ -58,53 +58,11 @@ function todayDate(){
 }
 
 async function initSpinPage(){
-
-  currentMemberId = getMemberId();
-
-  document.getElementById("statusText").innerText = "Checking...";
-  document.getElementById("spinLeftText").innerText = "Loading...";
-
-  let user = null;
-
-  let res1 = await supabaseClient
-    .from("users")
-    .select("*")
-    .eq("member_id", "DC642045")
-    .maybeSingle();
-
-  user = res1.data;
-
-  if(!user){
-    let res2 = await supabaseClient
-      .from("users")
-      .select("*")
-      .eq("email", "vasimahmad614@gmail.com")
-      .maybeSingle();
-
-    user = res2.data;
-  }
-
-  if(!user){
-    document.getElementById("statusText").innerText = "🔴 User Not Found";
-    document.getElementById("spinLeftText").innerText = "Check Supabase URL / KEY";
-    return;
-  }
-
-  currentMemberId = user.member_id;
+  currentMemberId = "DC642045";
   currentActive = true;
 
-  const { data:spinRow } = await supabaseClient
-    .from("daily_claims")
-    .select("*")
-    .eq("user_id", currentMemberId)
-    .eq("task_type", "spin")
-    .eq("claim_date", todayDate())
-    .maybeSingle();
-
-  const used = spinRow ? Number(spinRow.claim_count || 0) : 0;
-
   document.getElementById("statusText").innerText = "✅ Active User";
-  document.getElementById("spinLeftText").innerText = "Today Spins Left: " + (5 - used);
+  document.getElementById("spinLeftText").innerText = "Today Spins Left: 5";
 }
   
 async function getSpinData(){
