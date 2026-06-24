@@ -1202,7 +1202,22 @@ if(adminBox){
   setText("balance", Number(data.wallet || 0).toFixed(2));
   const teamData = await countTotalTeam(data.member_id);
 
+const totalReferralIncome = Number(teamData.total || 0) * 20;
+
 setText("totalRefer", teamData.total);
+
+setText(
+"referralIncome",
+totalReferralIncome.toFixed(2) + "DC"
+);
+
+await supabaseClient
+.from("users")
+.update({
+referral_count: teamData.total,
+referral_income: totalReferralIncome
+})
+.eq("member_id", data.member_id);
     alert(
 "Direct Active: " + teamData.directActive +
 "\nTeam Active: " + teamData.activeTotal
