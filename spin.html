@@ -41,9 +41,16 @@ let currentActive = false;
 
 function getMemberId(){
   const p = new URLSearchParams(window.location.search);
-  let id = p.get("member_id") || p.get("id") || localStorage.getItem("member_id") || "";
 
-  return id.trim();
+  let id =
+    p.get("member_id") ||
+    p.get("id") ||
+    localStorage.getItem("member_id") ||
+    localStorage.getItem("memberId") ||
+    localStorage.getItem("user_id") ||
+    "DC642045";
+
+  return String(id).trim().toUpperCase();
 }
 
 function todayDate(){
@@ -61,7 +68,7 @@ async function initSpinPage(){
   const { data:user } = await supabaseClient
   .from("users")
   .select("*")
-  .eq("email", "vasimahmad614@gmail.com")
+  .eq("member_id", currentMemberId)
   .maybeSingle();
   
   if(!user){
