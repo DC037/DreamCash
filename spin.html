@@ -166,18 +166,67 @@ row: data
 };
 }
 
-async function updateSpinText(){
-const active = await isActiveUser();
+async function initSpinPage(){
 
-if(!active){
-document.getElementById("statusText").innerText = "🔴 Inactive User - Activate ID First";
-document.getElementById("spinLeftText").innerText = "Spin Locked";
+const memberId = getMemberId();
+
+if(!memberId){
+document.getElementById("statusText").innerText = "Please Login Again";
 return;
 }
 
-document.getElementById("statusText").innerText = "✅ Active User";
-const spinData = await getSpinData();
-document.getElementById("spinLeftText").innerText = "Today Spins Left: " + spinData.left;
+document.getElementById("statusText").innerText = "Loading...";
+document.getElementById("spinLeftText").innerText = "Please Wait...";
+
+const today = todayDate();
+
+const [userRes, spinRes] = await Promise.all([
+
+supabaseClient
+.from("users")
+.select("status")
+.eq("member_id", memberId)
+.maybeSingle(),
+
+supabaseClient
+.from("daily_claims")
+.select("*")
+.eq("user_id", memberId)
+.eq("task_type","spin")
+.eq("claim_date",today)
+.maybeSingle()
+
+]);
+
+const status = String(userRes.data?.status || "")
+.trim()
+.toLowerCase();
+
+const active =
+status === "active" ||
+status === "approved";
+
+if(!active){
+
+document.getElementById("statusText").innerText =
+"🔴 Inactive User - Activate ID First";
+
+document.getElementById("spinLeftText").innerText =
+"Spin Locked";
+
+return;
+}
+
+const used = spinRes.data
+? Number(spinRes.data.claim_count || 0)
+: 0;
+
+document.getElementById("statusText").innerText =
+"✅ Active User";
+
+document.getElementById("spinLeftText").innerText =
+"Today Spins Left: " + (5 - used);
+
 }
 
 async function startSpin(){
@@ -262,7 +311,7 @@ alert("Wallet update error");
 return;
 }
 
-await updateSpinText();
+await initSpinPage();
 alert("Congratulations! You won " + reward.toFixed(2) + " DC");
 
 },4000);
