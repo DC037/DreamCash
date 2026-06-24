@@ -1202,7 +1202,7 @@ if(adminBox){
   setText("balance", Number(data.wallet || 0).toFixed(2));
   const teamData = await countTotalTeam(data.member_id);
 
-const totalReferralIncome = Number(teamData.activeTotal || 0) * 20;
+const totalReferralIncome = Number(data.wallet || 0) - 20;
 setText("totalRefer", teamData.total);
 
 setText("refCount", teamData.total);
