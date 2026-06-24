@@ -202,6 +202,9 @@ const spinRes = await supabaseClient
   .eq("claim_date", today)
   .maybeSingle();
 
+  console.log("Member ID =", memberId);
+console.log("User Data =", userRes.data);
+  
 const status = String(userRes.data?.status || "")
 .trim()
 .toLowerCase();
