@@ -67,11 +67,6 @@ async function initSpinPage(){
     .eq("member_id", currentMemberId.trim())
     .maybeSingle();
   
-  alert("Member ID = " + currentMemberId);
-alert("User Data = " + JSON.stringify(user));
-alert("Status = " + (user ? user.status : "NULL"));
-console.log("Current Member ID =", currentMemberId);
-  
   if(!user){
     document.getElementById("statusText").innerText =
       "🔴 User Not Found";
