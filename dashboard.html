@@ -1013,6 +1013,15 @@ if(data && data.status){
 user.isActive = data.status.toLowerCase() === "active";
 saveUser(user);
 el("status").innerText = data.status;
+  el("walletMemberStatus").innerText =
+data.status === "Active"
+? "✅ Active Member"
+: "🔴 Inactive Member";
+
+el("accountStatus").innerText =
+data.status === "Active"
+? "🟢 Account Status: Active"
+: "🔴 Account Status: Inactive";
 }
 }
 function saveUser(data){
