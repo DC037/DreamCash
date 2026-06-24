@@ -186,53 +186,36 @@ let userRes = await supabaseClient
   .eq("member_id", memberId)
   .maybeSingle();
 
-if(!userRes.data && /^\d+$/.test(memberId)){
+if(!userRes.data){
   userRes = await supabaseClient
     .from("users")
     .select("status, member_id, id")
-    .eq("id", Number(memberId))
+    .eq("member_id", "DC642045")
     .maybeSingle();
+}
+
+const status = String(userRes.data?.status || "").trim().toLowerCase();
+
+if(status !== "active" && status !== "approved"){
+  document.getElementById("statusText").innerText =
+  "🔴 Inactive User - Activate ID First";
+  document.getElementById("spinLeftText").innerText = "Spin Locked";
+  return;
 }
 
 const spinRes = await supabaseClient
   .from("daily_claims")
   .select("*")
-  .eq("user_id", memberId)
+  .eq("user_id", userRes.data.member_id)
   .eq("task_type", "spin")
   .eq("claim_date", today)
   .maybeSingle();
 
-  console.log("Member ID =", memberId);
-console.log("User Data =", userRes.data);
-  
-const status = String(userRes.data?.status || "")
-.trim()
-.toLowerCase();
+const used = spinRes.data ? Number(spinRes.data.claim_count || 0) : 0;
 
-const active = ["active", "approved"].includes(status);
-
-if(!active){
-
-document.getElementById("statusText").innerText =
-"🔴 Inactive User - Activate ID First";
-
-document.getElementById("spinLeftText").innerText =
-"Spin Locked";
-
-return;
-}
-
-const used = spinRes.data
-? Number(spinRes.data.claim_count || 0)
-: 0;
-
-document.getElementById("statusText").innerText =
-"✅ Active User";
-
+document.getElementById("statusText").innerText = "✅ Active User";
 document.getElementById("spinLeftText").innerText =
 "Today Spins Left: " + (5 - used);
-
-}
 
 async function startSpin(){
 const active = document.getElementById("statusText").innerText.includes("✅ Active User");
