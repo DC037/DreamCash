@@ -57,6 +57,8 @@ async function initSpinPage(){
 
   document.getElementById("statusText").innerText = "Checking...";
   document.getElementById("spinLeftText").innerText = "Loading...";
+  currentMemberId = getMemberId();
+alert("Current ID = " + currentMemberId);
 
   const { data:user } = await supabaseClient
     .from("users")
