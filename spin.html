@@ -110,7 +110,7 @@ async function startSpin(){
         })
         .eq("id", spinData.row.id);
 
-      if(error){ alert("Spin save error"); return; }
+      if(error){ alert("Spin save error: " + JSON.stringify(error)); return; }
     }else{
       const { error } = await supabaseClient
         .from("daily_claims")
@@ -122,7 +122,7 @@ async function startSpin(){
           claim_count: 1
         });
 
-      if(error){ alert("Spin save error"); return; }
+      if(error){ alert("Spin save error: " + JSON.stringify(error)); return; }
     }
 
     const { data:userData, error:userError } = await supabaseClient
