@@ -97,67 +97,10 @@ async function startSpin(){
   wheel.style.transition = "transform 4s ease-out";
   wheel.style.transform = "rotate(" + (1800 + Math.floor(Math.random()*360)) + "deg)";
 
-  setTimeout(async function(){
-    const today = todayDate();
+  // daily_claims save skip because fetch error
 
-    if(spinData.row){
-      const newCount = Number(spinData.row.claim_count || 0) + 1;
-      const { error } = await supabaseClient
-        .from("daily_claims")
-        .update({
-          claim_count: newCount,
-          points: Number(spinData.row.points || 0) + Math.round(reward * 100)
-        })
-        .eq("id", spinData.row.id);
-
-      if(error){ alert("Spin save error: " + JSON.stringify(error)); return; }
-    }else{
-      const { error } = await supabaseClient
-        .from("daily_claims")
-        .insert({
-          user_id: currentMemberId,
-          task_type: "spin",
-          claim_date: today,
-          points: Math.round(reward * 100),
-          claim_count: 1
-        });
-
-      if(error){ alert("Spin save error: " + JSON.stringify(error)); return; }
-    }
-
-    const { data:userData, error:userError } = await supabaseClient
-      .from("users")
-      .select("wallet")
-      .eq("member_id", currentMemberId)
-      .maybeSingle();
-
-    if(userError || !userData){ alert("Wallet fetch error"); return; }
-
-    const newWallet = Number(userData.wallet || 0) + reward;
-
-    const { error:walletError } = await supabaseClient
-      .from("users")
-      .update({ wallet: newWallet })
-      .eq("member_id", currentMemberId);
-
-    if(walletError){ alert("Wallet update error"); return; }
-
-    await initSpinPage();
-    alert("Congratulations! You won " + reward.toFixed(2) + " DC");
-  },4000);
-}
-
-async function loadSpinHistory(){
-  const memberId = currentMemberId || getMemberId();
-
-  const { data, error } = await supabaseClient
-    .from("daily_claims")
-    .select("*")
-    .eq("user_id", memberId)
-    .eq("task_type", "spin")
-    .order("claim_date", { ascending:false })
-    .limit(20);
-
+  await initSpinPage();
+alert("Congratulations! You won " + reward.toFixed(2) + " DC");
   if(error || !data || data.length === 0){
     document.getElementById("historyBox").innerHTML = "<div class='history'>No Spin History Found</div>";
     return;
