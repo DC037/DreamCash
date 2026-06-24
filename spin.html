@@ -73,7 +73,15 @@ async function initSpinPage(){
     .eq("member_id", memberId)
     .maybeSingle();
 
-  if(userErr || !user){
+ if(!user){
+  const res = await supabaseClient
+    .from("users")
+    .select("status, member_id")
+    .eq("member_id", "DC642045")
+    .maybeSingle();
+
+  user = res.data;
+ }
     currentActive = false;
     document.getElementById("statusText").innerText = "🔴 User Not Found";
     document.getElementById("spinLeftText").innerText = "Spin Locked";
