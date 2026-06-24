@@ -1259,11 +1259,18 @@ if (badge) {
   }
 }
 
-function isActiveUser(){
-const user = getUser();
-const statusText = (el("status")?.innerText || "").trim().toLowerCase();
+async function isActiveUser(){
+const memberId = getMemberId();
 
-return user.isActive === true || statusText === "active";
+const { data, error } = await supabaseClient
+.from("users")
+.select("status")
+.eq("member_id", memberId)
+.maybeSingle();
+
+if(error || !data) return false;
+
+return String(data.status || "").trim().toLowerCase() === "active";
 }
 
 window.openUPIPayment = function(){
@@ -1820,7 +1827,7 @@ function getScratchUserId(){
 }
 
 window.checkScratchAccess = async function(){
-  if(!isActiveUser()){
+  if(!(await isActiveUser())){
     alert("Please Active ID");
     return;
   }
