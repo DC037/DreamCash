@@ -61,7 +61,7 @@ async function initSpinPage(){
   const { data:user } = await supabaseClient
   .from("users")
   .select("*")
-  .ilike("member_id", currentMemberId)
+  .eq("email", "vasimahmad614@gmail.com")
   .maybeSingle();
   
   if(!user){
