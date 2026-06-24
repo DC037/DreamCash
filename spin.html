@@ -55,47 +55,35 @@ function todayDate(){
 }
 
 async function initSpinPage(){
-  const memberId = getMemberId();
-  currentMemberId = memberId;
 
-  if(!memberId){
-    document.getElementById("statusText").innerText = "Please Login Again";
-    document.getElementById("spinLeftText").innerText = "Login Required";
+  currentMemberId = getMemberId();
+
+  document.getElementById("statusText").innerText = "Checking...";
+  document.getElementById("spinLeftText").innerText = "Loading...";
+
+  const { data:user } = await supabaseClient
+    .from("users")
+    .select("status, member_id")
+    .eq("member_id", currentMemberId)
+    .maybeSingle();
+
+  if(!user){
+    document.getElementById("statusText").innerText =
+      "🔴 User Not Found";
+    document.getElementById("spinLeftText").innerText =
+      "Spin Locked";
     return;
   }
 
-  document.getElementById("statusText").innerText = "Checking ID...";
-  document.getElementById("spinLeftText").innerText = "Loading...";
-
-  let { data:user, error:userErr } = await supabaseClient
-    .from("users")
-    .select("status, member_id")
-    .eq("member_id", memberId)
-    .maybeSingle();
-
- if(!user){
-  const res = await supabaseClient
-    .from("users")
-    .select("status, member_id")
-    .eq("member_id", "DC642045")
-    .maybeSingle();
-
-  user = res.data;
-}
-
-if(!user){
-  currentActive = false;
-  document.getElementById("statusText").innerText = "🔴 User Not Found";
-  document.getElementById("spinLeftText").innerText = "Spin Locked";
-  return;
-}
-
-  const status = String(user.status || "").trim().toLowerCase();
+  const status = String(user.status || "")
+    .trim()
+    .toLowerCase();
 
   if(status !== "active" && status !== "approved"){
-    currentActive = false;
-    document.getElementById("statusText").innerText = "🔴 Inactive User - Activate ID First";
-    document.getElementById("spinLeftText").innerText = "Spin Locked";
+    document.getElementById("statusText").innerText =
+      "🔴 Inactive User - Activate ID First";
+    document.getElementById("spinLeftText").innerText =
+      "Spin Locked";
     return;
   }
 
@@ -104,16 +92,22 @@ if(!user){
   const { data:spinRow } = await supabaseClient
     .from("daily_claims")
     .select("*")
-    .eq("user_id", memberId)
+    .eq("user_id", currentMemberId)
     .eq("task_type", "spin")
     .eq("claim_date", todayDate())
     .maybeSingle();
 
-  const used = spinRow ? Number(spinRow.claim_count || 0) : 0;
-  document.getElementById("statusText").innerText = "✅ Active User";
-  document.getElementById("spinLeftText").innerText = "Today Spins Left: " + Math.max(0, 5 - used);
-}
+  const used = spinRow
+    ? Number(spinRow.claim_count || 0)
+    : 0;
 
+  document.getElementById("statusText").innerText =
+    "✅ Active User";
+
+  document.getElementById("spinLeftText").innerText =
+    "Today Spins Left: " + (5 - used);
+}
+  
 async function getSpinData(){
   const { data } = await supabaseClient
     .from("daily_claims")
