@@ -117,8 +117,8 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const rewards = [0.10,0.15,0.20,0.25,0.30];
 
 function getMemberId(){
-return localStorage.getItem("member_id") ||
-localStorage.getItem("last_member_id") || "";
+const params = new URLSearchParams(window.location.search);
+return params.get("member_id") || "";
 }
 
 function todayDate(){
@@ -142,7 +142,8 @@ const { data, error } = await supabaseClient
 
 if(error || !data) return false;
 
-return String(data.status || "").trim().toLowerCase() === "active";
+const status = String(data.status || "").trim().toLowerCase();
+return status === "active" || status === "approved";
 }
 
 async function getSpinData(){
