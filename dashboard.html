@@ -1123,6 +1123,8 @@ urlParams.get("ref") ||
 localStorage.getItem("member_id") ||
 localStorage.getItem("last_member_id") ||
 "DC1001";
+    console.log("Current Member ID =", memberId);
+alert("Current Member ID = " + memberId);
   
 if(memberId){
   localStorage.setItem("member_id", memberId);
