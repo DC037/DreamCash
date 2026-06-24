@@ -70,7 +70,7 @@ async function loadHistory(){
   const myData = (data || []).filter(item =>
     String(item.user_id || "").trim() === userId
   );
-
+alert(JSON.stringify(myData));
   if(!myData || myData.length === 0){
     box.innerHTML = `
       <div class="history-card">
