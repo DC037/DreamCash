@@ -36,69 +36,69 @@
 </div>
 
 <script>
-  const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
-const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_M-R7UOrWY2JPMeFvZpAQrw_mj1phJ_1";
+
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search);
 
 const userId =
-  params.get("member_id") ||
+  (params.get("member_id") ||
   localStorage.getItem("member_id") ||
-  localStorage.getItem("last_member_id");
-  alert("Current user id: " + userId);
+  localStorage.getItem("last_member_id") ||
+  "").trim();
 
-  async function loadHistory(){
-    const box = document.getElementById("historyBox");
+async function loadHistory(){
+  const box = document.getElementById("historyBox");
 
-    if(!userId){
-      box.innerHTML = "<div class='history-card'>User login nahi mila. Please login again.</div>";
-      return;
-    }
-
-    const { data, error } = await supabaseClient
-      .from("offer_submissions")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false });
-alert("Searching for: " + userId);
-
-if(data){
-  alert("Records found: " + data.length);
-}
-    if(error){
-      box.innerHTML = "<div class='history-card'>Error: " + error.message + "</div>";
-      return;
-    }
-
-    if(!data || data.length === 0){
-      box.innerHTML = `
-        <div class="history-card">
-          <div class="offer-name">No Offer History Found</div>
-          <div class="offer-status">Complete offers to see history here</div>
-        </div>`;
-      return;
-    }
-
-    box.innerHTML = "";
-
-    data.forEach(item => {
-      let statusClass = "pending";
-      if(item.status === "Approved") statusClass = "approved";
-      if(item.status === "Rejected") statusClass = "rejected";
-
-      box.innerHTML += `
-        <div class="history-card">
-          <div class="offer-name">Offer ID: ${item.offer_id}</div>
-          <div class="offer-status ${statusClass}">Status: ${item.status}</div>
-          <div class="offer-reward">Reward: ₹${item.reward}</div>
-          <div class="date">Date: ${new Date(item.created_at).toLocaleString()}</div>
-        </div>
-      `;
-    });
+  if(!userId){
+    box.innerHTML = "<div class='history-card'>User login nahi mila. Please login again.</div>";
+    return;
   }
 
-  loadHistory();
+  const { data, error } = await supabaseClient
+    .from("offer_submissions")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if(error){
+    box.innerHTML = "<div class='history-card'>Error: " + error.message + "</div>";
+    return;
+  }
+
+  const myData = (data || []).filter(item =>
+    String(item.user_id || "").trim() === userId
+  );
+
+  if(!myData || myData.length === 0){
+    box.innerHTML = `
+      <div class="history-card">
+        <div class="offer-name">No Offer History Found</div>
+        <div class="offer-status">Complete offers to see history here</div>
+      </div>`;
+    return;
+  }
+
+  box.innerHTML = "";
+
+  myData.forEach(item => {
+    let statusClass = "pending";
+    if(item.status === "Approved") statusClass = "approved";
+    if(item.status === "Rejected") statusClass = "rejected";
+
+    box.innerHTML += `
+      <div class="history-card">
+        <div class="offer-name">Offer ID: ${item.offer_id}</div>
+        <div class="offer-status ${statusClass}">Status: ${item.status}</div>
+        <div class="offer-reward">Reward: ₹${item.reward}</div>
+        <div class="date">Date: ${new Date(item.created_at).toLocaleString()}</div>
+      </div>
+    `;
+  });
+}
+
+loadHistory();
 </script>
 
 </body>
