@@ -41,7 +41,13 @@ let currentActive = false;
 
 function getMemberId(){
   const p = new URLSearchParams(window.location.search);
-  return p.get("member_id") || p.get("id") || localStorage.getItem("member_id") || "";
+  let id = p.get("member_id") || p.get("id") || localStorage.getItem("member_id") || "";
+
+  if(!id || id === "null" || id === "undefined"){
+    id = "DC642045";
+  }
+
+  return id.trim();
 }
 
 function todayDate(){
