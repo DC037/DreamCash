@@ -63,10 +63,10 @@ async function initSpinPage(){
 
   const { data:user } = await supabaseClient
     .from("users")
-    .select("status, member_id")
-    .eq("member_id", currentMemberId)
+    .select("*")
+    .eq("member_id", currentMemberId.trim())
     .maybeSingle();
-
+console.log("Current Member ID =", currentMemberId);
   if(!user){
     document.getElementById("statusText").innerText =
       "🔴 User Not Found";
