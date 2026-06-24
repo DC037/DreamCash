@@ -1121,8 +1121,12 @@ let memberId =
 urlParams.get("member_id") ||
 urlParams.get("ref") ||
 localStorage.getItem("member_id") ||
-localStorage.getItem("last_member_id") ||
-"DC1001";
+localStorage.getItem("last_member_id");
+
+if (!memberId) {
+  alert("Member ID Not Found");
+  return;
+}
     console.log("Current Member ID =", memberId);
 alert("Current Member ID = " + memberId);
   
