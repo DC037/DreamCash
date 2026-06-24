@@ -1,15 +1,228 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DreamCash Spin</title>
+<style>
+body{margin:0;font-family:Arial;background:#f1f5f9;text-align:center}
+.header{background:#0ea5e9;color:white;padding:18px;font-size:22px;font-weight:bold}
+.card{background:white;margin:20px;padding:20px;border-radius:18px;box-shadow:0 5px 15px #0002}
+.wheel{width:230px;height:230px;border-radius:50%;margin:20px auto;border:8px solid #ff1493;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:bold;background:conic-gradient(#ffeb3b 0 60deg,#ff9800 60deg 120deg,#4caf50 120deg 180deg,#03a9f4 180deg 240deg,#9c27b0 240deg 300deg,#e91e63 300deg 360deg)}
+.btn{padding:12px 22px;border:none;border-radius:25px;background:#7c3aed;color:white;font-weight:bold;margin:5px}
+.back{background:#22c55e}
+.history{background:white;margin:15px;padding:12px;border-radius:12px;text-align:left}
+</style>
 </head>
 <body>
 
-<h2>Lucky Spin Page</h2>
+<div class="header">🎡 DreamCash Lucky Spin</div>
 
-<button onclick="window.location.href='dashboard.html'">
-Back To Dashboard
-</button>
+<div class="card">
+<h3 id="statusText">Checking...</h3>
+<p id="spinLeftText">Today Spins Left: 0</p>
+
+<div id="spinWheel" class="wheel">SPIN</div>
+
+<button class="btn" onclick="startSpin()">Spin Now</button>
+<button class="btn" onclick="loadSpinHistory()">Spin History</button>
+<button class="btn back" onclick="window.location.href='dashboard.html'">Back Dashboard</button>
+</div>
+
+<div id="historyBox"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://baqiuuxvscffmtvhceqk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_M-R7UOrWf2JPMefVzPAQRw_mjTphJ_1";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const rewards = [0.10,0.15,0.20,0.25,0.30];
+
+function getMemberId(){
+return localStorage.getItem("member_id") ||
+localStorage.getItem("last_member_id") || "";
+}
+
+function todayDate(){
+return new Date().toISOString().split("T")[0];
+}
+
+async function isActiveUser(){
+const memberId = getMemberId();
+
+if(!memberId){
+alert("Please login again");
+window.location.href="login.html";
+return false;
+}
+
+const { data, error } = await supabaseClient
+.from("users")
+.select("status")
+.eq("member_id", memberId)
+.maybeSingle();
+
+if(error || !data) return false;
+
+return String(data.status || "").trim().toLowerCase() === "active";
+}
+
+async function getSpinData(){
+const memberId = getMemberId();
+const today = todayDate();
+
+const { data } = await supabaseClient
+.from("daily_claims")
+.select("*")
+.eq("user_id", memberId)
+.eq("task_type", "spin")
+.eq("claim_date", today)
+.maybeSingle();
+
+const used = data ? Number(data.claim_count || 0) : 0;
+
+return {
+left: 5 - used,
+row: data
+};
+}
+
+async function updateSpinText(){
+const active = await isActiveUser();
+
+if(!active){
+document.getElementById("statusText").innerText = "🔴 Inactive User - Activate ID First";
+document.getElementById("spinLeftText").innerText = "Spin Locked";
+return;
+}
+
+document.getElementById("statusText").innerText = "✅ Active User";
+const spinData = await getSpinData();
+document.getElementById("spinLeftText").innerText = "Today Spins Left: " + spinData.left;
+}
+
+async function startSpin(){
+const active = await isActiveUser();
+
+if(!active){
+alert("Please activate your ID first");
+return;
+}
+
+const memberId = getMemberId();
+const spinData = await getSpinData();
+
+if(spinData.left <= 0){
+alert("No spins left today. Come back tomorrow.");
+return;
+}
+
+const reward = rewards[Math.floor(Math.random() * rewards.length)];
+const wheel = document.getElementById("spinWheel");
+
+wheel.style.transition = "transform 4s ease-out";
+wheel.style.transform = "rotate(" + (1800 + Math.floor(Math.random()*360)) + "deg)";
+
+setTimeout(async function(){
+
+const today = todayDate();
+
+if(spinData.row){
+const newCount = Number(spinData.row.claim_count || 0) + 1;
+
+const { error } = await supabaseClient
+.from("daily_claims")
+.update({
+claim_count: newCount,
+points: Math.round(reward * 100)
+})
+.eq("id", spinData.row.id);
+
+if(error){
+alert("Spin save error");
+return;
+}
+
+}else{
+const { error } = await supabaseClient
+.from("daily_claims")
+.insert({
+user_id: memberId,
+task_type: "spin",
+claim_date: today,
+points: Math.round(reward * 100),
+claim_count: 1
+});
+
+if(error){
+alert("Spin save error");
+return;
+}
+}
+
+const { data: userData, error: userError } = await supabaseClient
+.from("users")
+.select("wallet")
+.eq("member_id", memberId)
+.maybeSingle();
+
+if(userError || !userData){
+alert("Wallet fetch error");
+return;
+}
+
+const newWallet = Number(userData.wallet || 0) + reward;
+
+const { error: walletError } = await supabaseClient
+.from("users")
+.update({ wallet: newWallet })
+.eq("member_id", memberId);
+
+if(walletError){
+alert("Wallet update error");
+return;
+}
+
+await updateSpinText();
+alert("Congratulations! You won " + reward.toFixed(2) + " DC");
+
+},4000);
+}
+
+async function loadSpinHistory(){
+const memberId = getMemberId();
+
+const { data, error } = await supabaseClient
+.from("daily_claims")
+.select("*")
+.eq("user_id", memberId)
+.eq("task_type", "spin")
+.order("claim_date", { ascending:false })
+.limit(20);
+
+if(error || !data || data.length === 0){
+document.getElementById("historyBox").innerHTML =
+"<div class='history'>No Spin History Found</div>";
+return;
+}
+
+let html = "<div class='history'><h3>Spin History</h3>";
+
+data.forEach(item=>{
+html += "<p>Date: " + item.claim_date +
+" | Count: " + item.claim_count +
+" | Points: " + item.points + "</p>";
+});
+
+html += "</div>";
+document.getElementById("historyBox").innerHTML = html;
+}
+
+updateSpinText();
+</script>
 
 </body>
 </html>
