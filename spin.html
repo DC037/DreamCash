@@ -194,15 +194,13 @@ if(!userRes.data && /^\d+$/.test(memberId)){
     .maybeSingle();
 }
 
-supabaseClient
-.from("daily_claims")
-.select("*")
-.eq("user_id", memberId)
-.eq("task_type","spin")
-.eq("claim_date",today)
-.maybeSingle()
-
-]);
+const spinRes = await supabaseClient
+  .from("daily_claims")
+  .select("*")
+  .eq("user_id", memberId)
+  .eq("task_type", "spin")
+  .eq("claim_date", today)
+  .maybeSingle();
 
 const status = String(userRes.data?.status || "")
 .trim()
