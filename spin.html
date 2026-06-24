@@ -81,12 +81,14 @@ async function initSpinPage(){
     .maybeSingle();
 
   user = res.data;
- }
-    currentActive = false;
-    document.getElementById("statusText").innerText = "🔴 User Not Found";
-    document.getElementById("spinLeftText").innerText = "Spin Locked";
-    return;
-  }
+}
+
+if(!user){
+  currentActive = false;
+  document.getElementById("statusText").innerText = "🔴 User Not Found";
+  document.getElementById("spinLeftText").innerText = "Spin Locked";
+  return;
+}
 
   const status = String(user.status || "").trim().toLowerCase();
 
