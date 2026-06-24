@@ -57,14 +57,12 @@ async function initSpinPage(){
 
   document.getElementById("statusText").innerText = "Checking...";
   document.getElementById("spinLeftText").innerText = "Loading...";
-  currentMemberId = getMemberId();
-alert("Current ID = " + currentMemberId);
-
+  
   const { data:user } = await supabaseClient
-    .from("users")
-    .select("*")
-    .eq("member_id", currentMemberId.trim().toUpperCase())
-    .maybeSingle();
+  .from("users")
+  .select("*")
+  .ilike("member_id", currentMemberId)
+  .maybeSingle();
   
   if(!user){
     document.getElementById("statusText").innerText =
