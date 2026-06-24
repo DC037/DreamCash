@@ -125,6 +125,11 @@ if(error){
 console.log(error);
 return;
 }
+  if(!data || data.length === 0){
+document.getElementById("leaderboard").innerHTML =
+"<div style='text-align:center;margin-top:30px;color:#94a3b8;'>No earning data found</div>";
+return;
+  }
 
 let html = "";
 
