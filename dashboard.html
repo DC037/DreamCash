@@ -1017,7 +1017,21 @@ function getUser(){
     referredBy: saved.referredBy || "Direct Join"
   };
 }
+async function refreshUserStatus(){
+const user = getUser();
 
+const { data, error } = await supabaseClient
+.from("users")
+.select("status")
+.eq("member_id", user.memberId)
+.maybeSingle();
+
+if(data && data.status){
+user.isActive = data.status.toLowerCase() === "active";
+saveUser(user);
+el("status").innerText = data.status;
+}
+}
 function saveUser(data){
   localStorage.setItem("dreamUser", JSON.stringify(data));
 }
