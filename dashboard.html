@@ -1582,7 +1582,12 @@ async function updateSpinText(){
 }
 
 window.checkSpinAccess = async function(){
+const user = getUser();
 
+if(!user.isActive){
+alert("Please activate your ID first");
+return;
+}
   console.log("Spin Click Working");
 
   const popup = document.getElementById("spinPopup");
