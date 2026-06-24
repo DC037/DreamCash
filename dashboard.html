@@ -1246,7 +1246,10 @@ if (badge) {
 }
 
 function isActiveUser(){
-  return (el("status").innerText || "").trim().toLowerCase() === "active";
+const user = getUser();
+const statusText = (el("status")?.innerText || "").trim().toLowerCase();
+
+return user.isActive === true || statusText === "active";
 }
 
 window.openUPIPayment = function(){
