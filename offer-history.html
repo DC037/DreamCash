@@ -56,7 +56,7 @@ async function loadHistory(){
 
   const { data, error } = await supabaseClient
     .from("offer_submissions")
-    .select("*, offers(title,name,offer_name)")
+    .select("*, offers(*)")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
@@ -84,7 +84,7 @@ async function loadHistory(){
     box.innerHTML += `
       <div class="history-card">
         <div class="offer-name">
-${item.offers?.title || item.offers?.name || item.offers?.offer_name || "Unknown Offer"}
+${item.offers?.title || item.offers?.offer_name || item.offers?.app_name || item.offers?.offer_title || "Unknown Offer"}
 </div>
 
 <div style="font-size:12px;color:#777;">
