@@ -67,7 +67,7 @@ async function initSpinPage(){
   document.getElementById("statusText").innerText = "Checking ID...";
   document.getElementById("spinLeftText").innerText = "Loading...";
 
-  const { data:user, error:userErr } = await supabaseClient
+  let { data:user, error:userErr } = await supabaseClient
     .from("users")
     .select("status, member_id")
     .eq("member_id", memberId)
