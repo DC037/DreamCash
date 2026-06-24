@@ -433,7 +433,17 @@ async function rejectActivation(id, userId) {
     alert(error.message);
     return;
   }
+const { error: userRejectError } = await supabaseClient
+.from("users")
+.update({
+status: "Rejected"
+})
+.eq("member_id", userId);
 
+if(userRejectError){
+alert("User status update error: " + userRejectError.message);
+return;
+}
   alert("Activation Request Rejected");
   loadActivationRequests();
 }
