@@ -1,1 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DreamCash Spin</title>
 
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#020617,#111827,#1e1b4b);min-height:100vh;text-align:center;color:#fff}
+.header{background:linear-gradient(135deg,#06b6d4,#2563eb,#7c3aed);padding:20px;font-size:24px;font-weight:bold}
+.card{background:rgba(255,255,255,.12);margin:25px auto;padding:25px;border-radius:28px;max-width:420px;border:1px solid rgba(255,255,255,.25)}
+.wheel{width:285px;height:285px;border-radius:50%;margin:25px auto;border:10px solid #ff2bd6;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:bold;color:#fff;text-shadow:0 3px 8px #000;box-shadow:0 0 25px #ff2bd6;background:conic-gradient(#facc15 0 60deg,#fb923c 60deg 120deg,#22c55e 120deg 180deg,#0ea5e9 180deg 240deg,#a855f7 240deg 300deg,#ec4899 300deg 360deg)}
+.btn{padding:13px 24px;border:none;border-radius:28px;background:linear-gradient(135deg,#7c3aed,#ec4899,#06b6d4);color:white;font-weight:bold;margin:7px}
+.btn:disabled{opacity:.6}
+.back{background:linear-gradient(135deg,#16a34a,#22c55e,#86efac)}
+.history{background:rgba(255,255,255,.15);margin:18px auto;padding:15px;border-radius:18px;max-width:420px;text-align:left}
+</style>
+</head>
+
+<body>
+
+<div class="header">🎡 DreamCash Lucky Spin</div>
+
+<div class="card">
+  <h3 id="statusText">Checking...</h3>
+  <p id="spinLeftText">Today Spins Left: 0</p>
+  <div id="spinWheel" class="wheel">SPIN</div>
+
+  <button id="spinBtn" class="btn" onclick="startSpin()">Spin Now</button>
+  <button class="btn" onclick="loadSpinHistory()">Spin History</button>
+  <button class="btn back" onclick="window.location.href='dashboard.html'">Back Dashboard</button>
+</div>
+
+<div id="historyBox"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://baqiuuxvscffmtvhceqk.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhcWdpdXh2c2NmZm10dmhjZXFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjU1NjQsImV4cCI6MjA5NzM0MTU2NH0.Ds_kkWUrI7r7sWarCDO7uavPl3yqHogClSBPAlRfYcs";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const rewards = [0.10,0.15,0.20,0.25,0.30];
+
+let currentMemberId = "";
+let currentActive = false;
+let currentSpinLeft = 0;
+
+function getMemberId(){
+  const p = new URLSearchParams(window.location.search);
+  const id =
+    p.get("member_id") ||
+    p.get("id") ||
+    localStorage.getItem("member_id") ||
+    localStorage.getItem("memberId") ||
+    localStorage.getItem("user_id") ||
+    "";
+
+  return String(id).trim().toUpperCase();
+}
+
+function todayDate(){
+  return new Date().toISOString().split("T")[0];
+}
+
+async function initSpinPage(){
+  currentMemberId = getMemberId();
+
+  document.getElementById("statusText").innerText = "Checking...";
+  document.getElementById("spinLeftText").innerText = "Loading...";
+
+  if(!currentMemberId){
+    document.getElementById("statusText").innerText = "🔴 User Not Found";
+    document.getElementById("spinLeftText").innerText = "Open from dashboard";
+    currentActive = false;
+    return;
+  }
+
+  const { data:user, error:userError } = await supabaseClient
+    .from("users")
+    .select("*")
+    .eq("member_id", currentMemberId)
+    .maybeSingle();
+
+  if(userError || !user){
+    document.getElementById("statusText").innerText = "🔴 User Not Found";
+    document.getElementById("spinLeftText").innerText = "Spin Locked";
+    currentActive = false;
+    return;
+  }
+
+  const status = String(user.status || "").trim().toLowerCase();
+
+  if(status !== "active" && status !== "approved"){
+    document.getElementById("statusText").innerText = "🔴 Inactive User";
+    document.getElementById("spinLeftText").innerText = "Activate ID First";
+    currentActive = false;
+    return;
+  }
+
+  currentActive = true;
+
+  const { data:spinRow } = await supabaseClient
+    .from("daily_claims")
+    .select("*")
+    .eq("user_id", currentMemberId)
+    .eq("task_type", "spin")
+    .eq("claim_date", todayDate())
+    .maybeSingle();
+
+  const used = spinRow ? Number(spinRow.claim_count || 0) : 0;
+  currentSpinLeft = Math.max(0, 5 - used);
+
+  document.getElementById("statusText").innerText = "✅ Active User";
+  document.getElementById("spinLeftText").innerText = "Today Spins Left: " + currentSpinLeft;
+}
+
+async function startSpin(){
+  if(!currentActive){
+    alert("Please activate your ID first");
+    return;
+  }
+
+  if(currentSpinLeft <= 0){
+    alert("No spins left today. Come back tomorrow.");
+    return;
+  }
+
+  const btn = document.getElementById("spinBtn");
+  btn.disabled = true;
+
+  const reward = rewards[Math.floor(Math.random() * rewards.length)];
+  const wheel = document.getElementById("spinWheel");
+
+  wheel.style.transition = "transform 4s ease-out";
+  wheel.style.transform = "rotate(" + (1800 + Math.floor(Math.random()*360)) + "deg)";
+
+  setTimeout(async function(){
+    const today = todayDate();
+
+    const { data:spinRow } = await supabaseClient
+      .from("daily_claims")
+      .select("*")
+      .eq("user_id", currentMemberId)
+      .eq("task_type", "spin")
+      .eq("claim_date", today)
+      .maybeSingle();
+
+    if(spinRow){
+      const { error } = await supabaseClient
+        .from("daily_claims")
+        .update({
+          claim_count: Number(spinRow.claim_count || 0) + 1,
+          points: Number(spinRow.points || 0) + Math.round(reward * 100)
+        })
+        .eq("id", spinRow.id);
+
+      if(error){
+        btn.disabled = false;
+        alert("Spin save error: " + error.message);
+        return;
+      }
+    }else{
+      const { error } = await supabaseClient
+        .from("daily_claims")
+        .insert({
+          user_id: currentMemberId,
+          task_type: "spin",
+          claim_date: today,
+          points: Math.round(reward * 100),
+          claim_count: 1
+        });
+
+      if(error){
+        btn.disabled = false;
+        alert("Spin save error: " + error.message);
+        return;
+      }
+    }
+
+    const { data:userData, error:userError } = await supabaseClient
+      .from("users")
+      .select("wallet")
+      .eq("member_id", currentMemberId)
+      .maybeSingle();
+
+    if(userError || !userData){
+      btn.disabled = false;
+      alert("Wallet fetch error");
+      return;
+    }
+
+    const newWallet = Number(userData.wallet || 0) + reward;
+
+    const { error:walletError } = await supabaseClient
+      .from("users")
+      .update({ wallet: newWallet })
+      .eq("member_id", currentMemberId);
+
+    if(walletError){
+      btn.disabled = false;
+      alert("Wallet update error: " + walletError.message);
+      return;
+    }
+
+    currentSpinLeft = currentSpinLeft - 1;
+    document.getElementById("spinLeftText").innerText = "Today Spins Left: " + currentSpinLeft;
+
+    btn.disabled = false;
+    alert("Congratulations! You won " + reward.toFixed(2) + " DC");
+  }, 4000);
+}
+
+async function loadSpinHistory(){
+  const memberId = currentMemberId || getMemberId();
+
+  const { data, error } = await supabaseClient
+    .from("daily_claims")
+    .select("*")
+    .eq("user_id", memberId)
+    .eq("task_type", "spin")
+    .order("claim_date", { ascending:false })
+    .limit(20);
+
+  if(error || !data || data.length === 0){
+    document.getElementById("historyBox").innerHTML = "<div class='history'>No Spin History Found</div>";
+    return;
+  }
+
+  let html = "<div class='history'><h3>Spin History</h3>";
+  data.forEach(item=>{
+    html += "<p>Date: " + item.claim_date + " | Count: " + item.claim_count + " | Points: " + item.points + "</p>";
+  });
+  html += "</div>";
+
+  document.getElementById("historyBox").innerHTML = html;
+}
+
+initSpinPage();
+</script>
+
+</body>
+</html>
