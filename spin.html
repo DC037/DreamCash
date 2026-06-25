@@ -48,8 +48,6 @@ let currentSpinLeft = 0;
 function getMemberId(){
   const p = new URLSearchParams(window.location.search);
   const id =
-    p.get("member_id") ||
-    p.get("id") ||
     localStorage.getItem("member_id") ||
     localStorage.getItem("memberId") ||
     localStorage.getItem("user_id") ||
