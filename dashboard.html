@@ -125,8 +125,8 @@ left:150%;
 .topEarnerCard{
   min-height:142px;
   height:100%;
-  background:linear-gradient(135deg,#0f172a,#1e293b,#334155);
-  color:white;
+  background: linear-gradient(135deg,#000000,#111827,#1f2937) !important;
+  color: #ffffff !important;
   text-align:center;
   border-radius:22px;
   padding:14px 8px 12px;
@@ -172,7 +172,14 @@ left:150%;
   height:142px !important;
   padding:14px 8px 12px !important;
 }
+.topEarnerCard{
+  background: linear-gradient(135deg,#000000,#111827,#1f2937) !important;
+  color:#fff !important;
+}
 
+.topEarnerCard::before{
+  display:none !important;
+}
 .topRow .luckySpinCard h2,
 .topRow .topEarnerCard h3{
   font-size:16px !important;
@@ -663,7 +670,7 @@ Spin Now
 
   </div>
 
- <div class="box topEarningCard">
+<div class="box topEarnerCard">
     <h3>🏆 Top Earner</h3>
     <p>View Top Earners</p>
 
