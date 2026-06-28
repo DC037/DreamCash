@@ -6,65 +6,15 @@
 <title>Top Earner</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#0f172a;
-  color:#fff;
-}
-.header{
-  background:#111827;
-  padding:18px;
-  text-align:center;
-  font-size:24px;
-  font-weight:bold;
-}
-.backBtn{
-  margin:15px;
-  padding:10px 18px;
-  background:#22c55e;
-  color:#fff;
-  border:none;
-  border-radius:10px;
-  font-weight:bold;
-}
-.loading{
-  text-align:center;
-  margin-top:40px;
-  color:#94a3b8;
-}
-.podium{
-  display:flex;
-  justify-content:center;
-  align-items:flex-end;
-  gap:10px;
-  margin:35px 10px 22px;
-}
-.topBox{
-  width:30%;
-  border-radius:18px;
-  padding:14px 6px;
-  text-align:center;
-  box-shadow:0 5px 15px rgba(0,0,0,.35);
-}
-.first{
-  background:linear-gradient(135deg,#facc15,#f59e0b);
-  color:#111827;
-  min-height:160px;
-  order:2;
-}
-.second{
-  background:linear-gradient(135deg,#cbd5e1,#64748b);
-  color:#111827;
-  min-height:130px;
-  order:1;
-}
-.third{
-  background:linear-gradient(135deg,#b45309,#78350f);
-  color:#fff;
-  min-height:120px;
-  order:3;
-}
+body{margin:0;font-family:Arial,sans-serif;background:#0f172a;color:#fff;}
+.header{background:#111827;padding:18px;text-align:center;font-size:24px;font-weight:bold;}
+.backBtn{margin:15px;padding:10px 18px;background:#22c55e;color:#fff;border:none;border-radius:10px;font-weight:bold;}
+.loading{text-align:center;margin-top:40px;color:#94a3b8;}
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:10px;margin:35px 10px 22px;}
+.topBox{width:30%;border-radius:18px;padding:14px 6px;text-align:center;box-shadow:0 5px 15px rgba(0,0,0,.35);}
+.first{background:linear-gradient(135deg,#facc15,#f59e0b);color:#111827;min-height:160px;order:2;}
+.second{background:linear-gradient(135deg,#cbd5e1,#64748b);color:#111827;min-height:130px;order:1;}
+.third{background:linear-gradient(135deg,#b45309,#78350f);color:#fff;min-height:120px;order:3;}
 .medal{font-size:34px;}
 .rank{font-size:20px;font-weight:bold;color:#facc15;}
 .first .rank,.second .rank{color:#111827;}
@@ -72,15 +22,7 @@ body{
 .member,.team{font-size:12px;margin-top:4px;}
 .earning{font-size:17px;font-weight:bold;color:#22c55e;margin-top:6px;}
 .first .earning,.second .earning{color:#065f46;}
-.rankCard{
-  background:#1e293b;
-  margin:10px 12px;
-  padding:14px;
-  border-radius:14px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
+.rankCard{background:#1e293b;margin:10px 12px;padding:14px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;}
 .right{text-align:right;}
 .small{font-size:12px;color:#cbd5e1;}
 </style>
@@ -89,7 +31,6 @@ body{
 <body>
 
 <div class="header">🏆 Top Earner</div>
-
 <button class="backBtn" onclick="window.location.href='dashboard.html'">← Back</button>
 
 <div id="leaderboard">
@@ -106,62 +47,67 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 async function loadLeaderboard(){
   const box = document.getElementById("leaderboard");
 
-  const { data, error } = await supabaseClient
-    .from("users")
-    .select("name, member_id, referral_count, referral_income")
-    .order("referral_income", { ascending:false })
-    .limit(15);
+  try{
+    const { data, error } = await supabaseClient
+      .from("users")
+      .select("name, member_id, referral_count, referral_income")
+      .order("referral_income", { ascending:false })
+      .limit(15);
 
-  if(error){
-    box.innerHTML = "<div class='loading' style='color:#ef4444;'>Data load error: " + error.message + "</div>";
-    return;
-  }
+    if(error){
+      box.innerHTML = "<div class='loading' style='color:#ef4444;'>Data load error: " + error.message + "</div>";
+      return;
+    }
 
-  if(!data || data.length === 0){
-    box.innerHTML = "<div class='loading'>No earning data found</div>";
-    return;
-  }
+    if(!data || data.length === 0){
+      box.innerHTML = "<div class='loading'>No earning data found</div>";
+      return;
+    }
 
-  let topHtml = "<div class='podium'>";
+    let topHtml = "<div class='podium'>";
 
-  data.slice(0,3).forEach(function(user,index){
-    let cls = index === 0 ? "first" : index === 1 ? "second" : "third";
-    let medal = index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉";
+    data.slice(0,3).forEach(function(user,index){
+      let cls = index === 0 ? "first" : index === 1 ? "second" : "third";
+      let medal = index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉";
 
-    topHtml += `
-      <div class="topBox ${cls}">
-        <div class="medal">${medal}</div>
-        <div class="rank">#${index + 1}</div>
-        <div class="name">${user.name || "User"}</div>
-        <div class="member">ID : ${user.member_id || "-"}</div>
-        <div class="team">Team : ${user.referral_count || 0}</div>
-        <div class="earning">₹${Number(user.referral_income || 0).toFixed(2)}</div>
-      </div>
-    `;
-  });
-
-  topHtml += "</div>";
-
-  let listHtml = "";
-
-  data.slice(3,15).forEach(function(user,index){
-    listHtml += `
-      <div class="rankCard">
-        <div>
-          <div class="rank">#${index + 4}</div>
+      topHtml += `
+        <div class="topBox ${cls}">
+          <div class="medal">${medal}</div>
+          <div class="rank">#${index+1}</div>
           <div class="name">${user.name || "User"}</div>
           <div class="member">ID : ${user.member_id || "-"}</div>
-          <div class="team">Total Team : ${user.referral_count || 0}</div>
-        </div>
-        <div class="right">
+          <div class="team">Team : ${user.referral_count || 0}</div>
           <div class="earning">₹${Number(user.referral_income || 0).toFixed(2)}</div>
-          <div class="small">Total Earning</div>
         </div>
-      </div>
-    `;
-  });
+      `;
+    });
 
-  box.innerHTML = topHtml + listHtml;
+    topHtml += "</div>";
+
+    let listHtml = "";
+
+    data.slice(3,15).forEach(function(user,index){
+      listHtml += `
+        <div class="rankCard">
+          <div>
+            <div class="rank">#${index+4}</div>
+            <div class="name">${user.name || "User"}</div>
+            <div class="member">ID : ${user.member_id || "-"}</div>
+            <div class="team">Total Team : ${user.referral_count || 0}</div>
+          </div>
+          <div class="right">
+            <div class="earning">₹${Number(user.referral_income || 0).toFixed(2)}</div>
+            <div class="small">Total Earning</div>
+          </div>
+        </div>
+      `;
+    });
+
+    box.innerHTML = topHtml + listHtml;
+
+  }catch(err){
+    box.innerHTML = "<div class='loading' style='color:#ef4444;'>Data load error: " + err.message + "</div>";
+  }
 }
 
 loadLeaderboard();
