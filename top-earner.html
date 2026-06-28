@@ -32,53 +32,58 @@ font-weight:bold;
 cursor:pointer;
 }
 
+.podium{
+  display:flex;
+  justify-content:center;
+  align-items:end;
+  gap:10px;
+  margin:35px 12px 20px;
+}
+
+.topBox{
+  background:#1e293b;
+  border-radius:18px;
+  padding:15px 8px;
+  text-align:center;
+  width:30%;
+  box-shadow:0 4px 12px rgba(0,0,0,.35);
+}
+
+.topBox.first{
+  background:linear-gradient(135deg,#facc15,#f59e0b);
+  color:#111827;
+  min-height:150px;
+  order:2;
+}
+
+.topBox.second{
+  background:linear-gradient(135deg,#cbd5e1,#64748b);
+  min-height:125px;
+  order:1;
+}
+
+.topBox.third{
+  background:linear-gradient(135deg,#b45309,#78350f);
+  min-height:115px;
+  order:3;
+}
+
 .rankCard{
-background:#1e293b;
-margin:12px;
-padding:15px;
-border-radius:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
+  background:#1e293b;
+  margin:10px 12px;
+  padding:14px;
+  border-radius:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-.left{
-display:flex;
-flex-direction:column;
-gap:4px;
-}
-
-.rank{
-font-size:22px;
-font-weight:bold;
-color:#facc15;
-}
-
-.name{
-font-size:18px;
-font-weight:bold;
-}
-
-.member{
-font-size:13px;
-color:#cbd5e1;
-}
-
-.team{
-font-size:13px;
-color:#94a3b8;
-}
-
-.right{
-text-align:right;
-}
-
-.earning{
-font-size:20px;
-font-weight:bold;
-color:#22c55e;
-}
-</style>
+.rank{font-size:20px;font-weight:bold;color:#facc15;}
+.name{font-size:16px;font-weight:bold;}
+.member,.team{font-size:12px;color:#cbd5e1;}
+.earning{font-size:18px;font-weight:bold;color:#22c55e;}
+.right{text-align:right;}
+  <style>
 </head>
 
 <body>
@@ -110,7 +115,7 @@ SUPABASE_KEY
 
 async function loadLeaderboard(){
 
-const { data , error } = await supabaseClient
+const { data, error } = await supabaseClient
 .from("users")
 .select(`
 name,
@@ -133,51 +138,46 @@ return;
 
 let html = "";
 
-data.forEach((user,index)=>{
+let topHtml = "<div class='podium'>";
 
-html += `
-<div class="rankCard">
+data.slice(0,3).forEach((user,index)=>{
+  let cls = index === 0 ? "first" : index === 1 ? "second" : "third";
+  let medal = index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉";
 
-<div class="left">
-
-<div class="rank">
-#${index+1}
-</div>
-
-<div class="name">
-${user.name || "User"}
-</div>
-
-<div class="member">
-ID : ${user.member_id || "-"}
-</div>
-
-<div class="team">
-Total Team :
-${user.referral_count || 0}
-</div>
-
-</div>
-
-<div class="right">
-
-<div class="earning">
-₹${Number(
-user.referral_income || 0
-).toFixed(2)}
-</div>
-
-<div>Total Earning</div>
-
-</div>
-
-</div>
-`;
-
+  topHtml += `
+    <div class="topBox ${cls}">
+      <div style="font-size:30px">${medal}</div>
+      <div class="rank">#${index+1}</div>
+      <div class="name">${user.name || "User"}</div>
+      <div class="member">ID : ${user.member_id || "-"}</div>
+      <div class="team">Team : ${user.referral_count || 0}</div>
+      <div class="earning">₹${Number(user.referral_income || 0).toFixed(2)}</div>
+    </div>
+  `;
 });
 
-document.getElementById("leaderboard").innerHTML =
-html;
+topHtml += "</div>";
+
+let listHtml = "";
+
+data.slice(3,15).forEach((user,index)=>{
+  listHtml += `
+    <div class="rankCard">
+      <div>
+        <div class="rank">#${index+4}</div>
+        <div class="name">${user.name || "User"}</div>
+        <div class="member">ID : ${user.member_id || "-"}</div>
+        <div class="team">Total Team : ${user.referral_count || 0}</div>
+      </div>
+      <div class="right">
+        <div class="earning">₹${Number(user.referral_income || 0).toFixed(2)}</div>
+        <div>Total Earning</div>
+      </div>
+    </div>
+  `;
+});
+
+document.getElementById("leaderboard").innerHTML = topHtml + listHtml;
 
 }
 
