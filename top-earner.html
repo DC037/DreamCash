@@ -148,6 +148,10 @@ body{
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+  window.addEventListener("error", function(e){
+  document.getElementById("leaderboard").innerHTML =
+    "<div class='loading' style='color:#ef4444;'>JS Error: " + e.message + "</div>";
+});
 const SUPABASE_URL = "https://baqiuuxvscffmtvhceqk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_M-R7UOrWf2JPMefVzPAQRw_mjTphJ_1";
 
