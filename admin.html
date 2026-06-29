@@ -805,9 +805,22 @@ async function unbanUser(userId) {
 }
 
 async function sendReset(email) {
-  alert("Password reset अभी Firebase auth से जुड़ा है, इसे बाद में Supabase Auth से जोड़ेंगे.");
-}
+  if (!email || email === "N/A") {
+    alert("User email not found");
+    return;
+  }
 
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: "https://dc037.github.io/DreamCash/update-password.html"
+  });
+
+  if (error) {
+    alert("Password reset error: " + error.message);
+    return;
+  }
+
+  alert("Password reset link sent successfully");
+}
 async function viewUserWithdrawals(userId) {
   try {
     const snap = await db.collection("withdrawals")
