@@ -1365,7 +1365,6 @@ if(error){
 window.submitWithdraw = async function(){
   const amount = Number(el("withdrawAmount").value);
   const upi = el("withdrawUpi").value.trim();
-  const balance = Number(el("balance").innerText || 0);
 
   const memberId = localStorage.getItem("member_id") || el("memberId").innerText.trim();
   const name = el("userName").innerText.trim();
@@ -1380,8 +1379,33 @@ window.submitWithdraw = async function(){
     return;
   }
 
-  if(amount > balance){
+  const { data: userData, error: userError } = await supabaseClient
+    .from("users")
+    .select("wallet")
+    .eq("member_id", memberId)
+    .single();
+
+  if(userError || !userData){
+    alert("Wallet fetch error");
+    return;
+  }
+
+  const currentWallet = Number(userData.wallet || 0);
+
+  if(amount > currentWallet){
     alert("Insufficient wallet balance");
+    return;
+  }
+
+  const newWallet = currentWallet - amount;
+
+  const { error: walletError } = await supabaseClient
+    .from("users")
+    .update({ wallet: newWallet })
+    .eq("member_id", memberId);
+
+  if(walletError){
+    alert("Wallet cut error: " + walletError.message);
     return;
   }
 
@@ -1397,11 +1421,16 @@ window.submitWithdraw = async function(){
     });
 
   if(error){
+    await supabaseClient
+      .from("users")
+      .update({ wallet: currentWallet })
+      .eq("member_id", memberId);
+
     alert("Withdraw Error: " + error.message);
     return;
   }
 
-  setBalance(balance - amount);
+  setBalance(newWallet);
 
   el("withdrawAmount").value = "";
   el("withdrawUpi").value = "";
