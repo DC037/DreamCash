@@ -249,51 +249,47 @@ Reject
 
   box.innerHTML = html;
   }
-async function loadWithdrawals(){
+async function loadWithdrawals() {
   const box = document.getElementById("withdrawalList");
   box.innerHTML = "Loading...";
 
-  const snap = await db.collection("withdrawals")
-    .orderBy("createdAt", "desc")
-    .get();
+  const { data, error } = await supabaseClient
+    .from("withdrawal_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-  if(snap.empty){
+  if (error) {
+    box.innerHTML = error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
     box.innerHTML = "No withdrawal requests found.";
     return;
   }
 
   let html = "";
 
-  for (const doc of snap.docs) {
-    const d = doc.data();
-let userName = "Unknown";
-let memberId = "N/A";
-
-try {
-  const userDoc = await db.collection("users").doc(d.userId).get();
-
-  if (userDoc.exists) {
-    userName = userDoc.data().name || "Unknown";
-    memberId = userDoc.data().memberId || "N/A";
-  }
-} catch (e) {}
+  data.forEach(d => {
     html += `
       <div class="row">
         <b>Amount:</b> ₹${d.amount}<br>
-        <b>UPI:</b> ${d.upi || d.upiId || "N/A"}<br>
-        <b>Name:</b> ${userName}<br>
-<b>Member ID:</b> ${memberId}<br>
-        <b>User ID:</b> ${d.userId}<br>
-        <b>Status:</b> 
-<span class="status ${d.status === 'Approved' ? 'approved' : d.status === 'Rejected' ? 'rejected' : 'pending'}">
-${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d.status}
-</span><br><br>
+        <b>UPI:</b> ${d.upi}<br>
+        <b>Name:</b> ${d.name || "N/A"}<br>
+        <b>Member ID:</b> ${d.member_id || "N/A"}<br>
+        <b>User ID:</b> ${d.user_id || "N/A"}<br>
+        <b>Status:</b>
+        <span class="status ${d.status === "Approved" ? "approved" : d.status === "Rejected" ? "rejected" : "pending"}">
+          ${d.status === "Approved" ? "✅" : d.status === "Rejected" ? "❌" : "⏳"} ${d.status}
+        </span>
+        <br><br>
 
-        <button class="btn green" onclick="approveWithdraw('${doc.id}')">Approve</button>
-        <button class="btn red" onclick="rejectWithdraw('${doc.id}')">Reject</button>
+        <button class="btn green" onclick="approveWithdraw('${d.id}')">Approve</button>
+        <button class="btn red" onclick="rejectWithdraw('${d.id}')">Reject</button>
       </div>
+      <hr>
     `;
-  }
+  });
 
   box.innerHTML = html;
 }
@@ -449,34 +445,34 @@ return;
 }
 
 async function approveWithdraw(id){
-  await db.collection("withdrawals").doc(id).update({
-    status: "Approved",
-    approvedAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
+
+  const { error } = await supabaseClient
+    .from("withdrawal_requests")
+    .update({ status: "Approved" })
+    .eq("id", id);
+
+  if(error){
+    alert(error.message);
+    return;
+  }
 
   alert("Withdrawal Approved");
   loadWithdrawals();
 }
 
 async function rejectWithdraw(id){
-  const reqRef = db.collection("withdrawals").doc(id);
-  const reqDoc = await reqRef.get();
-  const reqData = reqDoc.data();
 
-  if(reqData.status === "Pending"){
-    const userId = reqData.userId || reqData.uid;
+  const { error } = await supabaseClient
+    .from("withdrawal_requests")
+    .update({ status: "Rejected" })
+    .eq("id", id);
 
-    await db.collection("users").doc(userId).update({
-      balance: firebase.firestore.FieldValue.increment(Number(reqData.amount))
-    });
+  if(error){
+    alert(error.message);
+    return;
   }
 
-  await reqRef.update({
-    status: "Rejected",
-    rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  alert("Withdrawal Rejected & Balance Refunded");
+  alert("Withdrawal Rejected");
   loadWithdrawals();
 }
 
