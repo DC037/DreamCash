@@ -1438,13 +1438,31 @@ window.submitWithdraw = async function(){
   alert("Withdrawal Request Submitted");
 };
 
-window.viewPaymentHistory = function(){
-  const withdrawals = JSON.parse(localStorage.getItem("withdrawHistory") || "[]");
-  if(withdrawals.length === 0){
+window.viewPaymentHistory = async function(){
+  const memberId = localStorage.getItem("member_id") || el("memberId").innerText.trim();
+
+  const { data, error } = await supabaseClient
+    .from("withdrawal_requests")
+    .select("*")
+    .eq("member_id", memberId)
+    .order("created_at", { ascending: false });
+
+  if(error){
+    alert("History Error: " + error.message);
+    return;
+  }
+
+  if(!data || data.length === 0){
     alert("No withdrawal history found");
     return;
   }
-  alert(withdrawals.map(w => "Amount: â‚¹" + w.amount + "\nUPI: " + w.upi + "\nStatus: " + w.status + "\nðŸ“… " + w.date).join("\n\n"));
+
+  alert(data.map(w =>
+    "Amount: ₹" + w.amount +
+    "\nUPI: " + w.upi +
+    "\nStatus: " + w.status +
+    "\nDate: " + new Date(w.created_at).toLocaleString()
+  ).join("\n\n"));
 };
 
 window.copyReferral = function(){
