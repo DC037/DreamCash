@@ -1444,20 +1444,23 @@ window.viewPaymentHistory = async function(){
 const { data, error } = await supabaseClient
   .from("withdrawal_requests")
   .select("*")
-  .or(`member_id.eq.${memberId},user_id.eq.${memberId}`)
   .order("created_at", { ascending: false });
+
+const myHistory = (data || []).filter(w =>
+  String(w.member_id || w.user_id || "").trim() === memberId
+);
 
   if(error){
     alert("History Error: " + error.message);
     return;
   }
 
-  if(!data || data.length === 0){
+  if(!myHistory || myHistory.length === 0){
     alert("No withdrawal history found");
     return;
   }
 
-  alert(data.map(w =>
+  alert(myHistory.map(w =>
     "Amount: ₹" + w.amount +
     "\nUPI: " + w.upi +
     "\nStatus: " + w.status +
