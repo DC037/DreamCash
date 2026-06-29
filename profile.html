@@ -91,6 +91,16 @@ photoInput.addEventListener("change", function () {
     reader.readAsDataURL(file);
 
 });
+  document.getElementById("uploadBtn").addEventListener("click", async function () {
+    const file = photoInput.files[0];
+
+    if (!file) {
+        alert("Please choose a photo first");
+        return;
+    }
+
+    alert("Upload code ready. Next step me Supabase save karenge.");
+});
 </script>
 </body>
 </html>
