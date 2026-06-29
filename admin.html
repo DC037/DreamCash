@@ -658,7 +658,7 @@ async function loadDreamCashTeam(){
 <b>Email:</b> ${d.email || "N/A"}<br>
 <b>Status:</b> ${d.status || "Inactive"}<br>
 <b>Ban Status:</b> ${d.is_banned ? "Banned" : "Not Banned"}<br>
-<b>Balance:</b> ${d.wallet || d.balance || 0} DC<br>
+${d.wallet || 0}
 <b>Total Refer:</b> ${liveReferCount || 0}<br>
 <b>Referral Income:</b> ${liveReferralIncome || 0} DC<br>
 <br>
@@ -677,80 +677,135 @@ async function loadDreamCashTeam(){
 
 async function addBalance(userId) {
   const amount = parseFloat(prompt("Enter amount to add"));
-  if (!amount) return;
+  if (!amount || amount <= 0) return;
 
-  await db.collection("users").doc(userId).update({
-    balance: firebase.firestore.FieldValue.increment(amount)
-  });
+  const { data: userData, error: fetchError } = await supabaseClient
+    .from("users")
+    .select("wallet")
+    .eq("member_id", userId)
+    .single();
 
-  alert("Balance added");
+  if (fetchError || !userData) {
+    alert("User wallet fetch error");
+    return;
+  }
+
+  const newWallet = Number(userData.wallet || 0) + amount;
+
+  const { error } = await supabaseClient
+    .from("users")
+    .update({ wallet: newWallet })
+    .eq("member_id", userId);
+
+  if (error) {
+    alert("Balance add error: " + error.message);
+    return;
+  }
+
+  alert("Balance added successfully");
   searchMember();
 }
 
 async function cutBalance(userId) {
   const amount = parseFloat(prompt("Enter amount to cut"));
-  if (!amount) return;
+  if (!amount || amount <= 0) return;
 
-  await db.collection("users").doc(userId).update({
-    balance: firebase.firestore.FieldValue.increment(-amount)
-  });
+  const { data: userData, error: fetchError } = await supabaseClient
+    .from("users")
+    .select("wallet")
+    .eq("member_id", userId)
+    .single();
 
-  alert("Balance cut");
+  if (fetchError || !userData) {
+    alert("User wallet fetch error");
+    return;
+  }
+
+  const oldWallet = Number(userData.wallet || 0);
+
+  if (amount > oldWallet) {
+    alert("User ke wallet me itna balance nahi hai");
+    return;
+  }
+
+  const newWallet = oldWallet - amount;
+
+  const { error } = await supabaseClient
+    .from("users")
+    .update({ wallet: newWallet })
+    .eq("member_id", userId);
+
+  if (error) {
+    alert("Balance cut error: " + error.message);
+    return;
+  }
+
+  alert("Balance cut successfully");
   searchMember();
 }
 
 async function makeActive(userId) {
-  await db.collection("users").doc(userId).update({
-    status: "Active",
-    isActive: true
-  });
+  const { error } = await supabaseClient
+    .from("users")
+    .update({ status: "Active", isActive: true })
+    .eq("member_id", userId);
+
+  if (error) {
+    alert("Active error: " + error.message);
+    return;
+  }
 
   alert("User Activated");
   searchMember();
 }
 
 async function makeInactive(userId) {
-  await db.collection("users").doc(userId).update({
-    status: "Inactive",
-    isActive: false
-  });
+  const { error } = await supabaseClient
+    .from("users")
+    .update({ status: "Inactive", isActive: false })
+    .eq("member_id", userId);
+
+  if (error) {
+    alert("Inactive error: " + error.message);
+    return;
+  }
 
   alert("User Inactive");
   searchMember();
 }
 
 async function banUser(userId) {
-  await db.collection("users").doc(userId).update({
-    isBanned: true,
-    banStatus: "Banned"
-  });
+  const { error } = await supabaseClient
+    .from("users")
+    .update({ is_banned: true, banStatus: "Banned" })
+    .eq("member_id", userId);
+
+  if (error) {
+    alert("Ban error: " + error.message);
+    return;
+  }
 
   alert("User Banned Successfully");
   searchMember();
 }
 
 async function unbanUser(userId) {
-  await db.collection("users").doc(userId).update({
-    isBanned: false,
-    banStatus: "Active"
-  });
+  const { error } = await supabaseClient
+    .from("users")
+    .update({ is_banned: false, banStatus: "Active" })
+    .eq("member_id", userId);
+
+  if (error) {
+    alert("Unban error: " + error.message);
+    return;
+  }
 
   alert("User Unbanned Successfully");
   searchMember();
 }
 
 async function sendReset(email) {
-  try {
-    if (!email || email === "N/A") {
-      alert("Email not found");
-      return;
-    }
-
-    await auth.sendPasswordResetEmail(email);
-    alert("Password reset link sent successfully");
-  } catch(error) {
-    alert(error.message);
-  }
+  alert("Password reset अभी Firebase auth से जुड़ा है, इसे बाद में Supabase Auth से जोड़ेंगे.");
 }
 
 async function viewUserWithdrawals(userId) {
