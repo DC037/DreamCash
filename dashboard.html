@@ -1439,7 +1439,7 @@ window.submitWithdraw = async function(){
 };
 
 window.viewPaymentHistory = async function(){
-  const memberId = localStorage.getItem("member_id") || el("memberId").innerText.trim();
+  const memberId = el("memberId").innerText.trim();
 
   const { data, error } = await supabaseClient
     .from("withdrawal_requests")
