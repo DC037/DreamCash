@@ -75,8 +75,21 @@ const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-document.getElementById("uploadBtn").addEventListener("click", function(){
-    alert("Upload button working");
+  const photoInput = document.getElementById("photoInput");
+const preview = document.getElementById("profilePreview");
+
+photoInput.addEventListener("change", function () {
+    const file = photoInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        preview.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+
 });
 </script>
 </body>
