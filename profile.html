@@ -68,6 +68,16 @@ button{
   <button onclick="location.href='dashboard.html'">Back</button>
 
 </div>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
+<script>
+const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+document.getElementById("uploadBtn").addEventListener("click", function(){
+    alert("Upload button working");
+});
+</script>
 </body>
 </html>
