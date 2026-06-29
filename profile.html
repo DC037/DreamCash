@@ -5,13 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Edit Profile</title>
 </head>
+
 <body>
 
-<h2>Edit Profile</h2>
+<h2 style="text-align:center;">Profile Picture</h2>
 
-<p>Profile upload page ready.</p>
+<div style="text-align:center;margin-top:30px;">
 
-<button onclick="location.href='dashboard.html'">Back</button>
+  <img id="profilePreview"
+       src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+       style="width:140px;height:140px;border-radius:50%;border:4px solid #2196f3;object-fit:cover;">
+
+  <br><br>
+
+  <input type="file" id="photoInput" accept="image/*">
+
+  <br><br>
+
+  <button id="uploadBtn">Upload Photo</button>
+
+  <br><br>
+
+  <button onclick="location.href='dashboard.html'">Back</button>
+
+</div>
 
 </body>
 </html>
