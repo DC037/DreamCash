@@ -1362,36 +1362,50 @@ if(error){
   }
 };
 
-window.submitWithdraw = function(){
+window.submitWithdraw = async function(){
   const amount = Number(el("withdrawAmount").value);
   const upi = el("withdrawUpi").value.trim();
   const balance = Number(el("balance").innerText || 0);
+
+  const memberId = localStorage.getItem("member_id") || el("memberId").innerText.trim();
+  const name = el("userName").innerText.trim();
 
   if(!amount || !upi){
     alert("Please enter amount and UPI ID");
     return;
   }
+
   if(amount < 200){
-    alert("Minimum withdrawal amount is â‚¹200");
+    alert("Minimum withdrawal amount is ₹200");
     return;
   }
+
   if(amount > balance){
     alert("Insufficient wallet balance");
     return;
   }
 
-  const withdrawals = JSON.parse(localStorage.getItem("withdrawHistory") || "[]");
-  withdrawals.unshift({
-    amount,
-    upi,
-    status: "Pending",
-    date: new Date().toLocaleString()
-  });
-  localStorage.setItem("withdrawHistory", JSON.stringify(withdrawals));
+  const { error } = await supabaseClient
+    .from("withdrawal_requests")
+    .insert({
+      user_id: memberId,
+      member_id: memberId,
+      name: name,
+      amount: amount,
+      upi: upi,
+      status: "Pending"
+    });
+
+  if(error){
+    alert("Withdraw Error: " + error.message);
+    return;
+  }
+
   setBalance(balance - amount);
 
   el("withdrawAmount").value = "";
   el("withdrawUpi").value = "";
+
   alert("Withdrawal Request Submitted");
 };
 
