@@ -99,7 +99,23 @@ photoInput.addEventListener("change", function () {
         return;
     }
 
-    alert("Upload code ready. Next step me Supabase save karenge.");
+    const fileName = Date.now() + "_" + file.name;
+
+const { error } = await supabaseClient.storage
+  .from("avatars")
+  .upload(fileName, file);
+
+if (error) {
+  alert(error.message);
+  return;
+}
+
+const imageUrl =
+  SUPABASE_URL + "/storage/v1/object/public/avatars/" + fileName;
+
+alert("Photo uploaded successfully!");
+
+console.log(imageUrl);
 });
 </script>
 </body>
