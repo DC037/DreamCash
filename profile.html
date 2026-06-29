@@ -112,7 +112,7 @@ if (error) {
 
 const imageUrl =
   SUPABASE_URL + "/storage/v1/object/public/avatars/" + fileName;
-
+localStorage.setItem("profilePhoto", imageUrl);
 alert("Photo uploaded successfully!");
 
 console.log(imageUrl);
