@@ -464,9 +464,13 @@ async function rejectWithdraw(id){
 
   const { data: reqData, error: statusError } = await supabaseClient
     .from("withdrawal_requests")
-    .update({ status: "Rejected" })
+    .update({
+      status: "Rejected",
+      refunded: true
+    })
     .eq("id", id)
     .eq("status", "Pending")
+    .eq("refunded", false)
     .select()
     .single();
 
