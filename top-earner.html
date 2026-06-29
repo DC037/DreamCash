@@ -226,22 +226,32 @@ box-shadow:0 6px 18px rgba(0,0,0,.3);
 
     let listHtml = "";
 
-    data.slice(3,15).forEach(function(user,index){
-      listHtml += `
-        <div class="rankCard">
-          <div>
-            <div class="rank">#${index+4}</div>
-            <div class="name">${user.name || "User"}</div>
-            <div class="member">ID : ${user.member_id || "-"}</div>
-            <div class="team">Total Team : ${user.referral_count || 0}</div>
-          </div>
-          <div class="right">
-            <div class="earning">₹${Number(user.referral_income || 0).toFixed(2)}</div>
-            <div class="small">Total Earning</div>
-          </div>
+data.slice(3,15).forEach(function(user,index){
+  listHtml += `
+    <div class="rankCard">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="font-size:28px;font-weight:bold;color:#facc15;min-width:50px;">
+          #${index+4}
         </div>
-      `;
-    });
+
+        <div style="width:52px;height:52px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;">
+          👤
+        </div>
+
+        <div>
+          <div class="name">${user.name || "User"}</div>
+          <div class="member">ID : ${user.member_id || "-"}</div>
+          <div class="team">Team : ${user.referral_count || 0}</div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="earning">₹${Number(user.referral_income || 0).toFixed(2)}</div>
+        <div class="small">Total Earning</div>
+      </div>
+    </div>
+  `;
+});
 
     box.innerHTML = topHtml + listHtml;
 
