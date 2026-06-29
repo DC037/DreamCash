@@ -1863,7 +1863,12 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 });
   })();
-  
+  const savedProfilePhoto = localStorage.getItem("profilePhoto");
+const dashboardPhoto = document.getElementById("dashboardProfilePhoto");
+
+if (savedProfilePhoto && dashboardPhoto) {
+  dashboardPhoto.src = savedProfilePhoto;
+}
 </script>
   <div style="text-align:center;padding:20px 10px 90px 10px;font-size:13px;color:#666;">
 
