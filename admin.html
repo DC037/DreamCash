@@ -462,55 +462,46 @@ async function approveWithdraw(id){
 
 async function rejectWithdraw(id){
 
-  const { data: reqData, error: fetchError } = await supabaseClient
+  const { data: reqData, error: statusError } = await supabaseClient
     .from("withdrawal_requests")
-    .select("*")
+    .update({ status: "Rejected" })
     .eq("id", id)
+    .eq("status", "Pending")
+    .select()
     .single();
 
-  if(fetchError || !reqData){
-    alert("Request fetch error");
+  if(statusError || !reqData){
+    alert("Ye request already processed hai");
+    loadWithdrawals();
     return;
   }
 
-  if(reqData.status === "Pending"){
-    const { data: userData, error: userError } = await supabaseClient
-      .from("users")
-      .select("wallet")
-      .eq("member_id", reqData.member_id)
-      .single();
+  const { data: userData, error: userError } = await supabaseClient
+    .from("users")
+    .select("wallet")
+    .eq("member_id", reqData.member_id)
+    .single();
 
-    if(userError || !userData){
-      alert("User wallet fetch error");
-      return;
-    }
-
-    const newWallet = Number(userData.wallet || 0) + Number(reqData.amount || 0);
-
-    const { error: walletError } = await supabaseClient
-      .from("users")
-      .update({ wallet: newWallet })
-      .eq("member_id", reqData.member_id);
-
-    if(walletError){
-      alert("Refund error: " + walletError.message);
-      return;
-    }
+  if(userError || !userData){
+    alert("User wallet fetch error");
+    return;
   }
 
-  const { error } = await supabaseClient
-    .from("withdrawal_requests")
-    .update({ status: "Rejected" })
-    .eq("id", id);
+  const newWallet = Number(userData.wallet || 0) + Number(reqData.amount || 0);
 
-  if(error){
-    alert(error.message);
+  const { error: walletError } = await supabaseClient
+    .from("users")
+    .update({ wallet: newWallet })
+    .eq("member_id", reqData.member_id);
+
+  if(walletError){
+    alert("Refund error: " + walletError.message);
     return;
   }
 
   alert("Withdrawal Rejected & Balance Refunded");
   loadWithdrawals();
-    }
+}
 
 async function loadRankRewardClaims(){
   const box = document.getElementById("rankRewardClaimsList");
