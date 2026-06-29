@@ -1439,11 +1439,13 @@ window.submitWithdraw = async function(){
 };
 
 window.viewPaymentHistory = async function(){
-  const { data, error } = await supabaseClient
-    .from("withdrawal_requests")
-    .select("*")
-    .eq("member_id", memberId)
-    .order("created_at", { ascending: false });
+  const memberId = el("memberId").innerText.trim();
+
+const { data, error } = await supabaseClient
+  .from("withdrawal_requests")
+  .select("*")
+  .or(`member_id.eq.${memberId},user_id.eq.${memberId}`)
+  .order("created_at", { ascending: false });
 
   if(error){
     alert("History Error: " + error.message);
