@@ -217,7 +217,7 @@ box-shadow:0 6px 18px rgba(0,0,0,.3);
           <div class="name">${user.name || "User"}</div>
           <div class="member">ID : ${user.member_id || "-"}</div>
           <div class="team">Team : ${user.referral_count || 0}</div>
-          Number(user.referral_income || 0).toFixed(2)
+          <div class="earning">₹${Number(user.referral_income || 0).toFixed(2)}</div>
         </div>
       `;
     });
@@ -246,7 +246,7 @@ data.slice(3,15).forEach(function(user,index){
       </div>
 
       <div class="right">
-        Number(user.referral_income || 0).toFixed(2)
+        <div class="rank">₹${Number(user.referral_income || 0).toFixed(2)}</div>
         <div class="small">Total Earning</div>
       </div>
     </div>
