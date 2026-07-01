@@ -1,1 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monthly Reward</title>
 
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#0b1220;color:#fff;padding-bottom:30px}
+.header{background:#111827;padding:18px;text-align:center;font-size:23px;font-weight:bold}
+.back{margin:15px;background:#22c55e;color:white;border:0;padding:10px 18px;border-radius:8px;font-weight:bold}
+.card{background:#1e293b;margin:12px;padding:15px;border-radius:14px}
+.row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #334155;padding:12px 0}
+.row:last-child{border-bottom:0}
+.rank{font-size:24px;color:#facc15;font-weight:bold}
+.name{font-weight:bold;font-size:16px}
+.small{font-size:12px;color:#cbd5e1;margin-top:4px}
+.amount{font-size:20px;color:#22c55e;font-weight:bold}
+.reward{color:#38bdf8;font-weight:bold}
+.note{font-size:12px;color:#94a3b8;line-height:1.5;margin:12px}
+.btn{width:100%;padding:13px;border:0;border-radius:10px;font-weight:bold;font-size:15px;margin-top:10px}
+.green{background:#22c55e;color:white}
+.lock{background:#475569;color:#cbd5e1}
+.red{background:#ef4444;color:white}
+.status{font-weight:bold}
+.pending{color:#facc15}
+.approved{color:#22c55e}
+.rejected{color:#ef4444}
+</style>
+</head>
+
+<body>
+
+<div class="header">🏆 Monthly Earning Reward</div>
+<button class="back" onclick="window.location.href='dashboard.html'">← Back</button>
+
+<div class="note">
+ℹ️ Note: Minimum <b>50 DC Monthly Earnings</b> are required to claim the Monthly Reward.
+Reward claiming is unlocked only on the <b>30th of every month</b>.
+Only <b>Top 10 ranked users</b> are eligible.
+</div>
+
+<div class="card">
+<h3>🏆 Top 10 Monthly Leaderboard</h3>
+<div id="leaderboard">Loading...</div>
+</div>
+
+<div class="card">
+<h3>🎁 My Monthly Reward</h3>
+<div id="claimBox">Loading...</div>
+</div>
+
+<div class="card">
+<h3>📜 Claim History</h3>
+<div id="historyBox">Loading...</div>
+</div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_M-R7UOrWY2JPMefvZpAQRW_mj1phJ_1";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const rewards = {
+  1: 125,
+  2: 75,
+  3: 50,
+  4: 25,
+  5: 15,
+  6: 10,
+  7: 10,
+  8: 10,
+  9: 10,
+  10: 10
+};
+
+function getMonthKey() {
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+}
+
+function canClaimToday() {
+  return new Date().getDate() === 30;
+}
+
+function getLocalMemberId() {
+  return (
+    localStorage.getItem("member_id") ||
+    localStorage.getItem("memberId") ||
+    localStorage.getItem("user_id") ||
+    localStorage.getItem("userId") ||
+    ""
+  );
+}
+
+async function getCurrentUser() {
+  const memberId = getLocalMemberId();
+
+  if (memberId) {
+    const { data } = await supabaseClient
+      .from("users")
+      .select("*")
+      .eq("member_id", memberId)
+      .single();
+    return data;
+  }
+
+  const { data: authData } = await supabaseClient.auth.getUser();
+  const email = authData?.user?.email;
+
+  if (email) {
+    const { data } = await supabaseClient
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .single();
+    return data;
+  }
+
+  return null;
+}
+
+async function loadLeaderboard() {
+  const box = document.getElementById("leaderboard");
+
+  const { data, error } = await supabaseClient
+    .from("users")
+    .select("name,full_name,username,member_id,monthly_earning,referral_count")
+    .order("monthly_earning", { ascending: false })
+    .limit(10);
+
+  if (error) {
+    box.innerHTML = "Error: " + error.message;
+    return [];
+  }
+
+  if (!data || data.length === 0) {
+    box.innerHTML = "No monthly earning data found.";
+    return [];
+  }
+
+  let html = "";
+
+  data.forEach((u, i) => {
+    const rank = i + 1;
+    const name = u.full_name || u.name || u.username || "User";
+    const earning = Number(u.monthly_earning || 0);
+
+    html += `
+      <div class="row">
+        <div>
+          <div class="rank">#${rank}</div>
+        </div>
+        <div style="flex:1;margin-left:12px">
+          <div class="name">${name}</div>
+          <div class="small">ID: ${u.member_id}</div>
+          <div class="small">Team: ${u.referral_count || 0}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="amount">${earning.toFixed(2)} DC</div>
+          <div class="small">Reward: <span class="reward">${rewards[rank]} DC</span></div>
+        </div>
+      </div>
+    `;
+  });
+
+  box.innerHTML = html;
+  return data;
+}
+
+async function loadClaimBox(leaderboard) {
+  const box = document.getElementById("claimBox");
+  const user = await getCurrentUser();
+
+  if (!user) {
+    box.innerHTML = "Please login first.";
+    return;
+  }
+
+  const month = getMonthKey();
+  const myIndex = leaderboard.findIndex(u => u.member_id === user.member_id);
+  const rank = myIndex + 1;
+  const monthlyEarning = Number(user.monthly_earning || 0);
+
+  if (rank < 1 || rank > 10) {
+    box.innerHTML = "You are not in Top 10 this month.";
+    return;
+  }
+
+  if (monthlyEarning < 50) {
+    box.innerHTML = "Minimum 50 DC monthly earning required to claim reward.";
+    return;
+  }
+
+  const { data: oldClaim } = await supabaseClient
+    .from("monthly_reward_claims")
+    .select("*")
+    .eq("user_id", user.member_id)
+    .eq("month", month)
+    .maybeSingle();
+
+  if (oldClaim) {
+    box.innerHTML = `
+      <b>Rank:</b> #${rank}<br>
+      <b>Reward:</b> ${oldClaim.reward_amount} DC<br>
+      <b>Status:</b> <span class="status ${oldClaim.status.toLowerCase()}">${oldClaim.status}</span>
+    `;
+    return;
+  }
+
+  const rewardAmount = rewards[rank];
+
+  if (!canClaimToday()) {
+    box.innerHTML = `
+      <b>Your Rank:</b> #${rank}<br>
+      <b>Your Reward:</b> ${rewardAmount} DC<br>
+      <button class="btn lock">🔒 Claim unlocks on 30th</button>
+    `;
+    return;
+  }
+
+  box.innerHTML = `
+    <b>Your Rank:</b> #${rank}<br>
+    <b>Your Reward:</b> ${rewardAmount} DC<br>
+    <button class="btn green" onclick="claimReward(${rank}, ${rewardAmount})">Claim Reward</button>
+  `;
+}
+
+async function claimReward(rank, rewardAmount) {
+  const user = await getCurrentUser();
+  if (!user) {
+    alert("Please login first");
+    return;
+  }
+
+  if (!canClaimToday()) {
+    alert("Claim will unlock only on 30th");
+    return;
+  }
+
+  const month = getMonthKey();
+
+  const { data: oldClaim } = await supabaseClient
+    .from("monthly_reward_claims")
+    .select("id")
+    .eq("user_id", user.member_id)
+    .eq("month", month)
+    .maybeSingle();
+
+  if (oldClaim) {
+    alert("You already claimed this month");
+    return;
+  }
+
+  let sponsorName = "N/A";
+
+  if (user.sponsor_id) {
+    const { data: sponsorData } = await supabaseClient
+      .from("users")
+      .select("full_name,name,username")
+      .eq("member_id", user.sponsor_id)
+      .maybeSingle();
+
+    sponsorName =
+      sponsorData?.full_name ||
+      sponsorData?.name ||
+      sponsorData?.username ||
+      "N/A";
+  }
+
+  const userName = user.full_name || user.name || user.username || "User";
+
+  const { error } = await supabaseClient
+    .from("monthly_reward_claims")
+    .insert({
+      user_id: user.member_id,
+      user_name: userName,
+      sponsor_id: user.sponsor_id || "",
+      sponsor_name: sponsorName,
+      month: month,
+      rank: rank,
+      monthly_earning: Number(user.monthly_earning || 0),
+      reward_amount: rewardAmount,
+      status: "Pending"
+    });
+
+  if (error) {
+    alert("Claim error: " + error.message);
+    return;
+  }
+
+  alert("Monthly reward claim submitted");
+  init();
+}
+
+async function loadHistory() {
+  const box = document.getElementById("historyBox");
+  const user = await getCurrentUser();
+
+  if (!user) {
+    box.innerHTML = "Please login first.";
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("monthly_reward_claims")
+    .select("*")
+    .eq("user_id", user.member_id)
+    .order("claim_date", { ascending: false });
+
+  if (error) {
+    box.innerHTML = error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    box.innerHTML = "No claim history found.";
+    return;
+  }
+
+  let html = "";
+
+  data.forEach(c => {
+    html += `
+      <div class="row">
+        <div>
+          <b>${c.month}</b><br>
+          <span class="small">Rank: #${c.rank}</span><br>
+          <span class="small">Earning: ${Number(c.monthly_earning || 0).toFixed(2)} DC</span>
+        </div>
+        <div style="text-align:right">
+          <b>${c.reward_amount} DC</b><br>
+          <span class="status ${c.status.toLowerCase()}">${c.status}</span>
+        </div>
+      </div>
+    `;
+  });
+
+  box.innerHTML = html;
+}
+
+async function init() {
+  const leaderboard = await loadLeaderboard();
+  await loadClaimBox(leaderboard);
+  await loadHistory();
+}
+
+init();
+</script>
+
+</body>
+</html>
