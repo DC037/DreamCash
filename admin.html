@@ -899,7 +899,7 @@ async function approveOffer(submissionId, userId, reward) {
 
   const { data: userData, error: userError } = await supabaseClient
     .from("users")
-    .select("wallet")
+    .select("wallet, lifetime_earning")
     .eq("member_id", userId)
     .maybeSingle();
 
@@ -914,10 +914,15 @@ if (!userData) {
   const oldWallet = Number(userData.wallet || 0);
   const addReward = Number(reward || 0);
 
-  const { error: walletError } = await supabaseClient
-    .from("users")
-    .update({ wallet: oldWallet + addReward })
-    .eq("member_id", userId);
+  const oldLifetime = Number(userData.lifetime_earning || 0);
+
+const { error: walletError } = await supabaseClient
+  .from("users")
+  .update({
+    wallet: oldWallet + addReward,
+    lifetime_earning: oldLifetime + addReward
+  })
+  .eq("member_id", userId);
 
   if (walletError) {
     alert("Wallet update error: " + walletError.message);
