@@ -260,18 +260,17 @@ async function claimReward(rank, rewardAmount) {
   if (user.sponsor_id) {
     const { data: sponsorData } = await supabaseClient
       .from("users")
-      .select("name,username")
+      .select("name")
       .eq("member_id", user.sponsor_id)
       .maybeSingle();
 
     sponsorName =
       
       sponsorData?.name ||
-      sponsorData?.username ||
       "N/A";
   }
 
-  const userName = user.name || user.username || "User";
+  const userName = user.name || "User";
 
   const { error } = await supabaseClient
     .from("monthly_reward_claims")
