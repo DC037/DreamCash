@@ -221,10 +221,40 @@ const error = null;
 
   let html = "";
 
-  data.forEach(d => {
-    html += `
+  for (const d of data) {
+    
+    const { data: userData } = await supabaseClient
+  .from("users")
+  .select("full_name,name,username,sponsor_id")
+  .eq("member_id", d.user_id)
+  .single();
+
+let applyName =
+  userData?.full_name ||
+  userData?.name ||
+  userData?.username ||
+  "N/A";
+
+let sponsorName = "N/A";
+
+if (userData?.sponsor_id) {
+  const { data: sponsorData } = await supabaseClient
+    .from("users")
+    .select("full_name,name,username")
+    .eq("member_id", userData.sponsor_id)
+    .single();
+
+  sponsorName =
+    sponsorData?.full_name ||
+    sponsorData?.name ||
+    sponsorData?.username ||
+    "N/A";
+}
+  html += `
       <div class="row">
         <b>User ID:</b> ${d.user_id}<br>
+        <b>Apply Name:</b> ${applyName}<br>
+<b>Sponsor:</b> ${sponsorName}<br>
         <b>Offer ID:</b> ${d.offer_id}<br>
         <b>Reward:</b> ${d.reward}<br>
         <b>Status:</b>
@@ -245,7 +275,7 @@ Reject
         <hr>
       </div>
     `;
-  });
+  }
 
   box.innerHTML = html;
   }
