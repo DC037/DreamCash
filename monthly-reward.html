@@ -126,7 +126,7 @@ async function loadLeaderboard() {
   const box = document.getElementById("leaderboard");
 
   const response = await fetch(
-  SUPABASE_URL + "/rest/v1/users?select=name,username,member_id,monthly_earning,referral_count&order=monthly_earning.desc&limit=10",
+  SUPABASE_URL + "/rest/v1/users?select=name,member_id,monthly_earning,referral_count&order=monthly_earning.desc&limit=10"
   {
     headers: {
       "apikey": SUPABASE_KEY,
@@ -146,7 +146,7 @@ if (!response.ok) {
 
   data.forEach((u, i) => {
     const rank = i + 1;
-    const name = u.name || u.username || "User";
+    const name = u.name || "User";
     const earning = Number(u.monthly_earning || 0);
 
     html += `
