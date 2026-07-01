@@ -172,8 +172,8 @@ async function loadLeaderboard(){
   try{
     const { data, error } = await supabaseClient
       .from("users")
-      .select("name, member_id, referral_count, referral_income")
-      .order("referral_income", { ascending:false })
+      .select("name, member_id, referral_count, lifetime_earning")
+      .order("lifetime_earning", { ascending:false })
       .limit(15);
 
     if(error){
@@ -217,7 +217,7 @@ box-shadow:0 6px 18px rgba(0,0,0,.3);
           <div class="name">${user.name || "User"}</div>
           <div class="member">ID : ${user.member_id || "-"}</div>
           <div class="team">Team : ${user.referral_count || 0}</div>
-          <div class="earning">₹${Number(user.referral_income || 0).toFixed(2)}</div>
+          <div class="earning">₹${Number(user.lifetime_earning || 0).toFixed(2)}</div>
         </div>
       `;
     });
@@ -246,7 +246,7 @@ data.slice(3,15).forEach(function(user,index){
       </div>
 
       <div class="right">
-        <div class="rank">₹${Number(user.referral_income || 0).toFixed(2)}</div>
+        <div class="rank">₹${Number(user.lifetime_earning || 0).toFixed(2)}</div>
         <div class="small">Total Earning</div>
       </div>
     </div>
