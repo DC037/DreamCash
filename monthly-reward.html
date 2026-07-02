@@ -130,22 +130,35 @@ Only <b>Top 10 ranked users</b> are eligible.
 <h3>📜 Claim History</h3>
 <div id="historyBox">Loading...</div>
 </div>
-
+  }
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  
+
 const rewards = {
   1:125, 2:75, 3:50, 4:25, 5:15,
   6:10, 7:10, 8:10, 9:10, 10:10
 };
 
-function getMonthKey(){
-  const d = new Date();
-  return d.getFullYear() + "-" + ("0" + (d.getMonth()+1)).slice(-2);
+let activeRewardMonth = "";
+let activeUserMonthlyEarning = 0;
+
+function pad2(n){
+  return String(n).padStart(2, "0");
+}
+
+function getMonthKey(date = new Date()){
+  return date.getFullYear() + "-" + pad2(date.getMonth() + 1);
+}
+
+function getIncomeMonth(createdAt){
+  if(!createdAt) return "";
+  const d = new Date(createdAt);
+  if(isNaN(d.getTime())) return "";
+  return getMonthKey(d);
 }
 
 function canClaimToday(){
@@ -165,45 +178,53 @@ function getLocalMemberId(){
 async function getCurrentUser(){
   const memberId = getLocalMemberId();
 
-  if(memberId){
-    const { data } = await supabaseClient
-      .from("users")
-      .select("*")
-      .eq("member_id", memberId)
-      .maybeSingle();
+  if(!memberId) return null;
 
-    return data;
-  }
+  const { data } = await supabaseClient
+    .from("users")
+    .select("*")
+    .eq("member_id", memberId)
+    .maybeSingle();
 
-  return null;
+  return data;
 }
 
 async function loadLeaderboard(){
   const box = document.getElementById("leaderboard");
 
-  const start = new Date();
-  start.setDate(1);
-  start.setHours(0,0,0,0);
-
-  const end = new Date(start);
-  end.setMonth(end.getMonth() + 1);
-
   const { data: incomes, error } = await supabaseClient
     .from("income_history")
     .select("user_id,amount,status,created_at")
     .eq("status", "approved")
-    .gte("created_at", start.toISOString())
-    .lt("created_at", end.toISOString());
+    .order("created_at", { ascending:false })
+    .limit(5000);
 
   if(error){
     box.innerHTML = "Income error: " + error.message;
     return [];
   }
 
+  if(!incomes || incomes.length === 0){
+    box.innerHTML = "No approved income data found.";
+    return [];
+  }
+
+  const currentMonth = getMonthKey();
+  const hasCurrentMonth = incomes.some(i => getIncomeMonth(i.created_at) === currentMonth);
+
+  activeRewardMonth = hasCurrentMonth
+    ? currentMonth
+    : getIncomeMonth(incomes[0].created_at);
+
   const earningMap = {};
 
-  (incomes || []).forEach(i => {
-    const uid = i.user_id;
+  incomes.forEach(i => {
+    const month = getIncomeMonth(i.created_at);
+    if(month !== activeRewardMonth) return;
+
+    const uid = String(i.user_id || "").trim();
+    if(!uid) return;
+
     earningMap[uid] = (earningMap[uid] || 0) + Number(i.amount || 0);
   });
 
@@ -224,23 +245,44 @@ async function loadLeaderboard(){
     return [];
   }
 
-  const leaderboard = (users || []).map(u => ({
-    ...u,
-    monthly_earning: earningMap[u.member_id] || 0
-  }))
+  const userMap = {};
+  (users || []).forEach(u => {
+    userMap[u.member_id] = u;
+  });
+
+  const leaderboard = ids.map(id => {
+    const u = userMap[id] || {};
+    return {
+      name: u.name || "User",
+      member_id: id,
+      referral_count: u.referral_count || 0,
+      monthly_earning: earningMap[id] || 0
+    };
+  })
   .sort((a,b) => b.monthly_earning - a.monthly_earning)
   .slice(0,10);
 
   let html = "";
 
+  if(activeRewardMonth !== currentMonth){
+    html += `<div class="small" style="margin-bottom:10px;color:#facc15">
+      Showing latest available month: <b>${activeRewardMonth}</b>
+    </div>`;
+  }else{
+    html += `<div class="small" style="margin-bottom:10px">
+      Month: <b>${activeRewardMonth}</b>
+    </div>`;
+  }
+
   leaderboard.forEach((u, i) => {
     const rank = i + 1;
     const earning = Number(u.monthly_earning || 0);
+
     html += `
       <div class="row">
         <div class="rank">#${rank}</div>
         <div style="flex:1">
-          <div class="name">${u.name || "User"}</div>
+          <div class="name">${u.name}</div>
           <div class="small">ID: ${u.member_id}</div>
           <div class="small">Team: ${u.referral_count || 0}</div>
         </div>
@@ -265,17 +307,24 @@ async function loadClaimBox(leaderboard){
     return;
   }
 
-  const month = getMonthKey();
+  const month = activeRewardMonth || getMonthKey();
   const myIndex = leaderboard.findIndex(u => u.member_id === user.member_id);
   const rank = myIndex + 1;
   const monthlyEarning = Number(leaderboard[myIndex]?.monthly_earning || 0);
+
+  activeUserMonthlyEarning = monthlyEarning;
+
   if(rank < 1 || rank > 10){
     box.innerHTML = "You are not in Top 10 this month.";
     return;
   }
 
   if(monthlyEarning < 50){
-    box.innerHTML = "Minimum 50 DC monthly earning required to claim reward.";
+    box.innerHTML = `
+      <b>Your Rank:</b> #${rank}<br>
+      <b>Your Monthly Earning:</b> ${monthlyEarning.toFixed(2)} DC<br>
+      Minimum 50 DC monthly earning required to claim reward.
+    `;
     return;
   }
 
@@ -288,6 +337,7 @@ async function loadClaimBox(leaderboard){
 
   if(oldClaim){
     box.innerHTML = `
+      <b>Month:</b> ${oldClaim.month}<br>
       <b>Rank:</b> #${oldClaim.rank}<br>
       <b>Reward:</b> ${oldClaim.reward_amount} DC<br>
       <b>Status:</b> <span class="${oldClaim.status.toLowerCase()}">${oldClaim.status}</span>
@@ -299,7 +349,9 @@ async function loadClaimBox(leaderboard){
 
   if(!canClaimToday()){
     box.innerHTML = `
+      <b>Month:</b> ${month}<br>
       <b>Your Rank:</b> #${rank}<br>
+      <b>Your Monthly Earning:</b> ${monthlyEarning.toFixed(2)} DC<br>
       <b>Your Reward:</b> ${rewardAmount} DC<br>
       <button class="btn lock">🔒 Claim unlocks on 30th</button>
     `;
@@ -307,7 +359,9 @@ async function loadClaimBox(leaderboard){
   }
 
   box.innerHTML = `
+    <b>Month:</b> ${month}<br>
     <b>Your Rank:</b> #${rank}<br>
+    <b>Your Monthly Earning:</b> ${monthlyEarning.toFixed(2)} DC<br>
     <b>Your Reward:</b> ${rewardAmount} DC<br>
     <button class="btn green" onclick="claimReward(${rank},${rewardAmount})">Claim Reward</button>
   `;
@@ -326,7 +380,7 @@ async function claimReward(rank, rewardAmount){
     return;
   }
 
-  const month = getMonthKey();
+  const month = activeRewardMonth || getMonthKey();
 
   const { data: oldClaim } = await supabaseClient
     .from("monthly_reward_claims")
@@ -352,18 +406,16 @@ async function claimReward(rank, rewardAmount){
     sponsorName = sponsorData?.name || "N/A";
   }
 
-  const userName = user.name || "User";
-
   const { error } = await supabaseClient
     .from("monthly_reward_claims")
     .insert({
       user_id: user.member_id,
-      user_name: userName,
+      user_name: user.name || "User",
       sponsor_id: user.sponsor_id || "",
       sponsor_name: sponsorName,
       month: month,
       rank: rank,
-      monthly_earning: Number(user.monthly_earning || 0),
+      monthly_earning: activeUserMonthlyEarning,
       reward_amount: rewardAmount,
       status: "Pending"
     });
@@ -389,8 +441,7 @@ async function loadHistory(){
   const { data, error } = await supabaseClient
     .from("monthly_reward_claims")
     .select("*")
-    .eq("user_id", user.member_id)
-    .order("claim_date", { ascending:false });
+    .eq("user_id", user.member_id);
 
   if(error){
     box.innerHTML = error.message;
@@ -414,7 +465,7 @@ async function loadHistory(){
         </div>
         <div style="text-align:right">
           <b>${c.reward_amount} DC</b><br>
-          <span class="${c.status.toLowerCase()}">${c.status}</span>
+          <span class="${String(c.status || "Pending").toLowerCase()}">${c.status || "Pending"}</span>
         </div>
       </div>
     `;
