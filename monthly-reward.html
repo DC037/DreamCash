@@ -235,7 +235,7 @@ async function loadLeaderboard(){
 
   leaderboard.forEach((u, i) => {
     const rank = i + 1;
-    const monthlyEarning = Number(leaderboard[myIndex]?.monthly_earning || 0);
+    const earning = Number(u.monthly_earning || 0);
     html += `
       <div class="row">
         <div class="rank">#${rank}</div>
@@ -268,8 +268,7 @@ async function loadClaimBox(leaderboard){
   const month = getMonthKey();
   const myIndex = leaderboard.findIndex(u => u.member_id === user.member_id);
   const rank = myIndex + 1;
-  const monthlyEarning = Number(user.monthly_earning || 0);
-
+  const monthlyEarning = Number(leaderboard[myIndex]?.monthly_earning || 0);
   if(rank < 1 || rank > 10){
     box.innerHTML = "You are not in Top 10 this month.";
     return;
