@@ -181,34 +181,66 @@ async function getCurrentUser(){
 async function loadLeaderboard(){
   const box = document.getElementById("leaderboard");
 
-  const { data, error } = await supabaseClient
-    .from("users")
-    .select("name,member_id,monthly_earning,referral_count")
-    .order("monthly_earning", { ascending:false })
-    .limit(10);
+  const start = new Date();
+  start.setDate(1);
+  start.setHours(0,0,0,0);
+
+  const end = new Date(start);
+  end.setMonth(end.getMonth() + 1);
+
+  const { data: incomes, error } = await supabaseClient
+    .from("income_history")
+    .select("user_id,amount,status,created_at")
+    .eq("status", "approved")
+    .gte("created_at", start.toISOString())
+    .lt("created_at", end.toISOString());
 
   if(error){
-    box.innerHTML = "Error: " + error.message;
+    box.innerHTML = "Income error: " + error.message;
     return [];
   }
 
-  if(!data || data.length === 0){
+  const earningMap = {};
+
+  (incomes || []).forEach(i => {
+    const uid = i.user_id;
+    earningMap[uid] = (earningMap[uid] || 0) + Number(i.amount || 0);
+  });
+
+  const ids = Object.keys(earningMap);
+
+  if(ids.length === 0){
     box.innerHTML = "No monthly earning data found.";
     return [];
   }
 
+  const { data: users, error: userError } = await supabaseClient
+    .from("users")
+    .select("name,member_id,referral_count")
+    .in("member_id", ids);
+
+  if(userError){
+    box.innerHTML = "User error: " + userError.message;
+    return [];
+  }
+
+  const leaderboard = (users || []).map(u => ({
+    ...u,
+    monthly_earning: earningMap[u.member_id] || 0
+  }))
+  .sort((a,b) => b.monthly_earning - a.monthly_earning)
+  .slice(0,10);
+
   let html = "";
 
-  data.forEach((u, i) => {
+  leaderboard.forEach((u, i) => {
     const rank = i + 1;
-    const name = u.name || "User";
-    const earning = Number(u.monthly_earning || 0);
-
+    const monthlyEarning = Number(leaderboard[myIndex]?.monthly_earning || 0);
     html += `
       <div class="row">
         <div class="rank">#${rank}</div>
         <div style="flex:1">
-          <div class="name">${name}</div>
+          <div class="name">${u.name || "User"}</div>
           <div class="small">ID: ${u.member_id}</div>
           <div class="small">Team: ${u.referral_count || 0}</div>
         </div>
@@ -221,7 +253,7 @@ async function loadLeaderboard(){
   });
 
   box.innerHTML = html;
-  return data;
+  return leaderboard;
 }
 
 async function loadClaimBox(leaderboard){
