@@ -267,7 +267,12 @@ async function forgotPassword(){
   const email = prompt("Enter your registered Email ID");
   if(!email) return;
 
-  const { error } = await supabaseClient.auth.resetPasswordForEmail(email.trim().toLowerCase());
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(
+    email.trim().toLowerCase(),
+    {
+      redirectTo: "https://dc037.github.io/DreamCash/reset-password.html"
+    }
+  );
 
   if(error){
     alert(error.message);
