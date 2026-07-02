@@ -342,9 +342,21 @@ async function loadHistory() {
 }
 
 async function init() {
-  const leaderboard = await loadLeaderboard();
-  await loadClaimBox(leaderboard);
-  await loadHistory();
+  try {
+    const leaderboard = await loadLeaderboard();
+    await loadClaimBox(leaderboard || []);
+    await loadHistory();
+  } catch (err) {
+    document.getElementById("leaderboard").innerHTML =
+      "JS Error: " + err.message;
+
+    document.getElementById("claimBox").innerHTML =
+      "JS Error: " + err.message;
+
+    document.getElementById("historyBox").innerHTML =
+      "JS Error: " + err.message;
+  }
+}
 }
 
 init();
