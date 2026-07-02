@@ -419,7 +419,7 @@ async function distributeLevelIncome(userId) {
 
     const { data: sponsorUser } = await supabaseClient
       .from("users")
-      .select("wallet")
+      .select("wallet, lifetime_earning")
       .eq("member_id", sponsorId)
       .single();
 
@@ -437,12 +437,15 @@ async function distributeLevelIncome(userId) {
       });
 
     const oldWallet = Number(sponsorUser.wallet || 0);
+const oldLifetime = Number(sponsorUser.lifetime_earning || 0);
 
-    await supabaseClient
-      .from("users")
-      .update({ wallet: oldWallet + income })
-      .eq("member_id", sponsorId);
-
+await supabaseClient
+.from("users")
+.update({
+  wallet: oldWallet + income,
+  lifetime_earning: oldLifetime + income
+})
+.eq("member_id", sponsorId);
     currentMemberId = sponsorId;
   }
 }
