@@ -1212,9 +1212,6 @@ referral_income: totalReferralIncome
 })
 .eq("member_id", data.member_id);
 
-    const completedRank = getCompletedRank(teamData.directActive, teamData.activeTotal);
-console.log("Rank Data:", teamData, "Completed Rank:", completedRank);
-    updateRankProgress(completedRank);
   setText("myCode", referralCode);
 
     const box = document.getElementById("activationBox");
