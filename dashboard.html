@@ -1165,8 +1165,6 @@ if(!data || !data.member_id){
   console.log("Invalid user data, default not applied");
   return;
 }
-   return; 
-}
   localStorage.setItem("member_id", data.member_id);
   localStorage.setItem("last_member_id", data.member_id);
 
@@ -1174,7 +1172,7 @@ if(!data || !data.member_id){
     "https://dc037.github.io/DreamCash/login.html?register=1&ref=" + data.member_id;
 
   setText("userName", data.name || "User");
-  setText("memberId", data.member_id || "DC1001");
+  setText("memberId", data.member_id || "");
   if (data.current_rank && data.current_rank.trim() !== "") {
     setText("status", data.current_rank);
 } else {
