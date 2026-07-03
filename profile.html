@@ -43,6 +43,62 @@ button{
     font-size:16px;
     cursor:pointer;
 }
+    .id-card-section{
+    margin-top:30px;
+}
+
+.id-card{
+    width:320px;
+    margin:0 auto;
+    padding:22px;
+    border-radius:22px;
+    background:linear-gradient(135deg,rgba(205,127,50,0.95),rgba(80,45,20,0.95));
+    box-shadow:0 20px 40px rgba(0,0,0,0.45);
+    color:white;
+    text-align:center;
+    transform:perspective(900px) rotateX(4deg);
+    border:1px solid rgba(255,255,255,0.35);
+}
+
+.id-card h3{
+    margin:0 0 12px;
+    font-size:20px;
+}
+
+.id-card img{
+    width:95px;
+    height:95px;
+    border-radius:50%;
+    object-fit:cover;
+    border:4px solid white;
+    background:#fff;
+}
+
+.id-card .name{
+    font-size:21px;
+    font-weight:bold;
+    margin-top:12px;
+}
+
+.id-card .info{
+    font-size:14px;
+    margin-top:6px;
+}
+
+.card-status{
+    display:inline-block;
+    margin-top:10px;
+    padding:6px 14px;
+    border-radius:20px;
+    background:#22c55e;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.download-card-btn{
+    margin-top:18px;
+    background:#0ea5e9;
+}
   </style>
 </head>
 
@@ -66,7 +122,27 @@ button{
   <br><br>
 
   <button onclick="location.href='dashboard.html'">Back</button>
+<div class="id-card-section">
 
+    <div class="id-card" id="dreamCard">
+        <h3>DreamCash Identity Card</h3>
+
+        <img id="cardPhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+
+        <div class="name" id="cardName">DreamCash User</div>
+
+        <div class="info">User ID: <span id="cardUserId">DC037</span></div>
+
+        <div class="info">Rank: <span id="cardRank">Bronze</span></div>
+
+        <div class="card-status" id="cardStatus">Active</div>
+    </div>
+
+    <button class="download-card-btn" id="downloadCardBtn">
+        Download ID Card
+    </button>
+
+</div>
 </div>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
