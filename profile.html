@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Edit Profile</title>
-  <style>
+
+<style>
 body{
     margin:0;
     font-family:Arial,sans-serif;
@@ -21,12 +22,12 @@ body{
     text-align:center;
 }
 
-img{
-    width:150px;
-    height:150px;
+#profilePreview{
+    width:140px;
+    height:140px;
     border-radius:50%;
     object-fit:cover;
-    border:4px solid #22c55e;
+    border:4px solid #2196f3;
 }
 
 input{
@@ -43,31 +44,31 @@ button{
     font-size:16px;
     cursor:pointer;
 }
-    .id-card-section{
+
+.id-card-section{
     margin-top:30px;
 }
 
 .id-card{
-    width:320px;
+    width:280px;
     margin:0 auto;
-    padding:22px;
-    border-radius:22px;
-    background:linear-gradient(135deg,rgba(205,127,50,0.95),rgba(80,45,20,0.95));
-    box-shadow:0 20px 40px rgba(0,0,0,0.45);
+    padding:18px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#cd7f32,#4b2508);
+    box-shadow:0 18px 35px rgba(0,0,0,0.45);
     color:white;
     text-align:center;
-    transform:perspective(900px) rotateX(4deg);
     border:1px solid rgba(255,255,255,0.35);
 }
 
 .id-card h3{
-    margin:0 0 12px;
-    font-size:20px;
+    margin:0 0 10px;
+    font-size:18px;
 }
 
 .id-card img{
-    width:95px;
-    height:95px;
+    width:75px;
+    height:75px;
     border-radius:50%;
     object-fit:cover;
     border:4px solid white;
@@ -75,14 +76,14 @@ button{
 }
 
 .id-card .name{
-    font-size:21px;
+    font-size:18px;
     font-weight:bold;
-    margin-top:12px;
+    margin-top:10px;
 }
 
 .id-card .info{
-    font-size:14px;
-    margin-top:6px;
+    font-size:13px;
+    margin-top:5px;
 }
 
 .card-status{
@@ -91,7 +92,7 @@ button{
     padding:6px 14px;
     border-radius:20px;
     background:#22c55e;
-    font-size:13px;
+    font-size:12px;
     font-weight:bold;
 }
 
@@ -99,60 +100,75 @@ button{
     margin-top:18px;
     background:#0ea5e9;
 }
-  </style>
+</style>
 </head>
 
 <body>
 
 <h2 style="text-align:center;">Profile Picture</h2>
+
 <div class="container">
 
-  <img id="profilePreview"
-       src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-       style="width:140px;height:140px;border-radius:50%;border:4px solid #2196f3;object-fit:cover;">
+    <img id="profilePreview" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
 
-  <br><br>
+    <br><br>
 
-  <input type="file" id="photoInput" accept="image/*">
+    <input type="file" id="photoInput" accept="image/*">
 
-  <br><br>
+    <br><br>
 
-  <button id="uploadBtn">Upload Photo</button>
+    <button id="uploadBtn">Upload Photo</button>
 
-  <br><br>
+    <br><br>
 
-  <button onclick="location.href='dashboard.html'">Back</button>
-<div class="id-card-section">
+    <button onclick="location.href='dashboard.html'">Back</button>
 
-    <div class="id-card" id="dreamCard">
-        <h3>DreamCash Identity Card</h3>
+    <div class="id-card-section">
 
-        <img id="cardPhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+        <div class="id-card" id="dreamCard">
+            <h3>DreamCash Identity Card</h3>
 
-        <div class="name" id="cardName">DreamCash User</div>
+            <img id="cardPhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
 
-        <div class="info">User ID: <span id="cardUserId">DC037</span></div>
+            <div class="name" id="cardName">Loading...</div>
 
-        <div class="info">Rank: <span id="cardRank">Bronze</span></div>
+            <div class="info">Member ID: <span id="cardUserId">Loading...</span></div>
 
-        <div class="card-status" id="cardStatus">Active</div>
+            <div class="info">Rank: <span id="cardRank">Bronze</span></div>
+
+            <div class="card-status" id="cardStatus">Active</div>
+        </div>
+
+        <button class="download-card-btn" id="downloadCardBtn">
+            Download ID Card
+        </button>
+
     </div>
 
-    <button class="download-card-btn" id="downloadCardBtn">
-        Download ID Card
-    </button>
+</div>
 
-</div>
-</div>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
 const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const photoInput = document.getElementById("photoInput");
+const photoInput = document.getElementById("photoInput");
 const preview = document.getElementById("profilePreview");
+const cardPhoto = document.getElementById("cardPhoto");
+const cardName = document.getElementById("cardName");
+const cardUserId = document.getElementById("cardUserId");
+
+const savedPhoto = localStorage.getItem("profilePhoto");
+if (savedPhoto) {
+    preview.src = savedPhoto;
+    cardPhoto.src = savedPhoto;
+}
+
+cardName.innerText = localStorage.getItem("name") || "Member";
+cardUserId.innerText = localStorage.getItem("memberId") || "Member ID";
 
 photoInput.addEventListener("change", function () {
     const file = photoInput.files[0];
@@ -162,12 +178,13 @@ photoInput.addEventListener("change", function () {
 
     reader.onload = function (e) {
         preview.src = e.target.result;
+        cardPhoto.src = e.target.result;
     };
 
     reader.readAsDataURL(file);
-
 });
-  document.getElementById("uploadBtn").addEventListener("click", async function () {
+
+document.getElementById("uploadBtn").addEventListener("click", async function () {
     const file = photoInput.files[0];
 
     if (!file) {
@@ -177,22 +194,39 @@ photoInput.addEventListener("change", function () {
 
     const fileName = Date.now() + "_" + file.name;
 
-const { error } = await supabaseClient.storage
-  .from("avatars")
-  .upload(fileName, file);
+    const { error } = await supabaseClient.storage
+        .from("avatars")
+        .upload(fileName, file);
 
-if (error) {
-  alert(error.message);
-  return;
-}
+    if (error) {
+        alert(error.message);
+        return;
+    }
 
-const imageUrl =
-  SUPABASE_URL + "/storage/v1/object/public/avatars/" + fileName;
-localStorage.setItem("profilePhoto", imageUrl);
-alert("Photo uploaded successfully!");
+    const imageUrl = SUPABASE_URL + "/storage/v1/object/public/avatars/" + fileName;
 
-console.log(imageUrl);
+    localStorage.setItem("profilePhoto", imageUrl);
+    preview.src = imageUrl;
+    cardPhoto.src = imageUrl;
+
+    alert("Photo uploaded successfully!");
+});
+
+document.getElementById("downloadCardBtn").addEventListener("click", function () {
+    const card = document.getElementById("dreamCard");
+
+    html2canvas(card, {
+        width: 1280,
+        height: 720,
+        scale: 2
+    }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "DreamCash-ID-Card.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    });
 });
 </script>
+
 </body>
 </html>
