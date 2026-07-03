@@ -1149,7 +1149,7 @@ if(memberId){
   }
     
 if(error || !data){
-    setDefault();
+  console.log("User fetch failed, default not applied");
 
     if(memberId){
         const tempReferralCode =
@@ -1162,7 +1162,9 @@ if(error || !data){
     return;
 }
 if(!data || !data.member_id){
-   setDefault();
+  console.log("Invalid user data, default not applied");
+  return;
+}
    return; 
 }
   localStorage.setItem("member_id", data.member_id);
