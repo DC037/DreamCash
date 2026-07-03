@@ -1520,9 +1520,39 @@ const rankPlan = [
 
   return completed;
   }
-  function updateRankProgress(completedRank){
+  async function updateRankProgress(completedRank){
   const steps = document.querySelectorAll(".overall-rank-progress .rank-step");
   const lines = document.querySelectorAll(".overall-rank-progress .rank-line");
+  const cards = document.querySelectorAll(".rank-reward-card");
+
+  const memberId =
+    localStorage.getItem("member_id") ||
+    localStorage.getItem("last_member_id") ||
+    document.getElementById("memberId")?.innerText?.trim();
+
+  let currentRank = "";
+  let pendingRanks = [];
+
+  if(memberId){
+    const { data:userData } = await supabaseClient
+      .from("users")
+      .select("current_rank")
+      .eq("member_id", memberId)
+      .maybeSingle();
+
+    currentRank = userData?.current_rank || "";
+
+    const snap = await db.collection("rankRewardClaims")
+      .where("userId", "==", memberId)
+      .get();
+
+    snap.forEach(doc => {
+      const d = doc.data();
+      if(d.status === "Pending" || d.status === "Approved"){
+        pendingRanks.push(d.rank);
+      }
+    });
+  }
 
   steps.forEach((step, index) => {
     step.classList.remove("done", "active");
@@ -1543,6 +1573,35 @@ const rankPlan = [
       line.classList.add("active");
     }
   });
+
+  cards.forEach((card, index) => {
+    const rank = rankPlan[index];
+
+    let oldBtn = card.querySelector(".rankClaimBtn");
+    if(oldBtn) oldBtn.remove();
+
+    const btn = document.createElement("button");
+    btn.className = "btn rankClaimBtn";
+
+    if(currentRank === rank.name || pendingRanks.includes(rank.name)){
+      btn.innerText = "🔒 Claimed";
+      btn.classList.add("lock");
+      btn.disabled = true;
+    }else if(index <= completedRank){
+      btn.innerText = "Claim " + rank.name;
+      btn.classList.add("green");
+      btn.onclick = function(){
+        claimRankReward(rank.name, rank.reward);
+      };
+    }else{
+      btn.innerText = "🔒 Locked";
+      btn.classList.add("lock");
+      btn.disabled = true;
+    }
+
+    card.appendChild(btn);
+  });
+  }
   }
 window.showLevelIncome = function(){
   const box = el("levelIncomeBox");
