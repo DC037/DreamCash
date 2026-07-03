@@ -167,8 +167,17 @@ if (savedPhoto) {
     cardPhoto.src = savedPhoto;
 }
 
-cardName.innerText = localStorage.getItem("name") || "Member";
-cardUserId.innerText = localStorage.getItem("memberId") || "Member ID";
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+if(currentUser){
+
+cardName.innerText = currentUser.name;
+
+cardUserId.innerText = currentUser.member_id;
+
+document.getElementById("cardStatus").innerText = currentUser.status;
+
+}
 
 photoInput.addEventListener("change", function () {
     const file = photoInput.files[0];
