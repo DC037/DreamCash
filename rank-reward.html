@@ -97,6 +97,7 @@ function getMemberId(){
 
 async function countTotalTeam(rootId){
   let currentIds = [rootId];
+
   let total = 0;
   let activeTotal = 0;
   let directActive = 0;
@@ -115,9 +116,12 @@ async function countTotalTeam(rootId){
       String(u.status || "").trim().toLowerCase() === "active"
     ).length;
 
-    if(level === 1) directActive = activeCount;
+    if(level === 1){
+      directActive = activeCount;
+    } else {
+      activeTotal += activeCount;
+    }
 
-    activeTotal += activeCount;
     currentIds = data.map(u => u.member_id);
   }
 
