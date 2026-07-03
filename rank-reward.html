@@ -1,1 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rank Rewards - Dream Cash</title>
 
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f1f5f9;color:#111;padding-bottom:25px}
+.header{background:linear-gradient(135deg,#00796b,#03a9f4);color:white;padding:18px;border-radius:0 0 18px 18px}
+.header h2{margin:0;font-size:22px}
+.card{background:white;margin:12px;padding:15px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.btn{border:none;border-radius:20px;padding:10px 18px;color:white;font-weight:bold;background:linear-gradient(135deg,#0aa35c,#18c76e)}
+.blue{background:linear-gradient(135deg,#1976d2,#29b6f6)}
+.orange{background:linear-gradient(135deg,#ff7a00,#ffb300)}
+.rank-card{background:#071b3d;color:white;padding:14px;margin:12px 0;border-radius:14px}
+.rank-card h3{margin:0 0 8px}
+.row{display:flex;justify-content:space-between;margin:7px 0}
+.lock{background:#444}
+.done{background:#16a34a}
+.pending{background:#ff9800}
+.small{font-size:12px;color:#666}
+.back{margin:12px}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h2>🏆 DreamCash Rank Rewards</h2>
+  <p>Complete rank target and claim reward</p>
+</div>
+
+<div class="back">
+  <button class="btn blue" onclick="window.location.href='dashboard.html'">⬅ Back Dashboard</button>
+</div>
+
+<div class="card">
+  <h3>Hello, <span id="userName">User</span></h3>
+  <p class="small">Member ID: <span id="memberId">Loading...</span></p>
+  <p>Status: <b id="userStatus">Loading...</b></p>
+  <p>Direct Active: <b id="directActive">0</b></p>
+  <p>Total Active Team: <b id="activeTeam">0</b></p>
+</div>
+
+<div class="card">
+  <h3>🏆 Rank List</h3>
+  <div id="rankList">Loading ranks...</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCVIHJ66pEI6A3HmSma0LNsFanatv-yhic",
+  authDomain: "dreamcash-dafb4.firebaseapp.com",
+  projectId: "dreamcash-dafb4",
+  storageBucket: "dreamcash-dafb4.firebasestorage.app",
+  messagingSenderId: "66002195487",
+  appId: "1:66002195487:web:6fb777fca2630c466a312a"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const ranks = [
+  {name:"Bronze", direct:11, team:0, reward:100},
+  {name:"Silver", direct:25, team:51, reward:500},
+  {name:"Gold", direct:40, team:101, reward:1500},
+  {name:"Diamond", direct:80, team:501, reward:10000},
+  {name:"Crown", direct:222, team:1022, reward:25000}
+];
+
+let currentUser = null;
+let teamData = {directActive:0, activeTotal:0};
+
+function getMemberId(){
+  const url = new URLSearchParams(window.location.search);
+  const savedUser = JSON.parse(localStorage.getItem("dreamUser") || "{}");
+
+  return url.get("member_id") ||
+         url.get("ref") ||
+         localStorage.getItem("member_id") ||
+         localStorage.getItem("last_member_id") ||
+         savedUser.member_id ||
+         savedUser.memberId ||
+         "";
+}
+
+async function countTotalTeam(rootId){
+  let currentIds = [rootId];
+  let total = 0;
+  let activeTotal = 0;
+  let directActive = 0;
+
+  for(let level = 1; level <= 5; level++){
+    const { data, error } = await supabaseClient
+      .from("users")
+      .select("member_id,status")
+      .in("sponsor_id", currentIds);
+
+    if(error || !data || data.length === 0) break;
+
+    total += data.length;
+
+    const activeCount = data.filter(u =>
+      String(u.status || "").trim().toLowerCase() === "active"
+    ).length;
+
+    if(level === 1) directActive = activeCount;
+
+    activeTotal += activeCount;
+    currentIds = data.map(u => u.member_id);
+  }
+
+  return {total, activeTotal, directActive};
+}
+
+async function getClaimedRanks(memberId){
+  const snap = await db.collection("rankRewardClaims")
+    .where("userId", "==", memberId)
+    .get();
+
+  let claimed = {};
+  snap.forEach(doc => {
+    const d = doc.data();
+    claimed[d.rank] = d.status || "Pending";
+  });
+
+  return claimed;
+}
+
+async function claimRank(rankName, reward){
+  if(!currentUser || !currentUser.member_id){
+    alert("User not found");
+    return;
+  }
+
+  await db.collection("rankRewardClaims").add({
+    userId: currentUser.member_id,
+    name: currentUser.name || "User",
+    rank: rankName,
+    reward: reward,
+    status: "Pending",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  alert("Rank Reward claim submitted. Admin approval pending.");
+  loadPage();
+}
+
+function eligible(rank){
+  return teamData.directActive >= rank.direct && teamData.activeTotal >= rank.team;
+}
+
+async function renderRanks(){
+  const claimed = await getClaimedRanks(currentUser.member_id);
+  const box = document.getElementById("rankList");
+  box.innerHTML = "";
+
+  ranks.forEach(rank => {
+    const isEligible = eligible(rank);
+    const claimStatus = claimed[rank.name];
+
+    let buttonHtml = "";
+
+    if(claimStatus === "Approved"){
+      buttonHtml = `<button class="btn done" disabled>✅ Approved</button>`;
+    } else if(claimStatus === "Pending"){
+      buttonHtml = `<button class="btn pending" disabled>⏳ Pending</button>`;
+    } else if(isEligible){
+      buttonHtml = `<button class="btn" onclick="claimRank('${rank.name}', ${rank.reward})">Claim ${rank.name}</button>`;
+    } else {
+      buttonHtml = `<button class="btn lock" disabled>🔒 Locked</button>`;
+    }
+
+    box.innerHTML += `
+      <div class="rank-card">
+        <h3>🏅 ${rank.name} Level</h3>
+        <div class="row"><span>Direct Active Required</span><b>${rank.direct}</b></div>
+        <div class="row"><span>Total Active Team Required</span><b>${rank.team}</b></div>
+        <div class="row"><span>Reward</span><b>${rank.reward} DC</b></div>
+        ${buttonHtml}
+      </div>
+    `;
+  });
+}
+
+async function loadPage(){
+  const memberId = getMemberId();
+
+  if(!memberId){
+    alert("Member ID not found. Please login again.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  localStorage.setItem("member_id", memberId);
+  localStorage.setItem("last_member_id", memberId);
+
+  const { data, error } = await supabaseClient
+    .from("users")
+    .select("*")
+    .eq("member_id", memberId)
+    .maybeSingle();
+
+  if(error || !data){
+    alert("User data not found");
+    return;
+  }
+
+  currentUser = data;
+
+  document.getElementById("userName").innerText = data.name || "User";
+  document.getElementById("memberId").innerText = data.member_id;
+  document.getElementById("userStatus").innerText = data.status || "Inactive";
+
+  teamData = await countTotalTeam(data.member_id);
+
+  document.getElementById("directActive").innerText = teamData.directActive;
+  document.getElementById("activeTeam").innerText = teamData.activeTotal;
+
+  renderRanks();
+}
+
+loadPage();
+</script>
+
+</body>
+</html>
