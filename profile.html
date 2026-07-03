@@ -328,10 +328,9 @@ document.getElementById("downloadCardBtn").addEventListener("click", function ()
     const card = document.getElementById("dreamCard");
 
     html2canvas(card, {
-        width: 1280,
-        height: 720,
-        scale: 2
-    }).then(canvas => {
+    backgroundColor: null,
+    scale: 4
+}).then(canvas => {
         const link = document.createElement("a");
         link.download = "DreamCash-ID-Card.png";
         link.href = canvas.toDataURL("image/png");
