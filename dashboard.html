@@ -1217,7 +1217,11 @@ if(!data || !data.member_id){
 
   setText("userName", data.name || "User");
   setText("memberId", data.member_id || "DC1001");
-  setText("status", data.status || "Inactive");
+  if (data.current_rank && data.current_rank.trim() !== "") {
+    setText("status", data.current_rank);
+} else {
+    setText("status", data.status || "Inactive");
+  }
     
     setText("profileName", data.name || "--");
 setText("profileEmail", data.email || "--");
