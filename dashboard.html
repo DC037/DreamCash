@@ -629,7 +629,7 @@ box-shadow:0 0 20px #ff9800;
 </div>
   <div>
     <h3>Hello, <span id="userName">User</span></h3>
-    <p class="small">Member ID: <span id="memberId">DC1001</span> | Status: <span id="status">Loading...</span>
+    <p class="small">Member ID: <span id="memberId"></span> | Status: <span id="status">Loading...</span>
   </div>
 </div>
 
@@ -948,7 +948,7 @@ const db = firebase.firestore();
 (function(){
 "use strict";
 
-const REF_LINK = "https://dc037.github.io/DreamCash/login.html?register=1&ref=DC1001";
+const REF_LINK = "https://dc037.github.io/DreamCash/login.html?register=1&ref=";
 let referralCode = REF_LINK;
 let scratchRewardValue = 0;
 let scratchDataNow = null;
@@ -967,7 +967,7 @@ function getUser(){
     balance: Number(saved.balance || 0),
     referralCount: Number(saved.referralCount || 0),
     referralIncome: Number(saved.referralIncome || 0),
-    myReferralCode: saved.myReferralCode || "DC1001",
+    myReferralCode: saved.myReferralCode || "",
     isActive: saved.isActive === true,
     email: saved.email || "-",
     referredBy: saved.referredBy || "Direct Join"
@@ -1016,7 +1016,7 @@ async function addBalance(amount){
 
  const addAmount = Number(amount || 0);
 
- if(!memberId || memberId === "DC1001"){
+ if(!memberId){
    alert("Member ID not found. Please login again.");
    return;
  }
@@ -1588,7 +1588,7 @@ window.dailyCheckIn = async function(){
   const userId = getMemberId();
   const today = getTodayDate();
 
-  if(!userId || userId === "DC1001"){
+  if(!userId){
     alert("User ID not found. Please login again.");
     return;
   }
