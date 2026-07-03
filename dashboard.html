@@ -1099,11 +1099,15 @@ async function loadDashboard(){
   try{
   let urlParams = new URLSearchParams(window.location.search);
 
+let savedUser = JSON.parse(localStorage.getItem("dreamUser") || "{}");
+
 let memberId =
 urlParams.get("member_id") ||
 urlParams.get("ref") ||
 localStorage.getItem("member_id") ||
-localStorage.getItem("last_member_id");
+localStorage.getItem("last_member_id") ||
+savedUser.member_id ||
+savedUser.memberId;
 
 if (!memberId) {
   alert("Member ID Not Found");
