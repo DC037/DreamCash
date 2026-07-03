@@ -135,6 +135,53 @@ button{
     margin-top:18px;
     background:#0ea5e9;
 }
+    .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.brand{
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:1px;
+    color:#ffd700;
+}
+
+.card-type{
+    font-size:11px;
+    color:#ffffffcc;
+    border:1px solid rgba(255,255,255,.3);
+    padding:4px 10px;
+    border-radius:20px;
+}
+
+.card-middle{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin:18px 0;
+}
+
+.card-details{
+    flex:1;
+    text-align:left;
+}
+
+.signature{
+    color:#ffd700;
+    font-size:16px;
+    font-style:italic;
+    font-weight:bold;
+}
+
+.card-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:18px;
+}
 </style>
 </head>
 
@@ -161,17 +208,27 @@ button{
     <div class="id-card-section">
 
         <div class="id-card" id="dreamCard">
-            <h3>DreamCash Identity Card</h3>
 
-          <img id="cardPhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+    <div class="card-top">
+        <div class="brand">DREAMCASH</div>
+        <div class="card-type">IDENTITY CARD</div>
+    </div>
 
+    <div class="card-middle">
+        <img id="cardPhoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+
+        <div class="card-details">
             <div class="name" id="cardName">Loading...</div>
-
             <div class="info">Member ID: <span id="cardUserId">Loading...</span></div>
-
             <div class="info">Status: <span id="cardStatusText">Loading...</span></div>
+        </div>
+    </div>
 
-            <div class="card-status" id="cardStatus">Active</div>
+    <div class="card-bottom">
+        <span class="card-status" id="cardStatus">Active</span>
+        <span class="signature">DreamCash</span>
+    </div>
+
         </div>
 
         <button class="download-card-btn" id="downloadCardBtn">
