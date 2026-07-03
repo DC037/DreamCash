@@ -260,6 +260,7 @@ async function loginUser(){
 
   localStorage.setItem("member_id", data[0].member_id);
   localStorage.setItem("last_member_id", data[0].member_id);
+  localStorage.setItem("currentUser", JSON.stringify(data[0]));
   window.location.href = "dashboard.html?member_id=" + data[0].member_id;
 }
 
