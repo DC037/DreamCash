@@ -963,7 +963,7 @@ function getUser(){
   const saved = JSON.parse(localStorage.getItem("dreamUser") || "{}");
   return {
     fullName: saved.fullName || "User",
-    memberId: saved.member_id || saved.memberId || "DC1001",
+    memberId: saved.member_id || saved.memberId || "",
     balance: Number(saved.balance || 0),
     referralCount: Number(saved.referralCount || 0),
     referralIncome: Number(saved.referralIncome || 0),
