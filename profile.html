@@ -171,11 +171,24 @@ const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
 if(currentUser){
 
-cardName.innerText = currentUser.name;
+    cardName.innerText = currentUser.name;
 
-cardUserId.innerText = currentUser.member_id;
+    cardUserId.innerText = currentUser.member_id;
 
-document.getElementById("cardStatus").innerText = currentUser.status;
+    // Rank
+    document.getElementById("cardRank").innerText =
+        currentUser.current_rank || "Bronze";
+
+    // Status
+    document.getElementById("cardStatus").innerText =
+        currentUser.status;
+
+    // Status color
+    if(currentUser.status === "Active"){
+        document.getElementById("cardStatus").style.background = "#22c55e";
+    }else{
+        document.getElementById("cardStatus").style.background = "#ef4444";
+    }
 
 }
 
