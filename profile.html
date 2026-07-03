@@ -134,7 +134,7 @@ button{
 
             <div class="info">Member ID: <span id="cardUserId">Loading...</span></div>
 
-            <div class="info">Rank: <span id="cardRank">Bronze</span></div>
+            <div class="info">Status: <span id="cardStatusText">Loading...</span></div>
 
             <div class="card-status" id="cardStatus">Active</div>
         </div>
@@ -175,13 +175,11 @@ if(currentUser){
 
     cardUserId.innerText = currentUser.member_id;
 
-    // Rank
-    document.getElementById("cardRank").innerText =
-        currentUser.current_rank || "Bronze";
-
     // Status
     document.getElementById("cardStatus").innerText =
         currentUser.status;
+    document.getElementById("cardStatusText").innerText =
+currentUser.status;
 
     // Status color
     if(currentUser.status === "Active"){
