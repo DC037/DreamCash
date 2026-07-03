@@ -234,7 +234,7 @@ async function loginUser(){
 
   const { data, error } = await supabaseClient
     .from("users")
-    .select("email, mobile, member_id, name, wallet, status")
+    .select("email, mobile, member_id, name, wallet, status, branch")
     .eq("mobile", mobile)
     .limit(1);
 
