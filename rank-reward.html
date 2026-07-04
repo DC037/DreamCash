@@ -6,51 +6,86 @@
 <title>Rank Rewards - Dream Cash</title>
 
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f1f5f9;color:#111;padding-bottom:25px}
-.header{background:linear-gradient(135deg,#00796b,#03a9f4);color:white;padding:18px;border-radius:0 0 18px 18px}
-.header h2{margin:0;font-size:22px}
-.card{background:white;margin:12px;padding:15px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
-.btn{border:none;border-radius:20px;padding:10px 18px;color:white;font-weight:bold;background:linear-gradient(135deg,#0aa35c,#18c76e)}
-.blue{background:linear-gradient(135deg,#1976d2,#29b6f6)}
-.orange{background:linear-gradient(135deg,#ff7a00,#ffb300)}
-.rank-card{background:#071b3d;color:white;padding:14px;margin:12px 0;border-radius:14px}
-.rank-card h3{margin:0 0 8px}
-.row{display:flex;justify-content:space-between;margin:7px 0}
-.lock{background:#444}
-.done{background:#16a34a}
-.pending{background:#ff9800}
-.small{font-size:12px;color:#666}
-.back{margin:12px}
+*{box-sizing:border-box;font-family:'Poppins','Segoe UI',Arial,sans-serif}
+body{margin:0;background:linear-gradient(180deg,#eef4fb,#f8fbff,#edf3fb);color:#0b1b3d;padding-bottom:28px}
+.header{position:relative;overflow:hidden;min-height:175px;background:linear-gradient(135deg,#061b44,#092c70,#061a3d);color:white;padding:28px 24px 44px;border-radius:0 0 34px 34px;box-shadow:0 18px 45px rgba(4,24,70,.22)}
+.header:before{content:"";position:absolute;inset:auto -12% -58px -12%;height:105px;background:#f8fbff;border-radius:50% 50% 0 0}
+.header:after{content:"💰";position:absolute;right:25px;top:23px;width:115px;height:115px;display:flex;align-items:center;justify-content:center;font-size:62px;border-radius:50%;background:rgba(255,255,255,.12)}
+.header h2{position:relative;z-index:2;margin:0;font-size:30px;font-weight:900}
+.header h2 span{display:block;color:#ffd36c;font-size:31px}
+.header p{position:relative;z-index:2;margin:18px 0 0;font-size:16px;color:#eaf3ff}
+.back{margin:-23px 18px 14px;position:relative;z-index:5}
+.btn{border:none;border-radius:28px;padding:10px 18px;color:white;font-weight:800;cursor:pointer;box-shadow:0 10px 22px rgba(0,0,0,.16)}
+.blue{background:linear-gradient(135deg,#1438a8,#20b7ff)}
+.card{background:rgba(255,255,255,.92);margin:14px;padding:18px;border-radius:20px;box-shadow:0 12px 35px rgba(15,44,84,.10)}
+.profile-card{display:grid;grid-template-columns:82px 1fr;gap:15px;align-items:center}
+.logo-circle{width:78px;height:78px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:13px;line-height:1.05;color:#5ef36d;font-weight:900;background:radial-gradient(circle,#153c86,#061632)}
+.logo-circle b{color:#2dc9ff;display:block;font-size:16px}
+.user-title{margin:0 0 8px;font-size:22px}
+.info-line{margin:8px 0;color:#394860;font-size:15px}
+.info-line b{color:#096bd8}
+#userStatus{color:#12a05c}
+.rank-title{margin:0 0 15px;font-size:23px}
+.rank-card{position:relative;overflow:hidden;min-height:150px;color:white;padding:21px 18px 19px 132px;margin:14px 0;border-radius:18px;box-shadow:0 13px 26px rgba(9,30,66,.17)}
+.rank-card:before{content:attr(data-icon);position:absolute;left:21px;top:24px;width:86px;height:86px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:46px;background:rgba(255,255,255,.16)}
+.rank-card:after{content:"🏆";position:absolute;right:22px;top:34px;font-size:100px;opacity:.11}
+.rank-card h3{margin:0 0 11px;font-size:23px;font-weight:900}
+.row{display:flex;justify-content:space-between;margin:8px 0;font-size:15px}
+.row b{font-size:17px;color:#fff4b4;min-width:82px;text-align:right}
+.lock{background:rgba(0,0,0,.33)}
+.done{background:linear-gradient(135deg,#0fa86a,#20d98d)}
+.pending{background:linear-gradient(135deg,#ff9800,#ffc107);color:#3d2100}
+.rank-card .btn{margin-top:9px;padding:9px 18px;box-shadow:none}
+.claim-btn{background:linear-gradient(135deg,#0aa35c,#18c76e)}
+.bronze{background:linear-gradient(135deg,#7a2c07,#b45309,#f08b33)}
+.silver{background:linear-gradient(135deg,#243044,#6b778f,#b9c1d1)}
+.gold{background:linear-gradient(135deg,#8a5700,#e0a207,#ffc94d)}
+.diamond{background:linear-gradient(135deg,#17115f,#5b31c9,#9259ff)}
+.crown{background:linear-gradient(135deg,#061b44,#0b57c7,#1986ff)}
+.note{margin:16px 14px 0;padding:14px 16px;border-radius:14px;background:#eaf2ff;color:#3a5b94;font-weight:600}
+@media(max-width:520px){
+.header{min-height:154px;padding:20px 16px 36px}
+.header h2{font-size:24px}.header h2 span{font-size:26px}
+.header:after{right:15px;top:20px;width:88px;height:88px;font-size:49px}
+.profile-card{grid-template-columns:70px 1fr}
+.logo-circle{width:68px;height:68px}
+.rank-card{padding:17px 13px 17px 96px;min-height:138px}
+.rank-card:before{left:14px;top:22px;width:66px;height:66px;font-size:36px}
+.rank-card:after{font-size:78px}
+}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-  <h2>🏆 DreamCash Rank Rewards</h2>
+  <h2>🏆 DreamCash <span>Rank Rewards</span></h2>
   <p>Complete rank target and claim reward</p>
 </div>
 
 <div class="back">
-  <button class="btn blue" onclick="window.location.href='dashboard.html'">⬅ Back Dashboard</button>
+  <button class="btn blue" onclick="window.location.href='dashboard.html'">← Back Dashboard</button>
+</div>
+
+<div class="card profile-card">
+  <div class="logo-circle">Dream<b>Cash</b></div>
+  <div>
+    <h3 class="user-title">Hello, <span id="userName">User</span> 👋</h3>
+    <p class="info-line">Member ID: <b id="memberId">Loading...</b></p>
+    <p class="info-line">Status: <b id="userStatus">Loading...</b></p>
+    <p class="info-line">Direct Active: <b id="directActive">0</b></p>
+    <p class="info-line">Total Active Team: <b id="activeTeam">0</b></p>
+  </div>
 </div>
 
 <div class="card">
-  <h3>Hello, <span id="userName">User</span></h3>
-  <p class="small">Member ID: <span id="memberId">Loading...</span></p>
-  <p>Status: <b id="userStatus">Loading...</b></p>
-  <p>Direct Active: <b id="directActive">0</b></p>
-  <p>Total Active Team: <b id="activeTeam">0</b></p>
-</div>
-
-<div class="card">
-  <h3>🏆 Rank List</h3>
+  <h3 class="rank-title">🏆 Rank List</h3>
   <div id="rankList">Loading ranks...</div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<div class="note">🎖️ Complete the target of each rank to unlock and claim amazing rewards.</div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
@@ -72,11 +107,11 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 const ranks = [
-  {name:"Bronze", direct:11, team:0, reward:100},
-  {name:"Silver", direct:25, team:51, reward:500},
-  {name:"Gold", direct:40, team:101, reward:1500},
-  {name:"Diamond", direct:80, team:501, reward:10000},
-  {name:"Crown", direct:222, team:1022, reward:25000}
+  {name:"Bronze", direct:11, team:0, reward:100, icon:"🥉", cls:"bronze"},
+  {name:"Silver", direct:25, team:51, reward:500, icon:"🥈", cls:"silver"},
+  {name:"Gold", direct:40, team:101, reward:1500, icon:"🥇", cls:"gold"},
+  {name:"Diamond", direct:80, team:501, reward:10000, icon:"💎", cls:"diamond"},
+  {name:"Crown", direct:222, team:1022, reward:25000, icon:"👑", cls:"crown"}
 ];
 
 let currentUser = null;
@@ -97,7 +132,6 @@ function getMemberId(){
 
 async function countTotalTeam(rootId){
   let currentIds = [rootId];
-
   let total = 0;
   let activeTotal = 0;
   let directActive = 0;
@@ -181,14 +215,14 @@ async function renderRanks(){
     } else if(claimStatus === "Pending"){
       buttonHtml = `<button class="btn pending" disabled>⏳ Pending</button>`;
     } else if(isEligible){
-      buttonHtml = `<button class="btn" onclick="claimRank('${rank.name}', ${rank.reward})">Claim ${rank.name}</button>`;
+      buttonHtml = `<button class="btn claim-btn" onclick="claimRank('${rank.name}', ${rank.reward})">Claim ${rank.name}</button>`;
     } else {
       buttonHtml = `<button class="btn lock" disabled>🔒 Locked</button>`;
     }
 
     box.innerHTML += `
-      <div class="rank-card">
-        <h3>🏅 ${rank.name} Level</h3>
+      <div class="rank-card ${rank.cls}" data-icon="${rank.icon}">
+        <h3>${rank.name} Level</h3>
         <div class="row"><span>Direct Active Required</span><b>${rank.direct}</b></div>
         <div class="row"><span>Total Active Team Required</span><b>${rank.team}</b></div>
         <div class="row"><span>Reward</span><b>${rank.reward} DC</b></div>
