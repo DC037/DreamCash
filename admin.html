@@ -594,7 +594,7 @@ await supabaseClient
     .from("users")
     .update({
       status: "Rejected",
-      isActive: false
+      
     })
     .eq("member_id", finalUserId);
 
