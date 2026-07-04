@@ -253,29 +253,56 @@ if (savedPhoto) {
     cardPhoto.src = savedPhoto;
 }
 
-const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+let currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-if(currentUser){
+async function loadUserForCard() {
 
-    cardName.innerText = currentUser.name;
+    if (!currentUser) {
 
-    cardUserId.innerText = currentUser.member_id;
+        const memberId =
+            localStorage.getItem("member_id") ||
+            localStorage.getItem("last_member_id");
 
-    // Status
-    document.getElementById("cardStatus").innerText =
-        currentUser.status;
-    document.getElementById("cardStatusText").innerText =
-currentUser.status;
+        if (memberId) {
 
-    // Status color
-    if(currentUser.status === "Active"){
-        document.getElementById("cardStatus").style.background = "#22c55e";
-    }else{
-        document.getElementById("cardStatus").style.background = "#ef4444";
+            const { data, error } = await supabaseClient
+                .from("users")
+                .select("name, member_id, status")
+                .eq("member_id", memberId)
+                .limit(1);
+
+            if (!error && data.length > 0) {
+                currentUser = data[0];
+                localStorage.setItem(
+                    "currentUser",
+                    JSON.stringify(currentUser)
+                );
+            }
+        }
     }
 
+    if (currentUser) {
+
+        cardName.innerText = currentUser.name;
+        cardUserId.innerText = currentUser.member_id;
+
+        document.getElementById("cardStatus").innerText =
+            currentUser.status;
+
+        document.getElementById("cardStatusText").innerText =
+            currentUser.status;
+
+        if (currentUser.status === "Active") {
+            document.getElementById("cardStatus").style.background =
+                "#22c55e";
+        } else {
+            document.getElementById("cardStatus").style.background =
+                "#ef4444";
+        }
+    }
 }
 
+loadUserForCard();
 photoInput.addEventListener("change", function () {
     const file = photoInput.files[0];
     if (!file) return;
