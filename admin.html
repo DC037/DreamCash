@@ -655,12 +655,9 @@ async function loadRankRewardClaims(){
   box.innerHTML = html;
 }
 
-async function approveRankReward(id){
+ async function approveRankReward(id){
 
-  if(!confirm("Approve this rank reward? Wallet me reward add hoga.")) return;
-
-  const claimRef = db.collection("rankRewardClaims").doc(id);
-  const claimDoc = await claimRef.get();
+  const claimDoc = await db.collection("rankRewardClaims").doc(id).get();
 
   if(!claimDoc.exists){
     alert("Claim not found");
@@ -669,8 +666,8 @@ async function approveRankReward(id){
 
   const claim = claimDoc.data();
 
-  if(claim.status === "Approved" && claim.wallet_added === true){
-    alert("Ye rank reward pehle se Approved hai. Wallet me dobara add nahi hoga.");
+  if(claim.status === "Approved"){
+    alert("Ye rank reward pehle se Approved hai.");
     return;
   }
 
@@ -678,14 +675,9 @@ async function approveRankReward(id){
   const reward = Number(claim.reward || claim.amount || 0);
   const rank = claim.rank || "";
 
-  if(!memberId || reward <= 0){
-    alert("Invalid claim data");
-    return;
-  }
-
   const { data:user, error } = await supabaseClient
     .from("users")
-    .select("wallet,current_rank")
+    .select("wallet")
     .eq("member_id", memberId)
     .single();
 
@@ -694,8 +686,7 @@ async function approveRankReward(id){
     return;
   }
 
-  const oldWallet = Number(user.wallet || 0);
-  const newWallet = oldWallet + reward;
+  const newWallet = Number(user.wallet || 0) + reward;
 
   const { error:updateError } = await supabaseClient
     .from("users")
@@ -710,75 +701,20 @@ async function approveRankReward(id){
     return;
   }
 
-  await claimRef.update({
-    status: "Approved",
-    wallet_added: true,
-    approved_at: firebase.firestore.FieldValue.serverTimestamp()
+  await db.collection("rankRewardClaims").doc(id).update({
+    status: "Approved"
   });
 
-  alert("Rank Reward Approved & Wallet Updated Successfully");
+  alert("Rank Reward Approved Successfully");
   loadRankRewardClaims();
 }
 
-
 async function rejectRankReward(id){
-
-  if(!confirm("Reject this rank reward? Agar wallet me reward add hua hai to wapas cut ho jayega.")) return;
-
-  const claimRef = db.collection("rankRewardClaims").doc(id);
-  const claimDoc = await claimRef.get();
-
-  if(!claimDoc.exists){
-    alert("Claim not found");
-    return;
-  }
-
-  const claim = claimDoc.data();
-
-  const memberId = claim.userId;
-  const reward = Number(claim.reward || claim.amount || 0);
-
-  if(claim.status === "Approved" && claim.wallet_added === true){
-
-    const { data:user, error } = await supabaseClient
-      .from("users")
-      .select("wallet")
-      .eq("member_id", memberId)
-      .single();
-
-    if(error || !user){
-      alert("User wallet fetch error");
-      return;
-    }
-
-    const oldWallet = Number(user.wallet || 0);
-    const newWallet = oldWallet - reward;
-
-    if(newWallet < 0){
-      alert("Wallet balance reward se kam hai. Pehle manually check karo.");
-      return;
-    }
-
-    const { error:updateError } = await supabaseClient
-      .from("users")
-      .update({
-        wallet: newWallet
-      })
-      .eq("member_id", memberId);
-
-    if(updateError){
-      alert("Wallet cut error: " + updateError.message);
-      return;
-    }
-  }
-
-  await claimRef.update({
-    status: "Rejected",
-    wallet_added: false,
-    rejected_at: firebase.firestore.FieldValue.serverTimestamp()
+  await db.collection("rankRewardClaims").doc(id).update({
+    status: "Rejected"
   });
 
-  alert("Rank Reward Rejected. Agar reward add hua tha to wallet se cut ho gaya.");
+  alert("Rank Reward Rejected");
   loadRankRewardClaims();
 }
 
