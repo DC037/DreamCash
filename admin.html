@@ -450,37 +450,61 @@ await supabaseClient
   }
 }
 
-async function rejectActivation(id, userId) {
-  if (!confirm("Reject this activation request? Is user se gayi level income sponsors ke wallet se cut ho jayegi.")) return;
+    async function rejectActivation(id, userId) {
+  if (!confirm("Reject this activation request? Is user se gayi Level 1-5 income sponsors ke wallet se cut ho jayegi.")) return;
 
   let finalUserId = userId;
 
-  if (userId.includes("ref=")) {
+  if (userId && userId.includes("ref=")) {
     finalUserId = userId.split("ref=")[1].split("&")[0];
   }
 
-  const { data: incomeRows, error: incomeError } = await supabaseClient
+  const { data: oldReq, error: oldReqError } = await supabaseClient
+    .from("activation_requests")
+    .select("status")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (oldReqError) {
+    alert("Activation request check error: " + oldReqError.message);
+    return;
+  }
+
+  if (oldReq && oldReq.status === "Rejected") {
+    alert("Ye activation request pehle se Rejected hai. Wallet se dobara cut nahi hoga.");
+    loadActivationRequests();
+    return;
+  }
+
+  const { error: reqRejectError } = await supabaseClient
+    .from("activation_requests")
+    .update({ status: "Rejected" })
+    .eq("id", id);
+
+  if (reqRejectError) {
+    alert("Activation reject error: " + reqRejectError.message);
+    return;
+  }
+
+  let reversedCount = 0;
+       const { data: incomeRows, error: incomeError } = await supabaseClient
     .from("income_history")
-    .select("*")
+    .select("id,user_id,amount,status")
     .eq("from_user_id", finalUserId)
     .eq("income_type", "level_income")
     .eq("status", "approved");
 
-  if (incomeError) {
-    alert("Income history fetch error: " + incomeError.message);
-    return;
-  }
-
-  if (incomeRows && incomeRows.length > 0) {
+  if (!incomeError && incomeRows && incomeRows.length > 0) {
     for (const row of incomeRows) {
       const sponsorId = row.user_id;
       const amount = Number(row.amount || 0);
+      if (!sponsorId || amount <= 0) continue;
 
       const { data: sponsorUser, error: sponsorError } = await supabaseClient
         .from("users")
-        .select("wallet, lifetime_earning")
+        .select("wallet,lifetime_earning")
         .eq("member_id", sponsorId)
-        .single();
+        .maybeSingle();
 
       if (sponsorError || !sponsorUser) {
         alert("Sponsor wallet fetch error: " + sponsorId);
@@ -490,14 +514,11 @@ async function rejectActivation(id, userId) {
       const oldWallet = Number(sponsorUser.wallet || 0);
       const oldLifetime = Number(sponsorUser.lifetime_earning || 0);
 
-      const newWallet = oldWallet - amount;
-      const newLifetime = oldLifetime - amount;
-
       const { error: cutError } = await supabaseClient
         .from("users")
         .update({
-          wallet: newWallet < 0 ? 0 : newWallet,
-          lifetime_earning: newLifetime < 0 ? 0 : newLifetime
+          wallet: Math.max(0, oldWallet - amount),
+          lifetime_earning: Math.max(0, oldLifetime - amount)
         })
         .eq("member_id", sponsorId);
 
@@ -510,18 +531,62 @@ async function rejectActivation(id, userId) {
         .from("income_history")
         .update({ status: "reversed" })
         .eq("id", row.id);
+
+      reversedCount++;
     }
-  }
+   
+       if (reversedCount === 0) {
+    const levelAmounts = [25, 10, 5, 5, 5];
+    let currentMemberId = finalUserId;
 
-  const { error } = await supabaseClient
-    .from("activation_requests")
-    .update({ status: "Rejected" })
-    .eq("id", id);
+    for (let level = 1; level <= 5; level++) {
+      const { data: currentUser, error: currentError } = await supabaseClient
+        .from("users")
+        .select("sponsor_id")
+        .eq("member_id", currentMemberId)
+        .maybeSingle();
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+      if (currentError || !currentUser || !currentUser.sponsor_id) break;
+
+      const sponsorId = currentUser.sponsor_id;
+      const amount = Number(levelAmounts[level - 1] || 0);
+
+      const { data: sponsorUser, error: sponsorError } = await supabaseClient
+        .from("users")
+        .select("wallet,lifetime_earning")
+        .eq("member_id", sponsorId)
+        .maybeSingle();
+
+      if (sponsorError || !sponsorUser) break;
+
+      const oldWallet = Number(sponsorUser.wallet || 0);
+      const oldLifetime = Number(sponsorUser.lifetime_earning || 0);
+
+      const { error: cutError } = await supabaseClient
+        .from("users")
+        .update({
+          wallet: Math.max(0, oldWallet - amount),
+          lifetime_earning: Math.max(0, oldLifetime - amount)
+        })
+        .eq("member_id", sponsorId);
+
+      if (cutError) {
+        alert("Level " + level + " wallet cut error: " + cutError.message);
+        return;
+      }
+
+      await supabaseClient
+        .from("income_history")
+        .update({ status: "reversed" })
+        .eq("from_user_id", finalUserId)
+        .eq("user_id", sponsorId)
+        .eq("level", level)
+        .eq("income_type", "level_income")
+        .eq("status", "approved");
+
+      reversedCount++;
+      currentMemberId = sponsorId;
+    }
 
   const { error: userRejectError } = await supabaseClient
     .from("users")
@@ -536,9 +601,9 @@ async function rejectActivation(id, userId) {
     return;
   }
 
-  alert("Activation Rejected & Level Income Reversed Successfully");
+  alert("Activation Rejected & Level Income Reversed Successfully. Reversed Levels: " + reversedCount);
   loadActivationRequests();
-  }
+    }
 
 async function approveWithdraw(id){
 
