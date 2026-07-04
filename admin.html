@@ -451,7 +451,67 @@ await supabaseClient
 }
 
 async function rejectActivation(id, userId) {
-  if (!confirm("Reject this activation request?")) return;
+  if (!confirm("Reject this activation request? Is user se gayi level income sponsors ke wallet se cut ho jayegi.")) return;
+
+  let finalUserId = userId;
+
+  if (userId.includes("ref=")) {
+    finalUserId = userId.split("ref=")[1].split("&")[0];
+  }
+
+  const { data: incomeRows, error: incomeError } = await supabaseClient
+    .from("income_history")
+    .select("*")
+    .eq("from_user_id", finalUserId)
+    .eq("income_type", "level_income")
+    .eq("status", "approved");
+
+  if (incomeError) {
+    alert("Income history fetch error: " + incomeError.message);
+    return;
+  }
+
+  if (incomeRows && incomeRows.length > 0) {
+    for (const row of incomeRows) {
+      const sponsorId = row.user_id;
+      const amount = Number(row.amount || 0);
+
+      const { data: sponsorUser, error: sponsorError } = await supabaseClient
+        .from("users")
+        .select("wallet, lifetime_earning")
+        .eq("member_id", sponsorId)
+        .single();
+
+      if (sponsorError || !sponsorUser) {
+        alert("Sponsor wallet fetch error: " + sponsorId);
+        return;
+      }
+
+      const oldWallet = Number(sponsorUser.wallet || 0);
+      const oldLifetime = Number(sponsorUser.lifetime_earning || 0);
+
+      const newWallet = oldWallet - amount;
+      const newLifetime = oldLifetime - amount;
+
+      const { error: cutError } = await supabaseClient
+        .from("users")
+        .update({
+          wallet: newWallet < 0 ? 0 : newWallet,
+          lifetime_earning: newLifetime < 0 ? 0 : newLifetime
+        })
+        .eq("member_id", sponsorId);
+
+      if (cutError) {
+        alert("Wallet cut error: " + cutError.message);
+        return;
+      }
+
+      await supabaseClient
+        .from("income_history")
+        .update({ status: "reversed" })
+        .eq("id", row.id);
+    }
+  }
 
   const { error } = await supabaseClient
     .from("activation_requests")
@@ -462,20 +522,23 @@ async function rejectActivation(id, userId) {
     alert(error.message);
     return;
   }
-const { error: userRejectError } = await supabaseClient
-.from("users")
-.update({
-status: "Rejected"
-})
-.eq("member_id", userId);
 
-if(userRejectError){
-alert("User status update error: " + userRejectError.message);
-return;
-}
-  alert("Activation Request Rejected");
+  const { error: userRejectError } = await supabaseClient
+    .from("users")
+    .update({
+      status: "Rejected",
+      isActive: false
+    })
+    .eq("member_id", finalUserId);
+
+  if (userRejectError) {
+    alert("User status update error: " + userRejectError.message);
+    return;
+  }
+
+  alert("Activation Rejected & Level Income Reversed Successfully");
   loadActivationRequests();
-}
+  }
 
 async function approveWithdraw(id){
 
