@@ -130,11 +130,7 @@ button{
     font-size:12px;
     font-weight:bold;
 }
-
-.download-card-btn{
-    margin-top:18px;
-    background:#0ea5e9;
-}
+    
     .card-top{
     display:flex;
     justify-content:space-between;
@@ -231,9 +227,7 @@ button{
 
         </div>
 
-        <button class="download-card-btn" id="downloadCardBtn">
-            Download ID Card
-        </button>
+    
 
     </div>
 
@@ -323,41 +317,6 @@ document.getElementById("uploadBtn").addEventListener("click", async function ()
 
     alert("Photo uploaded successfully!");
 });
-
-document.getElementById("downloadCardBtn").addEventListener("click", async function () {
-
-    const card = document.getElementById("dreamCard");
-
-    const canvas = await html2canvas(card, {
-        scale: 4,
-        useCORS: true,
-        backgroundColor: null
-    });
-
-    // 1280 × 720 HD Canvas
-    const finalCanvas = document.createElement("canvas");
-    finalCanvas.width = 1280;
-    finalCanvas.height = 720;
-
-    const ctx = finalCanvas.getContext("2d");
-
-    // Background
-    ctx.fillStyle = "#0f172a";
-    ctx.fillRect(0, 0, 1280, 720);
-
-    // Card ko center me draw karo
-    const cardWidth = 500;
-    const cardHeight = cardWidth * canvas.height / canvas.width;
-
-    const x = (1280 - cardWidth) / 2;
-    const y = (720 - cardHeight) / 2;
-
-    ctx.drawImage(canvas, x, y, cardWidth, cardHeight);
-
-    const link = document.createElement("a");
-    link.download = "DreamCash-ID-Card.png";
-    link.href = finalCanvas.toDataURL("image/png");
-    link.click();
 
 });
 </script>
