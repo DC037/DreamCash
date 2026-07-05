@@ -1,1 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DreamCash Earning Check</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <style>
+    body{
+      font-family:Arial;
+      background:#eef3f7;
+      margin:0;
+      padding:15px;
+    }
+    .card{
+      background:white;
+      padding:15px;
+      border-radius:14px;
+      margin-bottom:15px;
+      box-shadow:0 4px 12px #0002;
+    }
+    h2{color:#0b6b7a;}
+    input{
+      width:100%;
+      padding:12px;
+      font-size:15px;
+      margin-bottom:10px;
+      box-sizing:border-box;
+    }
+    button{
+      border:none;
+      padding:11px 20px;
+      border-radius:22px;
+      color:white;
+      font-weight:bold;
+      background:linear-gradient(135deg,#00b75a,#20df83);
+      box-shadow:0 5px 10px #0003;
+    }
+    .back{
+      background:linear-gradient(135deg,#111827,#334155);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .box{
+      background:#f8fafc;
+      padding:12px;
+      border-radius:12px;
+      border:1px solid #e5e7eb;
+    }
+    .big{
+      font-size:20px;
+      font-weight:bold;
+      color:#0b6b7a;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+    }
+    th,td{
+      border:1px solid #ddd;
+      padding:8px;
+      text-align:left;
+    }
+    th{background:#0b6b7a;color:white;}
+  </style>
+</head>
+
+<body>
+
+  <h2>💰 DreamCash Earning Check</h2>
+
+  <button class="back" onclick="window.location.href='admin.html'">⬅ Back Admin</button>
+
+  <div class="card">
+    <h3>🔍 Search User</h3>
+
+    <input type="text" id="searchInput"
+      placeholder="Member ID ya Mobile Number dalo">
+
+    <button onclick="searchUserEarning()">Search</button>
+  </div>
+
+  <div id="resultBox"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function searchUserEarning(){
+      alert("Search system ready");
+    }
+  </script>
+
+</body>
+</html>
