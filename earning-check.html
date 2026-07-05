@@ -93,8 +93,204 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function searchUserEarning(){
-      alert("Search system ready");
-    }
+  const value = document.getElementById("searchInput").value.trim();
+  const box = document.getElementById("resultBox");
+
+  if(!value){
+    alert("Member ID ya Mobile Number dalo");
+    return;
+  }
+
+  box.innerHTML = "<div class='card'>Loading...</div>";
+
+  const { data:user, error:userError } = await supabaseClient
+    .from("users")
+    .select("*")
+    .or(`member_id.eq.${value},mobile.eq.${value},whatsapp.eq.${value}`)
+    .maybeSingle();
+
+  if(userError || !user){
+    box.innerHTML = "<div class='card'><b style='color:red'>User not found</b></div>";
+    return;
+  }
+
+  const memberId = user.member_id;
+
+  const { data:team } = await supabaseClient
+    .from("users")
+    .select("status")
+    .eq("sponsor_id", memberId);
+
+  let totalTeam = team ? team.length : 0;
+  let activeTeam = 0;
+  let inactiveTeam = 0;
+
+  if(team){
+    team.forEach(t=>{
+      if(t.status === "Active") activeTeam++;
+      else inactiveTeam++;
+    });
+  }
+
+  const { data:incomeRows } = await supabaseClient
+    .from("income_history")
+    .select("*")
+    .eq("user_id", memberId)
+    .eq("status", "approved");
+
+  const { data:dailyRows } = await supabaseClient
+    .from("daily_claims")
+    .select("*")
+    .eq("user_id", memberId);
+
+  const { data:offerRows } = await supabaseClient
+    .from("offer_submissions")
+    .select("*")
+    .eq("user_id", memberId)
+    .eq("status", "Approved");
+
+  const { data:rankRows } = await supabaseClient
+    .from("rank_reward_claims")
+    .select("*")
+    .eq("member_id", memberId);
+
+  const { data:monthlyRows } = await supabaseClient
+    .from("monthly_reward_claims")
+    .select("*")
+    .eq("user_id", memberId);
+
+  let referIncome = 0;
+  let spinIncome = 0;
+  let scratchIncome = 0;
+  let checkinIncome = 0;
+  let offerIncome = 0;
+  let rankIncome = 0;
+  let monthlyIncome = 0;
+
+  let history = [];
+
+  if(incomeRows){
+    incomeRows.forEach(r=>{
+      referIncome += Number(r.amount || 0);
+      history.push({
+        date:r.created_at,
+        source:"Refer / Level",
+        amount:r.amount
+      });
+    });
+  }
+
+  if(dailyRows){
+    dailyRows.forEach(r=>{
+      const amount = Number(r.points || 0);
+
+      if(r.task_type === "spin") spinIncome += amount;
+      if(r.task_type === "scratch") scratchIncome += amount;
+      if(r.task_type === "checkin") checkinIncome += amount;
+
+      history.push({
+        date:r.created_at || r.claim_date,
+        source:r.task_type,
+        amount:amount
+      });
+    });
+  }
+
+  if(offerRows){
+    offerRows.forEach(r=>{
+      offerIncome += Number(r.reward || 0);
+      history.push({
+        date:r.created_at,
+        source:"Offer / Report",
+        amount:r.reward
+      });
+    });
+  }
+
+  if(rankRows){
+    rankRows.forEach(r=>{
+      rankIncome += Number(r.reward_dc || 0);
+      history.push({
+        date:r.created_at,
+        source:"Rank Reward",
+        amount:r.reward_dc
+      });
+    });
+  }
+
+  if(monthlyRows){
+    monthlyRows.forEach(r=>{
+      monthlyIncome += Number(r.reward_amount || 0);
+      history.push({
+        date:r.claim_date,
+        source:"Monthly Reward",
+        amount:r.reward_amount
+      });
+    });
+  }
+
+  const totalEarning =
+    referIncome + spinIncome + scratchIncome + checkinIncome +
+    offerIncome + rankIncome + monthlyIncome;
+
+  history.sort((a,b)=> new Date(b.date) - new Date(a.date));
+
+  let html = `
+    <div class="card">
+      <h3>👤 User Details</h3>
+      <b>Name:</b> ${user.full_name || user.name || "N/A"}<br>
+      <b>Member ID:</b> ${memberId}<br>
+      <b>Mobile:</b> ${user.mobile || user.whatsapp || "N/A"}<br>
+      <b>Status:</b> ${user.status || "Inactive"}
+    </div>
+
+    <div class="card grid">
+      <div class="box"><b>Total Team</b><div class="big">${totalTeam}</div></div>
+      <div class="box"><b>Active Team</b><div class="big">${activeTeam}</div></div>
+      <div class="box"><b>Inactive Team</b><div class="big">${inactiveTeam}</div></div>
+      <div class="box"><b>Total Earning</b><div class="big">₹${totalEarning}</div></div>
+    </div>
+
+    <div class="card grid">
+      <div class="box"><b>Refer Income</b><div class="big">₹${referIncome}</div></div>
+      <div class="box"><b>Spin Income</b><div class="big">₹${spinIncome}</div></div>
+      <div class="box"><b>Scratch Income</b><div class="big">₹${scratchIncome}</div></div>
+      <div class="box"><b>Daily Checkin</b><div class="big">₹${checkinIncome}</div></div>
+      <div class="box"><b>Offer / Report</b><div class="big">₹${offerIncome}</div></div>
+      <div class="box"><b>Rank Reward</b><div class="big">₹${rankIncome}</div></div>
+    </div>
+
+    <div class="card">
+      <h3>📜 Earning History</h3>
+      <table>
+        <tr>
+          <th>Date</th>
+          <th>Source</th>
+          <th>Amount</th>
+        </tr>
+  `;
+
+  if(history.length === 0){
+    html += `<tr><td colspan="3">No earning history found</td></tr>`;
+  } else {
+    history.forEach(h=>{
+      html += `
+        <tr>
+          <td>${h.date ? new Date(h.date).toLocaleString() : "-"}</td>
+          <td>${h.source}</td>
+          <td>₹${h.amount || 0}</td>
+        </tr>
+      `;
+    });
+  }
+
+  html += `
+      </table>
+    </div>
+  `;
+
+  box.innerHTML = html;
+            }
   </script>
 
 </body>
