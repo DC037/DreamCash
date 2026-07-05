@@ -200,6 +200,8 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
   function showAdminSection(sectionId){
+   console.log(sectionId);
+alert(sectionId);
     document.getElementById("offerSection").style.display = "none";
   document.getElementById("withdrawSection").style.display = "none";
   document.getElementById("activationSection").style.display = "none";
