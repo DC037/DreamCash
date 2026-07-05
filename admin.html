@@ -124,6 +124,7 @@ button:nth-of-type(5){background:linear-gradient(135deg,#071b3d,#111827) !import
   <button class="btn" style="background:#7c3aed" onclick="showAdminSection('withdrawSection')">Withdraw Requests</button>
   <button class="btn" style="background:#f97316" onclick="showAdminSection('rankSection')">Rank Records</button>
   <button class="btn" style="background:#111827" onclick="showAdminSection('teamSection')">Users</button>
+   <button class="btn" style="background:#0f766e" onclick="showAdminSection('earningCheckSection')">Earning Check</button>
   </div>
   <div id="offerSection" class="admin-section" style="display:none;">
   <div class="card">
@@ -148,6 +149,21 @@ button:nth-of-type(5){background:linear-gradient(135deg,#071b3d,#111827) !import
   <h3>🏆 Rank Reward Claims</h3>
   <div id="rankRewardClaimsList">Loading...</div>
   </div>
+   <div id="earningCheckSection" class="admin-section" style="display:none;">
+  <div class="card">
+    <h3>💰 User Earning Check</h3>
+
+    <input type="text" id="earningSearchInput"
+      placeholder="Member ID ya Mobile Number dalo"
+      style="width:100%;padding:10px;margin-bottom:10px;">
+
+    <button class="btn green" onclick="checkUserEarning()">
+      Check Earning
+    </button>
+
+    <div id="earningResult"></div>
+  </div>
+   </div>
   </div>
   <div id="teamSection" class="admin-section" style="display:none;">
   <div class="card">
@@ -189,6 +205,7 @@ const auth = firebase.auth();
   document.getElementById("activationSection").style.display = "none";
   document.getElementById("rankSection").style.display = "none";
   document.getElementById("teamSection").style.display = "none";
+   document.getElementById("earningCheckSection").style.display = "none";
 
   document.getElementById(sectionId).style.display = "block";
   }
@@ -1069,7 +1086,9 @@ async function rejectOffer(submissionId, userId) {
   alert("Offer Rejected Successfully");
   loadOfferRequests();
 }
-
+async function checkUserEarning() {
+  alert("Earning Check Function Ready");
+}
 loadOfferRequests();
 loadWithdrawals();
 loadActivationRequests();
