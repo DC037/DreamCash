@@ -56,13 +56,11 @@ border-radius:18px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-gap:15px;
-padding:16px;
-margin:12px 0;
-background:#151f34;
-border:1px solid rgba(255,255,255,.08);
+padding:18px 20px;
+margin:14px 0;
+background:#162238;
 border-radius:18px;
-min-height:90px;
+min-height:95px;
 }
 
 .row:hover{
@@ -89,6 +87,21 @@ font-size:30px;
 font-weight:800;
 color:#22c55e;
 text-shadow:0 0 15px rgba(34,197,94,.4);
+}
+  .left{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.info{
+display:flex;
+flex-direction:column;
+}
+
+.right{
+margin-left:auto;
+text-align:right;
 }
 
 .reward{
@@ -307,15 +320,16 @@ async function loadLeaderboard(){
     const rank = i + 1;
     const earning = Number(u.monthly_earning || 0);
 
-    html += `
-      <div class="row">
+      <div class="row leaderboard-item">
         <div class="rank">#${rank}</div>
+        <div class="info">
         <div style="flex:1">
           <div class="name">${u.name}</div>
           <div class="small">ID: ${u.member_id}</div>
           <div class="small">Team: ${u.referral_count || 0}</div>
+          </div>
         </div>
-        <div style="text-align:right">
+        <div class="right">
           <div class="amount">${earning.toFixed(2)} DC</div>
           <div class="small">Reward: <span class="reward">${rewards[rank]} DC</span></div>
         </div>
