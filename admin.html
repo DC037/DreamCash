@@ -123,7 +123,7 @@ button:nth-of-type(5){background:linear-gradient(135deg,#071b3d,#111827) !import
   <button class="btn" style="background:#2563eb" onclick="showAdminSection('activationSection')">Activation Requests</button>
   <button class="btn" style="background:#7c3aed" onclick="showAdminSection('withdrawSection')">Withdraw Requests</button>
   <button class="btn" style="background:#f97316" onclick="showAdminSection('rankSection')">Rank Records</button>
-  <button class="btn" style="background:#111827" onclick="showAdminSection('teamSection')">Users</button>
+  <button class="btn" style="background:#111827" onclick="showAdminSection('monthlyRewardSection')">Monthly Reward</button>
    <button class="btn"
 style="background:#0f766e"
 onclick="window.location.href='earning-check.html'">
@@ -153,7 +153,14 @@ Earning Check
   <h3>🏆 Rank Reward Claims</h3>
   <div id="rankRewardClaimsList">Loading...</div>
   </div>
-   
+   <div id="monthlyRewardSection" class="admin-section" style="display:none;">
+    <div class="card">
+        <h3>🎁 Monthly Reward Claims</h3>
+        <div id="monthlyRewardList">
+            Loading...
+        </div>
+    </div>
+   </div>
   <div id="teamSection" class="admin-section" style="display:none;">
   <div class="card">
 <h3>👥 DreamCash Team</h3>
@@ -194,6 +201,7 @@ const auth = firebase.auth();
   document.getElementById("withdrawSection").style.display = "none";
   document.getElementById("activationSection").style.display = "none";
   document.getElementById("rankSection").style.display = "none";
+   document.getElementById("monthlyRewardSection").style.display = "none";
   document.getElementById("teamSection").style.display = "none";
    
   document.getElementById(sectionId).style.display = "block";
