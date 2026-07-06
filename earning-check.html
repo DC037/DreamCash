@@ -182,7 +182,7 @@
 
   if(dailyRows){
     dailyRows.forEach(r=>{
-      const amount = Number(r.points || 0);
+      const amount = Number(r.points || 0) / 100;
 
       if(r.task_type === "spin") spinIncome += amount;
       if(r.task_type === "scratch") scratchIncome += amount;
