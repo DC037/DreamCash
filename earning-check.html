@@ -82,6 +82,20 @@
     background: linear-gradient(135deg,#fff0f8,#ffe1ef);
     border-left:5px solid #e91e63;
     }
+    .box:nth-child(8){
+    background:linear-gradient(135deg,#fff5e6,#ffe2b8);
+    border-left:5px solid #ff9800;
+}
+
+.box:nth-child(9){
+    background:linear-gradient(135deg,#f2f2f2,#d9d9d9);
+    border-left:5px solid #333333;
+}
+
+.box:nth-child(10){
+    background:linear-gradient(135deg,#f4e8ff,#e6d5ff);
+    border-left:5px solid #8e44ad;
+}
     .big{
     font-size:20px;
       font-weight:bold;
@@ -275,6 +289,7 @@ if (withdrawalRows) {
   const totalEarning =
     referIncome + spinIncome + scratchIncome + checkinIncome +
     offerIncome + rankIncome + monthlyIncome;
+    const availableBalance = totalEarning - totalWithdrawal;
 
   history.sort((a,b)=> new Date(b.date) - new Date(a.date));
 
@@ -300,8 +315,14 @@ if (withdrawalRows) {
   <div class="box"><b>Scratch Income</b><div class="big">${scratchIncome} DC</div></div>
   <div class="box"><b>Daily Checkin</b><div class="big">${checkinIncome} DC</div></div>
   <div class="box"><b>Offer / Report</b><div class="big">${offerIncome} DC</div></div>
-  <div class="box"><b>Rank Reward</b><div class="big">${rankIncome} DC</div></div>
-  <div class="box"><b>Approved Withdrawal</b><div class="big">${totalWithdrawal} DC</div></div>
+
+<div class="box"><b>Rank Reward</b><div class="big">${rankIncome} DC</div></div>
+
+<div class="box"><b>Monthly Reward</b><div class="big">${monthlyIncome} DC</div></div>
+
+<div class="box"><b>Approved Withdrawal</b><div class="big">${totalWithdrawal} DC</div></div>
+
+<div class="box"><b>Available Balance</b><div class="big">${availableBalance.toFixed(2)} DC</div></div>
 </div>
 
 <div class="card">
