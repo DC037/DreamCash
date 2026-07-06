@@ -187,6 +187,11 @@
     .from("monthly_reward_claims")
     .select("*")
     .eq("user_id", memberId);
+      const { data: withdrawalRows } = await supabaseClient
+  .from("withdrawal_requests")
+  .select("amount")
+  .eq("member_id", memberId)
+  .eq("status", "Approved");
 
   let referIncome = 0;
   let spinIncome = 0;
@@ -195,6 +200,7 @@
   let offerIncome = 0;
   let rankIncome = 0;
   let monthlyIncome = 0;
+  let totalWithdrawal = 0;
 
   let history = [];
 
@@ -257,7 +263,11 @@
       });
     });
   }
-
+if (withdrawalRows) {
+  withdrawalRows.forEach(r => {
+    totalWithdrawal += Number(r.amount || 0);
+  });
+}
   const totalEarning =
     referIncome + spinIncome + scratchIncome + checkinIncome +
     offerIncome + rankIncome + monthlyIncome;
@@ -287,6 +297,7 @@
   <div class="box"><b>Daily Checkin</b><div class="big">${checkinIncome} DC</div></div>
   <div class="box"><b>Offer / Report</b><div class="big">${offerIncome} DC</div></div>
   <div class="box"><b>Rank Reward</b><div class="big">${rankIncome} DC</div></div>
+  <div class="box"><b>Approved Withdrawal</b><div class="big">${totalWithdrawal} DC</div></div>
 </div>
 
 <div class="card">
