@@ -241,7 +241,7 @@ function getMonthKey(date = new Date()){
 }
 
 function getIncomeMonth(createdAt){
-  if(!createdAt) return "";
+if(!createdAt) return "";
   const d = new Date(createdAt);
   if(isNaN(d.getTime())) return "";
   return getMonthKey(d);
