@@ -104,10 +104,10 @@
   box.innerHTML = "<div class='card'>Loading...</div>";
 
   const { data:user, error:userError } = await supabaseClient
-    .from("users")
-    .select("*")
-    .or(`member_id.eq.${value},user_id.eq.${value},id.eq.${value},mobile.eq.${value},whatsapp.eq.${value},phone.eq.${value}`)
-    .maybeSingle();
+  .from("users")
+  .select("*")
+  .or(`member_id.eq.${value},mobile.eq.${value}`)
+  .maybeSingle();
 
   if(userError || !user){
     box.innerHTML = "<div class='card'><b style='color:red'>User not found</b></div>";
