@@ -47,9 +47,18 @@ box-shadow:
 }
 
 .note{
-background:linear-gradient(135deg,#11192d,#161f38);
-border:1px solid #3b82f6;
-border-radius:18px;
+display:flex;
+align-items:flex-start;
+gap:12px;
+margin:15px;
+padding:16px 18px;
+background:linear-gradient(135deg,#151d34,#101828);
+border:1px solid rgba(59,130,246,.45);
+border-radius:16px;
+color:#dbeafe;
+font-size:14px;
+line-height:1.7;
+box-shadow:0 0 18px rgba(59,130,246,.12);
 }
 
 .row{
@@ -119,10 +128,25 @@ color:white;
 }
 
 .back{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:12px 22px;
+margin:15px 0 12px 18px;
 background:linear-gradient(135deg,#4f46e5,#7c3aed);
 border:none;
-border-radius:15px;
-box-shadow:0 0 18px rgba(124,92,246,.45);
+border-radius:14px;
+color:#fff;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+box-shadow:0 4px 15px rgba(124,92,246,.35);
+transition:.3s;
+}
+
+.back:hover{
+transform:translateY(-2px);
+box-shadow:0 8px 20px rgba(124,92,246,.45);
 }
 
 .small{
@@ -168,9 +192,14 @@ transform:translateY(-2px);
 <button class="back" onclick="window.location.href='dashboard.html'">← Back</button>
 
 <div class="note">
-ℹ️ Note: Minimum <b>50 DC Monthly Earnings</b> are required to claim the Monthly Reward.
-Reward claiming is unlocked only on the <b>30th of every month</b>.
+<div style="font-size:26px;">ℹ️</div>
+
+<div>
+<b>Note:</b> Minimum <b style="color:#facc15;">50 DC</b> Monthly Earnings are required to claim the Monthly Reward.<br>
+Reward claiming is unlocked only on the <b>30th of every month</b>.<br>
 Only <b>Top 10 ranked users</b> are eligible.
+</div>
+
 </div>
 
 <div class="card premium-card">
