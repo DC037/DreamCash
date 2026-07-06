@@ -277,7 +277,7 @@ async function loadLeaderboard(){
   const leaderboard = ids.map(id => {
     const u = userMap[id] || {};
     return {
-      name: u.name || "User",
+     name: u.name || "User",
       member_id: id,
       referral_count: u.referral_count || 0,
       monthly_earning: earningMap[id] || 0
