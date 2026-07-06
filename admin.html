@@ -196,21 +196,23 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
   function showAdminSection(sectionId){
-   
-    document.getElementById("offerSection").style.display = "none";
-  document.getElementById("withdrawSection").style.display = "none";
-  document.getElementById("activationSection").style.display = "none";
-  document.getElementById("rankSection").style.display = "none";
-   document.getElementById("monthlyRewardSection").style.display = "none";
-  document.getElementById("teamSection").style.display = "none";
-   
-  document.getElementById(sectionId).style.display = "block";
-  }
- if(sectionId==="monthlyRewardSection"){
-    loadMonthlyRewardClaims();
- }
- async function loadMonthlyRewardClaims(){
 
+    document.getElementById("offerSection").style.display = "none";
+    document.getElementById("withdrawSection").style.display = "none";
+    document.getElementById("activationSection").style.display = "none";
+    document.getElementById("rankSection").style.display = "none";
+    document.getElementById("monthlyRewardSection").style.display = "none";
+    document.getElementById("teamSection").style.display = "none";
+
+    document.getElementById(sectionId).style.display = "block";
+
+    if(sectionId === "monthlyRewardSection"){
+        loadMonthlyRewardClaims();
+    }
+}
+
+async function loadMonthlyRewardClaims(){
+ 
 const box = document.getElementById("monthlyRewardList");
 
 box.innerHTML = "Loading...";
