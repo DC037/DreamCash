@@ -335,23 +335,28 @@ async function loadLeaderboard(){
     const rank = i + 1;
     const earning = Number(u.monthly_earning || 0);
 
+    html += `
       <div class="row leaderboard-item">
-        <div class="rank">#${rank}</div>
-        <div class="info">
-        <div style="flex:1">
-          <div class="name">${u.name}</div>
-          <div class="small">ID: ${u.member_id}</div>
-          <div class="small">Team: ${u.referral_count || 0}</div>
+        <div class="left">
+          <div class="rank">#${rank}</div>
+
+          <div class="info">
+            <div class="name">${u.name}</div>
+            <div class="small">ID: ${u.member_id}</div>
+            <div class="small">Team: ${u.referral_count || 0}</div>
           </div>
         </div>
+
         <div class="right">
           <div class="amount">${earning.toFixed(2)} DC</div>
-          <div class="small">Reward: <span class="reward">${rewards[rank]} DC</span></div>
+          <div class="small">
+            Reward:
+            <span class="reward">${rewards[rank]} DC</span>
+          </div>
         </div>
       </div>
     `;
-  });
-
+});
   box.innerHTML = html;
   return leaderboard;
 }
