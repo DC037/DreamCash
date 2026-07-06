@@ -245,44 +245,44 @@
     </div>
 
     <div class="card grid">
-      <div class="box"><b>Total Team</b><div class="big">${totalTeam}</div></div>
-      <div class="box"><b>Active Team</b><div class="big">${activeTeam}</div></div>
-      <div class="box"><b>Inactive Team</b><div class="big">${inactiveTeam}</div></div>
-      <div class="box"><b>Total Earning</b><div class="big">₹${totalEarning}</div></div>
-    </div>
+  <div class="box"><b>Total Team</b><div class="big">${totalTeam}</div></div>
+  <div class="box"><b>Active Team</b><div class="big">${activeTeam}</div></div>
+  <div class="box"><b>Inactive Team</b><div class="big">${inactiveTeam}</div></div>
+  <div class="box"><b>Total Earning</b><div class="big">${totalEarning} DC</div></div>
+</div>
 
-    <div class="card grid">
-      <div class="box"><b>Refer Income</b><div class="big">₹${referIncome}</div></div>
-      <div class="box"><b>Spin Income</b><div class="big">₹${spinIncome}</div></div>
-      <div class="box"><b>Scratch Income</b><div class="big">₹${scratchIncome}</div></div>
-      <div class="box"><b>Daily Checkin</b><div class="big">₹${checkinIncome}</div></div>
-      <div class="box"><b>Offer / Report</b><div class="big">₹${offerIncome}</div></div>
-      <div class="box"><b>Rank Reward</b><div class="big">₹${rankIncome}</div></div>
-    </div>
+<div class="card grid">
+  <div class="box"><b>Refer Income</b><div class="big">${referIncome} DC</div></div>
+  <div class="box"><b>Spin Income</b><div class="big">${spinIncome} DC</div></div>
+  <div class="box"><b>Scratch Income</b><div class="big">${scratchIncome} DC</div></div>
+  <div class="box"><b>Daily Checkin</b><div class="big">${checkinIncome} DC</div></div>
+  <div class="box"><b>Offer / Report</b><div class="big">${offerIncome} DC</div></div>
+  <div class="box"><b>Rank Reward</b><div class="big">${rankIncome} DC</div></div>
+</div>
 
-    <div class="card">
-      <h3>📜 Earning History</h3>
-      <table>
-        <tr>
-          <th>Date</th>
-          <th>Source</th>
-          <th>Amount</th>
-        </tr>
-  `;
+<div class="card">
+  <h3>📜 Earning History</h3>
+  <table>
+    <tr>
+      <th>Date</th>
+      <th>Source</th>
+      <th>Amount</th>
+    </tr>
+`;
 
-  if(history.length === 0){
-    html += `<tr><td colspan="3">No earning history found</td></tr>`;
-  } else {
-    history.forEach(h=>{
-      html += `
-        <tr>
-          <td>${h.date ? new Date(h.date).toLocaleString() : "-"}</td>
-          <td>${h.source}</td>
-          <td>₹${h.amount || 0}</td>
-        </tr>
-      `;
-    });
-  }
+if(history.length === 0){
+  html += `<tr><td colspan="3">No earning history found</td></tr>`;
+} else {
+  history.forEach(h=>{
+    html += `
+      <tr>
+        <td>${h.date ? new Date(h.date).toLocaleString() : "-"}</td>
+        <td>${h.source}</td>
+        <td>${h.amount || 0} DC</td>
+      </tr>
+    `;
+  });
+}
 
   html += `
       </table>
