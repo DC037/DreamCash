@@ -6,183 +6,126 @@
 <title>Monthly Earning Reward</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+:root{
+--bg:#070b17;
+--card:#101827;
+--card2:#151f34;
+--border:#5b21b6;
+--blue:#3b82f6;
+--purple:#8b5cf6;
+--green:#22c55e;
+--text:#ffffff;
+--muted:#9ca3af;
 }
 
 body{
-    font-family:'Segoe UI',sans-serif;
-    background:
-    radial-gradient(circle at top,#1e3a8a 0%,transparent 35%),
-    linear-gradient(180deg,#060b16,#0d1528,#08101f);
-    color:#fff;
-    min-height:100vh;
+background:
+radial-gradient(circle at top,#1d4ed8 0%,transparent 28%),
+radial-gradient(circle at bottom,#7c3aed22 0%,transparent 35%),
+linear-gradient(180deg,#050814,#091221,#060b18);
+font-family:Inter,Arial,sans-serif;
+color:white;
 }
 
 .header{
-    background:rgba(15,23,42,.92);
-    backdrop-filter:blur(15px);
-    padding:22px;
-    text-align:center;
-    font-size:26px;
-    font-weight:800;
-    letter-spacing:.5px;
-    border-bottom:1px solid rgba(255,255,255,.08);
-    box-shadow:0 10px 30px rgba(0,0,0,.35);
-}
-
-.back{
-    margin:18px;
-    border:none;
-    color:#fff;
-    font-weight:700;
-    padding:12px 22px;
-    border-radius:14px;
-    cursor:pointer;
-    background:linear-gradient(135deg,#22c55e,#16a34a);
-    box-shadow:0 10px 25px rgba(34,197,94,.35);
-    transition:.3s;
-}
-
-.back:hover{
-    transform:translateY(-2px);
-}
-
-.note{
-    margin:18px;
-    padding:16px;
-    border-radius:18px;
-    background:rgba(255,255,255,.05);
-    border:1px solid rgba(255,255,255,.08);
-    color:#d1d5db;
-    line-height:1.7;
-    backdrop-filter:blur(12px);
+background:#0b1020;
+border-bottom:1px solid rgba(255,255,255,.08);
+font-size:34px;
+font-weight:800;
+letter-spacing:.5px;
+padding:22px;
 }
 
 .card{
-    margin:18px;
-    padding:18px;
-    border-radius:24px;
-    background:linear-gradient(180deg,#1b263b,#121d31);
-    border:1px solid rgba(255,255,255,.08);
-    box-shadow:
-    0 15px 35px rgba(0,0,0,.45),
-    inset 0 1px rgba(255,255,255,.05);
+background:linear-gradient(135deg,#121b2e,#0d1525);
+border:1px solid rgba(91,33,182,.5);
+border-radius:22px;
+box-shadow:
+0 0 0 1px rgba(59,130,246,.15),
+0 0 35px rgba(59,130,246,.08),
+0 15px 40px rgba(0,0,0,.45);
 }
 
-.card h3{
-    font-size:23px;
-    margin-bottom:16px;
-    color:#fff;
+.note{
+background:linear-gradient(135deg,#11192d,#161f38);
+border:1px solid #3b82f6;
+border-radius:18px;
 }
 
 .row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    padding:16px;
-    margin:12px 0;
-    border-radius:18px;
-    background:linear-gradient(135deg,#101a2f,#16233a);
-    border:1px solid rgba(255,255,255,.05);
-    transition:.25s;
+background:linear-gradient(90deg,#10182c,#131d31);
+border:1px solid rgba(255,255,255,.06);
+border-radius:18px;
+transition:.25s;
 }
 
 .row:hover{
-    transform:translateY(-2px);
-    border-color:#2563eb;
-    box-shadow:0 10px 25px rgba(37,99,235,.18);
+transform:translateY(-2px);
+border-color:#3b82f6;
+box-shadow:0 0 25px rgba(59,130,246,.25);
 }
 
 .rank{
-    width:58px;
-    height:58px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:22px;
-    font-weight:800;
-    color:#fff;
-    background:linear-gradient(135deg,#2563eb,#06b6d4);
-    box-shadow:0 8px 18px rgba(37,99,235,.35);
-}
-
-.name{
-    font-size:17px;
-    font-weight:700;
-}
-
-.small{
-    margin-top:4px;
-    font-size:12px;
-    color:#9ca3af;
+width:56px;
+height:56px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:16px;
+font-weight:800;
+font-size:22px;
+background:linear-gradient(135deg,#6d28d9,#2563eb);
+color:white;
+box-shadow:0 0 20px rgba(99,102,241,.45);
 }
 
 .amount{
-    color:#22c55e;
-    font-size:22px;
-    font-weight:800;
+font-size:30px;
+font-weight:800;
+color:#22c55e;
+text-shadow:0 0 15px rgba(34,197,94,.4);
 }
 
 .reward{
-    color:#38bdf8;
-    font-weight:700;
-}
-
-.btn{
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:16px;
-    font-size:16px;
-    font-weight:700;
-    cursor:pointer;
-    transition:.3s;
+color:#38bdf8;
+font-weight:700;
 }
 
 .green{
-    background:linear-gradient(135deg,#2563eb,#06b6d4);
-    color:#fff;
-}
-
-.green:hover{
-    transform:translateY(-2px);
-    box-shadow:0 12px 28px rgba(37,99,235,.35);
+background:linear-gradient(90deg,#7c3aed,#2563eb);
 }
 
 .lock{
-    background:#334155;
-    color:#cbd5e1;
+background:linear-gradient(90deg,#26344d,#2f3d57);
+color:white;
 }
 
-.pending{
-    color:#fbbf24;
-    font-weight:700;
+.back{
+background:linear-gradient(135deg,#4f46e5,#7c3aed);
+border:none;
+border-radius:15px;
+box-shadow:0 0 18px rgba(124,92,246,.45);
 }
 
-.approved{
-    color:#22c55e;
-    font-weight:700;
+.small{
+color:#9ca3af;
 }
 
-.rejected{
-    color:#ef4444;
-    font-weight:700;
+.name{
+font-size:18px;
+font-weight:700;
+}
+  .leaderboard-item:nth-child(2){
+border:2px solid #f59e0b;
 }
 
-::-webkit-scrollbar{
-    width:6px;
+.leaderboard-item:nth-child(3){
+border:2px solid #c0c0c0;
 }
 
-::-webkit-scrollbar-thumb{
-    background:#2563eb;
-    border-radius:20px;
+.leaderboard-item:nth-child(4){
+border:2px solid #cd7f32;
 }
-  
 </style>
 </head>
 
@@ -537,8 +480,8 @@ async function loadHistory(){
   let html = "";
 
   data.forEach(c => {
-    html += `
-      <div class="row">
+      html += `
+<div class="row leaderboard-item">
         <div>
           <b>${c.month}</b><br>
           <span class="small">Rank: #${c.rank}</span><br>
