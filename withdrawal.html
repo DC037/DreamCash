@@ -53,6 +53,47 @@ box-shadow:0 4px 10px rgba(214,0,0,.4);
     background:#fff1f1 !important;
     border-left:8px solid #dc2626;
 }
+        .summary-bar{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+margin:18px 0;
+}
+
+.summary-box{
+padding:18px;
+border-radius:18px;
+color:#fff;
+text-align:center;
+box-shadow:0 8px 20px rgba(0,0,0,.18);
+}
+
+.summary-box .num{
+font-size:24px;
+font-weight:700;
+margin-bottom:6px;
+}
+
+.summary-box .text{
+font-size:13px;
+opacity:.95;
+}
+
+.pending{
+background:linear-gradient(135deg,#ff9800,#ff5722);
+}
+
+.approved{
+background:linear-gradient(135deg,#00c853,#00e676);
+}
+
+.rejected{
+background:linear-gradient(135deg,#e53935,#ff5252);
+}
+
+.total{
+background:linear-gradient(135deg,#1976d2,#42a5f5);
+}
     </style>
 </head>
 <body>
@@ -65,6 +106,29 @@ DreamCash Admin Panel
 
 <div class="card">
 <h3>💸 Withdrawal Requests</h3>
+    <div class="summary-bar">
+
+    <div class="summary-box pending">
+        <div class="num" id="pendingCount">0</div>
+        <div class="text">Pending</div>
+    </div>
+
+    <div class="summary-box approved">
+        <div class="num" id="approvedCount">0</div>
+        <div class="text">Approved</div>
+    </div>
+
+    <div class="summary-box rejected">
+        <div class="num" id="rejectedCount">0</div>
+        <div class="text">Rejected</div>
+    </div>
+
+    <div class="summary-box total">
+        <div class="num" id="totalAmount">₹0</div>
+        <div class="text">Total Amount</div>
+    </div>
+
+    </div>
 
 <div id="withdrawalList">
 Loading...
@@ -102,9 +166,16 @@ const supabaseClient = supabase.createClient(
   }
 
   let html = "";
-
+let pending=0;
+let approved=0;
+let rejected=0;
+let totalAmount=0;
   data.forEach(d => {
+totalAmount += Number(d.amount||0);
 
+if(d.status=="Pending") pending++;
+if(d.status=="Approved") approved++;
+if(d.status=="Rejected") rejected++;
     html += `
       <div class="withdraw-card ${d.status==='Approved'?'approved-card':'rejected-card'}">
         <b>Amount:</b> ₹${d.amount}<br>
@@ -137,7 +208,10 @@ const supabaseClient = supabase.createClient(
     `;
 
   });
-
+document.getElementById("pendingCount").innerText=pending;
+document.getElementById("approvedCount").innerText=approved;
+document.getElementById("rejectedCount").innerText=rejected;
+document.getElementById("totalAmount").innerText="₹"+totalAmount;
   box.innerHTML = html;
     }
     async function approveWithdraw(id){
