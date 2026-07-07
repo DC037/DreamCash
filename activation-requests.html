@@ -172,6 +172,19 @@ return;
 let html = "";
 
 data.forEach(d=>{
+  let cardColor =
+d.status==="Approved"
+? "#eafaf1"
+: d.status==="Rejected"
+? "#fdecec"
+: "#fff8e6";
+
+let borderColor =
+d.status==="Approved"
+? "#28a745"
+: d.status==="Rejected"
+? "#dc3545"
+: "#f4b400";
 const dateTime = new Date(d.created_at);
 
 const requestDate = dateTime.toLocaleDateString("en-IN",{
