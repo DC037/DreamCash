@@ -585,59 +585,6 @@ async function loadRankRewardClaims(){
   box.innerHTML = html;
 }
 
- async function approveRankReward(id){
-
-  const claimDoc = await db.collection("rankRewardClaims").doc(id).get();
-
-  if(!claimDoc.exists){
-    alert("Claim not found");
-    return;
-  }
-
-  const claim = claimDoc.data();
-
-  if(claim.status === "Approved"){
-    alert("Ye rank reward pehle se Approved hai.");
-    return;
-  }
-
-  const memberId = claim.userId;
-  const reward = Number(claim.reward || claim.amount || 0);
-  const rank = claim.rank || "";
-
-  const { data:user, error } = await supabaseClient
-    .from("users")
-    .select("wallet")
-    .eq("member_id", memberId)
-    .single();
-
-  if(error || !user){
-    alert("User not found");
-    return;
-  }
-
-  const newWallet = Number(user.wallet || 0) + reward;
-
-  const { error:updateError } = await supabaseClient
-    .from("users")
-    .update({
-      wallet: newWallet,
-      current_rank: rank
-    })
-    .eq("member_id", memberId);
-
-  if(updateError){
-    alert("Wallet / Rank update error: " + updateError.message);
-    return;
-  }
-
-  await db.collection("rankRewardClaims").doc(id).update({
-    status: "Approved"
-  });
-
-  alert("Rank Reward Approved Successfully");
-  loadRankRewardClaims();
-}
  async function approveMonthlyReward(id){
 
     if(!confirm("Approve this monthly reward request?")) return;
@@ -699,14 +646,6 @@ async function rejectMonthlyReward(id){
 
     loadMonthlyRewardClaims();
          }
-async function rejectRankReward(id){
-  await db.collection("rankRewardClaims").doc(id).update({
-    status: "Rejected"
-  });
-
-  alert("Rank Reward Rejected");
-  loadRankRewardClaims();
-}
 
 async function loadDreamCashTeam(){
   const box = document.getElementById("teamStats");
@@ -1119,7 +1058,6 @@ async function rejectOffer(submissionId, userId) {
 
 loadOfferRequests();
 loadActivationRequests();
-loadRankRewardClaims();
 loadMonthlyRewardClaims();
 loadDreamCashTeam();
 showAdminSection("offerSection");
