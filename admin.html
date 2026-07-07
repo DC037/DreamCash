@@ -198,7 +198,7 @@ box.innerHTML = "Loading...";
 const { data, error } = await supabaseClient
 .from("monthly_reward_claims")
 .select("*")
-.order("created_at",{ascending:false});
+.order("claim_date",{ascending:false});
 
 if(error){
 box.innerHTML="<span style='color:red'>"+error.message+"</span>";
