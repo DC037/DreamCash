@@ -419,7 +419,7 @@ return;
 const {data:user,error:userError}=await supabaseClient
 .from("users")
 .select("wallet")
-.eq("member_id",claim.member_id)
+.eq("member_id",claim.user_id)
 .single();
 
 if(userError || !user){
