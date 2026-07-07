@@ -25,6 +25,131 @@ const supabaseClient = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
+    async function loadWithdrawals() {
+
+  const box = document.getElementById("withdrawalList");
+  box.innerHTML = "Loading...";
+
+  const { data, error } = await supabaseClient
+    .from("withdrawal_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    box.innerHTML = error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    box.innerHTML = "No withdrawal requests found.";
+    return;
+  }
+
+  let html = "";
+
+  data.forEach(d => {
+
+    html += `
+      <div class="row">
+        <b>Amount:</b> ₹${d.amount}<br>
+        <b>UPI:</b> ${d.upi}<br>
+        <b>Name:</b> ${d.name || "N/A"}<br>
+        <b>Member ID:</b> ${d.member_id || "N/A"}<br>
+        <b>User ID:</b> ${d.user_id || "N/A"}<br>
+
+        <b>Status:</b>
+
+        <span class="status ${d.status === "Approved" ? "approved" : d.status === "Rejected" ? "rejected" : "pending"}">
+
+        ${d.status === "Approved" ? "✅" : d.status === "Rejected" ? "❌" : "⏳"} ${d.status}
+
+        </span>
+
+        <br><br>
+
+        <button class="btn green"
+        onclick="approveWithdraw('${d.id}')">
+        Approve
+        </button>
+
+        <button class="btn red"
+        onclick="rejectWithdraw('${d.id}')">
+        Reject
+        </button>
+
+      </div>
+
+      <hr>
+    `;
+
+  });
+
+  box.innerHTML = html;
+    }
+    async function approveWithdraw(id){
+
+  const { error } = await supabaseClient
+    .from("withdrawal_requests")
+    .update({ status: "Approved" })
+    .eq("id", id);
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  alert("Withdrawal Approved");
+  loadWithdrawals();
+}
+
+async function rejectWithdraw(id){
+
+  const { data: reqData, error: statusError } = await supabaseClient
+    .from("withdrawal_requests")
+    .update({
+      status: "Rejected",
+      refunded: true
+    })
+    .eq("id", id)
+    .eq("status", "Pending")
+    .eq("refunded", false)
+    .select()
+    .single();
+
+  if(statusError || !reqData){
+    alert("Ye request already processed hai");
+    loadWithdrawals();
+    return;
+  }
+
+  const { data: userData, error: userError } = await supabaseClient
+    .from("users")
+    .select("wallet")
+    .eq("member_id", reqData.member_id)
+    .single();
+
+  if(userError || !userData){
+    alert("User wallet fetch error");
+    return;
+  }
+
+  const newWallet = Number(userData.wallet || 0) + Number(reqData.amount || 0);
+
+  const { error: walletError } = await supabaseClient
+    .from("users")
+    .update({ wallet: newWallet })
+    .eq("member_id", reqData.member_id);
+
+  if(walletError){
+    alert("Refund error: " + walletError.message);
+    return;
+  }
+
+  alert("Withdrawal Rejected & Balance Refunded");
+  loadWithdrawals();
+}
+
+loadWithdrawals();
 </script>
 </body>
 </html>
