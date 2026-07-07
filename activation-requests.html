@@ -20,31 +20,67 @@ border-radius:12px;
 margin-bottom:15px;
 box-shadow:0 3px 10px #0001;
 }
+  
+.row{
+background:#fff;
+padding:15px;
+margin-bottom:15px;
+border-radius:14px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+border-left:5px solid #0b6b7a;
+}
 
+.row:hover{
+transform:translateY(-2px);
+transition:.2s;
+box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
 h2{
 color:#0b6b7a;
 }
 
-.row{
-border-bottom:1px solid #eee;
-padding:10px 0;
+.btn{
+border:none !important;
+border-radius:20px !important;
+padding:10px 20px !important;
+font-weight:900 !important;
+color:white !important;
+cursor:pointer !important;
+position:relative;
+overflow:hidden;
+box-shadow:
+inset 0 2px 4px rgba(255,255,255,.55),
+inset 0 -5px 9px rgba(0,0,0,.22),
+0 5px 0 rgba(0,0,0,.18),
+0 9px 15px rgba(0,0,0,.18);
+transition:.15s ease;
 }
 
-.btn{
-border:none;
-padding:10px 18px;
-border-radius:20px;
-color:#fff;
-font-weight:bold;
-cursor:pointer;
+.btn::before{
+content:"";
+position:absolute;
+top:-55%;
+left:-35%;
+width:90%;
+height:100%;
+background:linear-gradient(135deg,rgba(255,255,255,.65),rgba(255,255,255,.05));
+transform:rotate(25deg);
+pointer-events:none;
+}
+
+.btn:active{
+transform:translateY(4px) scale(.98);
+box-shadow:
+inset 0 2px 4px rgba(255,255,255,.45),
+0 2px 0 rgba(0,0,0,.20);
 }
 
 .green{
-background:#16c784;
+background:linear-gradient(135deg,#00c853,#32e67a);
 }
 
 .red{
-background:#e74c3c;
+background:linear-gradient(135deg,#ff3d3d,#ff6b6b);
 }
 
 .status.approved{
@@ -136,7 +172,19 @@ return;
 let html = "";
 
 data.forEach(d=>{
+const dateTime = new Date(d.created_at);
 
+const requestDate = dateTime.toLocaleDateString("en-IN",{
+day:"2-digit",
+month:"short",
+year:"numeric"
+});
+
+const requestTime = dateTime.toLocaleTimeString("en-IN",{
+hour:"2-digit",
+minute:"2-digit",
+hour12:true
+});
 html += `
 <div class="row">
 
@@ -149,7 +197,9 @@ ${d.full_name || d.fullName || d.userName || d.name || d.username || d.displayNa
 <br>
 
 <b>User ID:</b> ${d.user_id}<br>
+<b>Date:</b> ${requestDate}<br>
 
+<b>Time:</b> ${requestTime}<br>
 <b>Status:</b>
 
 <span class="status ${
