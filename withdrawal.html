@@ -6,14 +6,28 @@
     <title>Withdrawal Requests</title>
 
     <link rel="stylesheet" href="../css/admin.css">
+    <style>
+body{margin:0;background:#eef3f8;font-family:Arial,sans-serif}
+.header{background:#e9f0f6;padding:18px;font-size:22px;font-weight:bold;color:#0b6d77}
+.container{width:95%;margin:20px auto}
+.card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+    </style>
 </head>
 <body>
     
-<h2>DreamCash Admin Panel</h2>
+<div class="header">
+DreamCash Admin Panel
+</div>
+
+<div class="container">
 
 <div class="card">
-    <h3>Withdrawal Requests</h3>
-    <div id="withdrawalList">Loading...</div>
+<h3>💸 Withdrawal Requests</h3>
+
+<div id="withdrawalList">
+Loading...
+</div>
+
 </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
