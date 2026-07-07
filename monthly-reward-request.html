@@ -243,10 +243,261 @@ Loading...
 
 const SUPABASE_URL="https://baqgiuxvscffmtvhceqk.supabase.co";
 
-const SUPABASE_KEY="YOUR_SUPABASE_KEY";
+const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
 
 const supabaseClient=
 supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
+async function loadMonthlyRewardClaims(){
+
+const box=document.getElementById("monthlyRewardList");
+
+box.innerHTML="<center>Loading Requests...</center>";
+
+const {data,error}=await supabaseClient
+.from("monthly_reward_claims")
+.select("*")
+.order("created_at",{ascending:false});
+
+if(error){
+
+box.innerHTML="<center style='color:#ff5a5a'>"+error.message+"</center>";
+
+return;
+
+}
+
+if(!data || data.length===0){
+
+box.innerHTML="<center>No Monthly Reward Requests</center>";
+
+return;
+
+}
+
+let html="";
+
+data.forEach(item=>{
+
+const statusClass=
+
+item.status==="Approved"
+
+?"approved"
+
+:item.status==="Rejected"
+
+?"rejected"
+
+:"pending";
+
+html+=`
+
+<div class="card requestBox">
+
+<div style="line-height:1.9">
+
+<b>👤 Name :</b>
+
+${item.name||"-"}
+
+<br>
+
+<b>🆔 Member ID :</b>
+
+${item.member_id}
+
+<br>
+
+<b>📅 Month :</b>
+
+${item.month}
+
+<br>
+
+<b>🏆 Rank :</b>
+
+#${item.rank}
+
+<br>
+
+<b>💰 Monthly Earning :</b>
+
+${item.monthly_earning} DC
+
+<br>
+
+<b>🎁 Reward :</b>
+
+${item.reward} DC
+
+<br>
+
+<b>🕒 Date & Time :</b>
+
+${item.created_at ?
+
+new Date(item.created_at)
+
+.toLocaleString()
+
+:"-"}
+
+<br>
+
+<b>Status :</b>
+
+<span class="status ${statusClass}">
+
+${item.status}
+
+</span>
+
+</div>
+
+<br>
+
+<button
+
+class="btn green"
+
+onclick="approveMonthlyReward('${item.id}')">
+
+✔ Approve
+
+</button>
+
+<button
+
+class="btn red"
+
+style="margin-left:10px"
+
+onclick="rejectMonthlyReward('${item.id}')">
+
+✖ Reject
+
+</button>
+
+</div>
+
+`;
+
+});
+
+box.innerHTML=html;
+
+}
+  async function approveMonthlyReward(id){
+
+if(!confirm("Approve this Monthly Reward Request?")) return;
+
+const {data:claim,error}=await supabaseClient
+.from("monthly_reward_claims")
+.select("*")
+.eq("id",id)
+.single();
+
+if(error || !claim){
+
+alert("Request Not Found");
+
+return;
+
+}
+
+if(claim.status==="Approved"){
+
+alert("Already Approved");
+
+return;
+
+}
+
+const {data:user,error:userError}=await supabaseClient
+.from("users")
+.select("wallet")
+.eq("member_id",claim.member_id)
+.single();
+
+if(userError || !user){
+
+alert("User Not Found");
+
+return;
+
+}
+
+const newWallet=
+Number(user.wallet||0)+
+Number(claim.reward||0);
+
+const {error:updateWalletError}=await supabaseClient
+.from("users")
+.update({
+wallet:newWallet
+})
+.eq("member_id",claim.member_id);
+
+if(updateWalletError){
+
+alert(updateWalletError.message);
+
+return;
+
+}
+
+const {error:updateStatusError}=await supabaseClient
+.from("monthly_reward_claims")
+.update({
+status:"Approved"
+})
+.eq("id",id);
+
+if(updateStatusError){
+
+alert(updateStatusError.message);
+
+return;
+
+}
+
+alert("✅ Monthly Reward Approved Successfully");
+
+loadMonthlyRewardClaims();
+
+  }
+  async function rejectMonthlyReward(id){
+
+if(!confirm("Reject this Monthly Reward Request?")) return;
+
+const {error}=await supabaseClient
+.from("monthly_reward_claims")
+.update({
+status:"Rejected"
+})
+.eq("id",id);
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+alert("❌ Monthly Reward Rejected Successfully");
+
+loadMonthlyRewardClaims();
+
+}
+
+loadMonthlyRewardClaims();
+
+</script>
+
+</body>
+
+</html>
