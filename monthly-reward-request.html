@@ -259,7 +259,7 @@ box.innerHTML="<center>Loading Requests...</center>";
 const {data,error}=await supabaseClient
 .from("monthly_reward_claims")
 .select("*")
-.order("created_at",{ascending:false});
+.order("claim_date",{ascending:false})
 
 if(error){
 
