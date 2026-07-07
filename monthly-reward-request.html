@@ -432,7 +432,7 @@ return;
 
 const newWallet=
 Number(user.wallet||0)+
-Number(claim.reward||0);
+Number(claim.reward_amount||0);
 
 const {error:updateWalletError}=await supabaseClient
 .from("users")
