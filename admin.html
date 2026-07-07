@@ -175,15 +175,19 @@ const db = firebase.firestore();
 const auth = firebase.auth();
   function showAdminSection(sectionId){
 
-    document.getElementById("monthlyRewardSection").style.display = "none";
-    document.getElementById("teamSection").style.display = "none";
+document.getElementById("monthlyRewardSection").style.display="none";
+document.getElementById("teamSection").style.display="none";
 
-    document.getElementById(sectionId).style.display = "block";
-
-    if(sectionId === "monthlyRewardSection"){
-        loadMonthlyRewardClaims();
-    }
+if(sectionId==="monthlyRewardSection"){
+document.getElementById("monthlyRewardSection").style.display="block";
+loadMonthlyRewardClaims();
 }
+
+if(sectionId==="teamSection"){
+document.getElementById("teamSection").style.display="block";
+}
+
+  }
 
 async function loadMonthlyRewardClaims(){
  
