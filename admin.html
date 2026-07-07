@@ -301,7 +301,7 @@ box.innerHTML = html;
         .eq("member_id", claim.member_id)
         .single();
 
-    const newWallet = Number(user.wallet || 0) + Number(claim.reward || 0);
+     const newWallet = Number(user.wallet || 0) + Number(claim.reward_amount || 0);
 
     await supabaseClient
         .from("users")
