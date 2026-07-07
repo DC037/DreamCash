@@ -118,18 +118,89 @@ button:nth-of-type(5){background:linear-gradient(135deg,#071b3d,#111827) !import
 
   <div id="memberResult"></div>
 </div>
-  <div class="card">
-  <button class="btn green" onclick="window.location.href='offer-activation.html';">Offer Requests</button>
-  <button class="btn" style="background:#2563eb" onclick="window.location.href='activation-requests.html'">Activation Requests</button>
-  <button class="btn" style="background:#7c3aed"onclick="window.location.href='withdrawal.html'">Withdraw Requests</button>
-  <button class="btn" style="background:#f97316"onclick="window.location.href='rank-records.html'">Rank Records</button>
-  <button class="btn" style="background:#111827" onclick="window.location.href='monthly-reward-request.html'">Monthly Reward</button>
-   <button class="btn"
-style="background:#0f766e"
-onclick="window.location.href='earning-check.html'">
+  <style>
+.menu-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:16px;
+margin-top:10px;
+}
+
+.menu-btn{
+position:relative;
+overflow:hidden;
+min-height:95px;
+border:none;
+border-radius:22px;
+padding:16px;
+display:flex;
+align-items:flex-end;
+justify-content:flex-start;
+font-size:16px;
+font-weight:800;
+color:#fff;
+cursor:pointer;
+box-shadow:0 12px 25px rgba(0,0,0,.20), inset 0 2px 2px rgba(255,255,255,.45);
+}
+
+.menu-btn::before{
+position:absolute;
+right:10px;
+top:-5px;
+font-size:65px;
+opacity:.12;
+}
+
+.offer{background:linear-gradient(135deg,#10b981,#34d399);}
+.offer::before{content:"🎁";}
+
+.activation{background:linear-gradient(135deg,#2563eb,#38bdf8);}
+.activation::before{content:"⚡";}
+
+.withdraw{background:linear-gradient(135deg,#7c3aed,#c084fc);}
+.withdraw::before{content:"💸";}
+
+.rank{background:linear-gradient(135deg,#f97316,#fdba74);}
+.rank::before{content:"🏆";}
+
+.reward{background:linear-gradient(135deg,#111827,#475569);}
+.reward::before{content:"🎖";}
+
+.earning{background:linear-gradient(135deg,#0f766e,#2dd4bf);}
+.earning::before{content:"📈";}
+</style>
+
+<div class="card">
+
+<div class="menu-grid">
+
+<button class="menu-btn offer" onclick="window.location.href='offer-activation.html'">
+Offer Requests
+</button>
+
+<button class="menu-btn activation" onclick="window.location.href='activation-requests.html'">
+Activation Requests
+</button>
+
+<button class="menu-btn withdraw" onclick="window.location.href='withdrawal.html'">
+Withdraw Requests
+</button>
+
+<button class="menu-btn rank" onclick="window.location.href='rank-records.html'">
+Rank Records
+</button>
+
+<button class="menu-btn reward" onclick="window.location.href='monthly-reward-request.html'">
+Monthly Reward
+</button>
+
+<button class="menu-btn earning" onclick="window.location.href='earning-check.html'">
 Earning Check
-   </button>
-  </div>
+</button>
+
+</div>
+
+</div>
  
   <div id="teamSection" class="admin-section" style="display:none;">
   <div class="card">
