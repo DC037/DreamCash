@@ -11,15 +11,15 @@ body{margin:0;background:#eef3f8;font-family:Arial,sans-serif}
 .header{background:#e9f0f6;padding:18px;font-size:22px;font-weight:bold;color:#0b6d77}
 .container{width:95%;margin:20px auto}
 .card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.1)}
-        .row{
-background:#f9fbfc;
-border:1px solid #dfe8ef;
-border-radius:12px;
-padding:15px;
-margin-bottom:15px;
-line-height:1.8;
-box-shadow:0 2px 6px rgba(0,0,0,.05);
-}
+        .withdraw-card{
+    background:#f9fbfc;
+    border:1px solid #dfe8ef;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:15px;
+    line-height:1.8;
+    box-shadow:0 2px 6px rgba(0,0,0,.05);
+        }
 
 .row b{
 color:#222;
@@ -95,7 +95,7 @@ const supabaseClient = supabase.createClient(
   data.forEach(d => {
 
     html += `
-      <div class="row">
+      <div class="withdraw-card">
         <b>Amount:</b> ₹${d.amount}<br>
         <b>UPI:</b> ${d.upi}<br>
         <b>Name:</b> ${d.name || "N/A"}<br>
@@ -110,8 +110,6 @@ const supabaseClient = supabase.createClient(
 
         </span>
 
-        <br><br>
-
         <button class="btn green"
         onclick="approveWithdraw('${d.id}')">
         Approve
@@ -123,8 +121,8 @@ const supabaseClient = supabase.createClient(
         </button>
 
       </div>
+<div style="clear:both;"></div>
 
-      <hr>
     `;
 
   });
