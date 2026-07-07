@@ -532,58 +532,6 @@ await supabaseClient
   loadActivationRequests();
  }
 
-async function loadRankRewardClaims(){
-  const box = document.getElementById("rankRewardClaimsList");
-  box.innerHTML = "Loading...";
-
-  const snap = await db.collection("rankRewardClaims")
-    .orderBy("createdAt", "desc")
-    .get();
-
-  if(snap.empty){
-    box.innerHTML = "No rank reward claims found.";
-    return;
-  }
-
-  let html = "";
-
-  for (const doc of snap.docs) {
-    const d = doc.data();
-
-    let userName = "N/A";
-    let userMobile = "N/A";
-
-    if(d.userId){
-      const userDoc = await db.collection("users").doc(d.userId).get();
-
-      if(userDoc.exists){
-        const u = userDoc.data();
-        userName = u.name || u.fullName || u.username || "N/A";
-        userMobile = u.mobile || u.phone || u.number || "N/A";
-      }
-    }
-
-    html += `
-    <div class="row">
-      <b>User Name:</b> ${userName}<br>
-      <b>Mobile:</b> ${userMobile}<br>
-      <b>User ID:</b> ${d.userId || "N/A"}<br>
-      <b>Rank:</b> ${d.rank || "N/A"}<br>
-      <b>Reward:</b> ${d.reward || d.amount || 0} DC<br>
-      <b>Status:</b>
-      <span class="status ${d.status === 'Approved' ? 'approved' : d.status === 'Rejected' ? 'rejected' : 'pending'}">
-        ${d.status === 'Approved' ? '✅' : d.status === 'Rejected' ? '❌' : '⏳'} ${d.status || "Pending"}
-      </span><br><br>
-
-      <button class="btn green" onclick="approveRankReward('${doc.id}')">Approve</button>
-      <button class="btn red" onclick="rejectRankReward('${doc.id}')">Reject</button>
-    </div>
-    `;
-  }
-
-  box.innerHTML = html;
-}
-
  async function approveMonthlyReward(id){
 
     if(!confirm("Approve this monthly reward request?")) return;
