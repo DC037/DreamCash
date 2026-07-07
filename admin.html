@@ -450,88 +450,6 @@ async function approveActivation(id, userId) {
   loadActivationRequests();
 }
 
-async function distributeLevelIncome(userId) {
-  const levelAmounts = [25, 10, 5, 5, 5];
-  let currentMemberId = userId;
-
-  for (let level = 1; level <= 5; level++) {
-    const { data: currentUser } = await supabaseClient
-      .from("users")
-      .select("sponsor_id")
-      .eq("member_id", currentMemberId)
-      .single();
-
-    if (!currentUser || !currentUser.sponsor_id) break;
-
-    const sponsorId = currentUser.sponsor_id;
-    const income = levelAmounts[level - 1];
-
-    const { data: sponsorUser } = await supabaseClient
-      .from("users")
-      .select("wallet, lifetime_earning")
-      .eq("member_id", sponsorId)
-      .single();
-
-    if (!sponsorUser) break;
-
-    await supabaseClient
-      .from("income_history")
-      .insert({
-        user_id: sponsorId,
-        from_user_id: userId,
-        level: level,
-        amount: income,
-        income_type: "level_income",
-        status: "approved"
-      });
-
-    const oldWallet = Number(sponsorUser.wallet || 0);
-const oldLifetime = Number(sponsorUser.lifetime_earning || 0);
-
-await supabaseClient
-.from("users")
-.update({
-  wallet: oldWallet + income,
-  lifetime_earning: oldLifetime + income
-})
-.eq("member_id", sponsorId);
-    currentMemberId = sponsorId;
-  }
-}
-
- async function rejectActivation(id, userId) {
-  if (!confirm("Reject this activation request?")) return;
-
-  let finalUserId = userId || "";
-
-  if (finalUserId.includes("ref=")) {
-    finalUserId = finalUserId.split("ref=")[1].split("&")[0];
-  }
-
-  const { error: reqError } = await supabaseClient
-    .from("activation_requests")
-    .update({ status: "Rejected" })
-    .eq("id", id);
-
-  if (reqError) {
-    alert("Reject error: " + reqError.message);
-    return;
-  }
-
-  const { error: userError } = await supabaseClient
-    .from("users")
-    .update({ status: "Rejected" })
-    .eq("member_id", finalUserId);
-
-  if (userError) {
-    alert("User status error: " + userError.message);
-    return;
-  }
-
-  alert("Activation Rejected Successfully");
-  loadActivationRequests();
- }
-
  async function approveMonthlyReward(id){
 
     if(!confirm("Approve this monthly reward request?")) return;
@@ -1004,7 +922,6 @@ async function rejectOffer(submissionId, userId) {
 }
 
 loadOfferRequests();
-loadActivationRequests();
 loadMonthlyRewardClaims();
 loadDreamCashTeam();
 showAdminSection("offerSection");
