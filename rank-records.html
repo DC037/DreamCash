@@ -1,1 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DreamCash Rank Records</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+body{
+font-family:Arial;
+background:#eef3f7;
+margin:0;
+padding:15px;
+}
+
+.card{
+background:#fff;
+padding:15px;
+border-radius:12px;
+margin-bottom:15px;
+box-shadow:0 3px 10px #0001;
+}
+
+h2{
+color:#0b6b7a;
+}
+
+.row{
+border-bottom:1px solid #eee;
+padding:10px 0;
+}
+
+.btn{
+border:none;
+padding:10px 18px;
+border-radius:20px;
+color:#fff;
+font-weight:bold;
+font-size:14px;
+min-width:90px;
+cursor:pointer;
+margin-right:8px;
+}
+
+.green{
+background:#16c784;
+}
+
+.red{
+background:#e74c3c;
+}
+
+.status{
+font-weight:bold;
+}
+
+.status.approved{
+color:green;
+}
+
+.status.rejected{
+color:red;
+}
+
+.status.pending{
+color:#e67e22;
+}
+
+button,
+.btn{
+border:none!important;
+border-radius:20px!important;
+padding:10px 20px!important;
+font-weight:900!important;
+color:#fff!important;
+cursor:pointer!important;
+position:relative!important;
+overflow:hidden!important;
+box-shadow:
+inset 0 2px 4px rgba(255,255,255,.55),
+inset 0 -5px 9px rgba(0,0,0,.22),
+0 5px 0 rgba(0,0,0,.18),
+0 9px 15px rgba(0,0,0,.18)!important;
+transition:.15s ease!important;
+}
+
+button::before,
+.btn::before{
+content:"";
+position:absolute;
+top:-55%;
+left:-35%;
+width:90%;
+height:100%;
+background:linear-gradient(135deg,rgba(255,255,255,.65),rgba(255,255,255,.05));
+transform:rotate(25deg);
+pointer-events:none;
+}
+
+button:active,
+.btn:active{
+transform:translateY(4px) scale(.98)!important;
+box-shadow:
+inset 0 2px 4px rgba(255,255,255,.45),
+0 2px 0 rgba(0,0,0,.20)!important;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>🏆 DreamCash Rank Records</h2>
+
+<div class="card">
+
+<h3>🏆 Rank Reward Claims</h3>
+
+<div id="rankRewardClaimsList">
+Loading...
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+
+const SUPABASE_URL="https://baqgiuxvscffmtvhceqk.supabase.co";
+
+const SUPABASE_KEY="sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+
+const supabaseClient=supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+const firebaseConfig={
+apiKey:"AIzaSyCVIHJ66pEI6A3HmSmaOLNsFanatv-yhic",
+authDomain:"dreamcash-dafb4.firebaseapp.com",
+projectId:"dreamcash-dafb4",
+storageBucket:"dreamcash-dafb4.firebasestorage.app",
+messagingSenderId:"66002195487",
+appId:"1:66002195487:web:6fb777fca2630c466a312a"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db=firebase.firestore();
+  async function loadRankRewardClaims(){
+
+const box=document.getElementById("rankRewardClaimsList");
+
+box.innerHTML="Loading...";
+
+const snap=await db.collection("rankRewardClaims")
+.orderBy("createdAt","desc")
+.get();
+
+if(snap.empty){
+box.innerHTML="No rank reward claims found.";
+return;
+}
+
+let html="";
+
+for(const doc of snap.docs){
+
+const d=doc.data();
+
+let userName="N/A";
+let userMobile="N/A";
+
+if(d.userId){
+
+const userDoc=await db
+.collection("users")
+.doc(d.userId)
+.get();
+
+if(userDoc.exists){
+
+const u=userDoc.data();
+
+userName=
+u.name||
+u.fullName||
+u.username||
+"N/A";
+
+userMobile=
+u.mobile||
+u.phone||
+u.number||
+"N/A";
+
+}
+
+}
+
+html+=`
+
+<div class="row">
+
+<b>User Name:</b> ${userName}<br>
+
+<b>Mobile:</b> ${userMobile}<br>
+
+<b>User ID:</b> ${d.userId||"N/A"}<br>
+
+<b>Rank:</b> ${d.rank||"N/A"}<br>
+
+<b>Reward:</b> ${d.reward||d.amount||0} DC<br>
+
+<b>Status:</b>
+
+<span class="status ${
+d.status==="Approved"
+?"approved"
+:d.status==="Rejected"
+?"rejected"
+:"pending"
+}">
+
+${
+d.status==="Approved"
+?"✅"
+:d.status==="Rejected"
+?"❌"
+:"⏳"
+}
+
+${d.status||"Pending"}
+
+</span>
+
+<br><br>
+
+<button
+class="btn green"
+onclick="approveRankReward('${doc.id}')">
+
+Approve
+
+</button>
+
+<button
+class="btn red"
+onclick="rejectRankReward('${doc.id}')">
+
+Reject
+
+</button>
+
+</div>
+
+`;
+
+}
+
+box.innerHTML=html;
+
+  }
+  async function approveRankReward(id){
+
+const claimDoc=await db
+.collection("rankRewardClaims")
+.doc(id)
+.get();
+
+if(!claimDoc.exists){
+alert("Claim not found");
+return;
+}
+
+const claim=claimDoc.data();
+
+if(claim.status==="Approved"){
+alert("Ye rank reward pehle se Approved hai.");
+return;
+}
+
+const memberId=claim.userId;
+
+const reward=Number(
+claim.reward||
+claim.amount||
+0
+);
+
+const rank=claim.rank||"";
+
+const {data:user,error}=await supabaseClient
+.from("users")
+.select("wallet")
+.eq("member_id",memberId)
+.single();
+
+if(error||!user){
+alert("User not found");
+return;
+}
+
+const newWallet=
+Number(user.wallet||0)+reward;
+
+const {error:updateError}=await supabaseClient
+.from("users")
+.update({
+wallet:newWallet,
+current_rank:rank
+})
+.eq("member_id",memberId);
+
+if(updateError){
+alert(
+"Wallet / Rank update error: "+
+updateError.message
+);
+return;
+}
+
+await db
+.collection("rankRewardClaims")
+.doc(id)
+.update({
+status:"Approved"
+});
+
+alert("Rank Reward Approved Successfully");
+
+loadRankRewardClaims();
+
+  }
+  async function rejectRankReward(id){
+
+if(!confirm("Reject this rank reward request?")) return;
+
+await db
+.collection("rankRewardClaims")
+.doc(id)
+.update({
+status:"Rejected"
+});
+
+alert("Rank Reward Rejected");
+
+loadRankRewardClaims();
+
+}
+
+loadRankRewardClaims();
+
+</script>
+
+</body>
+</html>
