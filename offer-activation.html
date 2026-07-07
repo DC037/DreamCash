@@ -120,25 +120,33 @@ color:red;
 color:#e67e22;
 }
 .status{
-padding:5px 12px;
-border-radius:20px;
-font-weight:bold;
 display:inline-block;
+padding:6px 14px;
+border-radius:30px;
+font-size:13px;
+font-weight:700;
+border:1px solid transparent;
 }
 
+/* Approved */
 .status.approved{
-background:#d1fae5;
+background:#dcfce7;
 color:#15803d;
+border-color:#86efac;
 }
 
+/* Pending */
 .status.pending{
 background:#fef9c3;
-color:#ca8a04;
+color:#a16207;
+border-color:#fde047;
 }
 
+/* Rejected */
 .status.rejected{
 background:#fee2e2;
-color:#dc2626;
+color:#b91c1c;
+border-color:#fca5a5;
 }
 </style>
 
@@ -278,16 +286,10 @@ html+=`
 <b>Offer ID:</b> ${d.offer_id}<br>
 
 <b>Reward:</b> ${d.reward}<br>
-
 <b>Status:</b>
-
 <span class="status ${d.status==='Approved'?'approved':d.status==='Rejected'?'rejected':'pending'}">
-
-${d.status==='Approved'?'✅':d.status==='Rejected'?'❌':'⏳'} ${d.status}
-
-</span>
-
-<br>
+${d.status}
+</span><br>
 
 <a href="${d.screenshot_url}" target="_blank">
 
