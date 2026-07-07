@@ -217,78 +217,40 @@ let html="";
 
 for(const item of data){
 
-const {
-
-data:user
-
-}=await supabaseClient
-
+const { data: users } = await supabaseClient
 .from("users")
+.select("*")
+.eq("member_id", item.member_id)
+.limit(1);
 
-.select(
-"full_name,name,username,mobile,phone,number"
-)
+const user = users && users.length ? users[0] : {};
 
-.eq(
-"member_id",
-item.member_id
-)
-
-.single();
-
-const userName=
-
-user?.full_name||
-
-user?.name||
-
-user?.username||
-
+const userName =
+user.full_name ||
+user.name ||
+user.username ||
+user.member_name ||
 "N/A";
 
-const mobile=
-
-user?.mobile||
-
-user?.phone||
-
-user?.number||
-
+const mobile =
+user.mobile ||
+user.phone ||
+user.number ||
+user.mobile_number ||
 "N/A";
 
 html+=`
 
 <div class="row">
 
-<b>Name :</b>
-${userName}
-<br>
-
-<b>Member ID :</b>
-${item.member_id}
-<br>
-
-<b>Mobile :</b>
-${mobile}
-<br>
-
-<b>Rank :</b>
-${item.rank_name}
-<br>
-
-<b>Reward :</b>
-${item.reward_dc} DC
-<br>
-
-<b>Status :</b>
-
-<span class="status ${item.status}">
-
-${item.status}
-
-</span>
-
-<br><br>
+<b>Name :</b> ${userName}<br>
+<b>Member ID :</b> ${item.member_id}<br>
+<b>Mobile :</b> ${mobile}<br>
+<b>Rank :</b> ${item.rank_name}<br>
+<b>Reward :</b> ${item.reward_dc} DC<br>
+<b>Date :</b> ${new Date(item.created_at).toLocaleDateString()}<br>
+<b>Time :</b> ${new Date(item.created_at).toLocaleTimeString()}<br>
+<b>Status :</b> ${item.status}<br><br>
 
 <button
 
