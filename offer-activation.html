@@ -30,24 +30,78 @@ color:#0b6b7a;
 border-bottom:1px solid #eee;
 padding:10px 0;
 }
+/* ===== 3D Glossy Galaxy Buttons ===== */
 
 .btn{
 border:none;
-padding:10px 18px;
-border-radius:20px;
+padding:10px 22px;
+border-radius:25px;
 color:#fff;
-font-weight:bold;
+font-weight:900;
 font-size:14px;
 cursor:pointer;
+position:relative;
+overflow:hidden;
 margin-right:8px;
+margin-bottom:8px;
+transition:.18s ease;
+box-shadow:
+inset 0 2px 4px rgba(255,255,255,.55),
+inset 0 -5px 10px rgba(0,0,0,.25),
+0 5px 0 rgba(0,0,0,.20),
+0 10px 18px rgba(0,0,0,.18);
 }
 
+.btn::before{
+content:"";
+position:absolute;
+top:-60%;
+left:-30%;
+width:80%;
+height:180%;
+background:linear-gradient(
+135deg,
+rgba(255,255,255,.70),
+rgba(255,255,255,0)
+);
+transform:rotate(25deg);
+pointer-events:none;
+}
+
+.btn:hover{
+transform:translateY(-2px);
+}
+
+.btn:active{
+transform:translateY(4px) scale(.98);
+box-shadow:
+inset 0 2px 4px rgba(255,255,255,.35),
+0 2px 0 rgba(0,0,0,.20);
+}
+
+/* Approve Button */
 .green{
-background:#16c784;
+background:linear-gradient(135deg,#00b75a,#22e58b);
 }
 
+/* Reject Button */
 .red{
-background:#e74c3c;
+background:linear-gradient(135deg,#ff3030,#ff6b6b);
+}
+
+/* Back Button */
+.blue{
+background:linear-gradient(135deg,#005bea,#29b6ff);
+}
+
+/* Optional Purple Button */
+.purple{
+background:linear-gradient(135deg,#6a11cb,#a855f7);
+}
+
+/* Optional Orange Button */
+.orange{
+background:linear-gradient(135deg,#ff7a00,#ffb300);
 }
 
 .status{
@@ -65,13 +119,36 @@ color:red;
 .status.pending{
 color:#e67e22;
 }
+.status{
+padding:5px 12px;
+border-radius:20px;
+font-weight:bold;
+display:inline-block;
+}
 
+.status.approved{
+background:#d1fae5;
+color:#15803d;
+}
+
+.status.pending{
+background:#fef9c3;
+color:#ca8a04;
+}
+
+.status.rejected{
+background:#fee2e2;
+color:#dc2626;
+}
 </style>
 
 </head>
 
 <body>
-
+<button class="btn blue"
+onclick="window.location.href='admin.html'">
+⬅ Back to Admin
+</button>
 <h2>📸 Offer Requests</h2>
 
 <div class="card">
