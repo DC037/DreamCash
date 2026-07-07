@@ -131,14 +131,6 @@ Earning Check
    </button>
   </div>
  
-   <div id="monthlyRewardSection" class="admin-section" style="display:none;">
-    <div class="card">
-        <h3>🎁 Monthly Reward Claims</h3>
-        <div id="monthlyRewardList">
-            Loading...
-        </div>
-    </div>
-   </div>
   <div id="teamSection" class="admin-section" style="display:none;">
   <div class="card">
 <h3>👥 DreamCash Team</h3>
@@ -175,167 +167,13 @@ const db = firebase.firestore();
 const auth = firebase.auth();
   function showAdminSection(sectionId){
 
-document.getElementById("monthlyRewardSection").style.display="none";
 document.getElementById("teamSection").style.display="none";
-
-if(sectionId==="monthlyRewardSection"){
-document.getElementById("monthlyRewardSection").style.display="block";
-loadMonthlyRewardClaims();
-}
 
 if(sectionId==="teamSection"){
 document.getElementById("teamSection").style.display="block";
 }
 
   }
-
-async function loadMonthlyRewardClaims(){
- 
-const box = document.getElementById("monthlyRewardList");
-
-box.innerHTML = "Loading...";
-
-const { data, error } = await supabaseClient
-.from("monthly_reward_claims")
-.select("*")
-.order("claim_date",{ascending:false});
-
-if(error){
-box.innerHTML="<span style='color:red'>"+error.message+"</span>";
-return;
-}
-
-if(!data || data.length===0){
-box.innerHTML="No Monthly Reward Requests";
-return;
-}
-
-let html="";
-
-for(const item of data){
-
-html += `
-<div class="card" style="margin-bottom:15px;">
-
-<b>Name:</b> ${item.name || "-"}<br>
-
-<b>Member ID:</b> ${item.member_id}<br>
-
-<b>Month:</b> ${item.month}<br>
-
-<b>Rank:</b> #${item.rank}<br>
-
-<b>Monthly Earning:</b> ${item.monthly_earning} DC<br>
-
-<b>Reward:</b>
-<span style="color:#22c55e;font-weight:bold;">
-${item.reward_amount} DC
-</span><br>
-
-<b>Status:</b>
-
-<span style="
-color:
-${item.status=="Approved"
-?"#22c55e":
-item.status=="Rejected"
-?"red":"orange"};
-font-weight:bold;
-">
-
-${item.status}
-
-</span>
-
-<br><br>
-
-<button
-class="btn green"
-onclick="approveMonthlyReward('${item.id}')">
-
-Approve
-
-</button>
-
-<button
-class="btn"
-style="background:#ef4444;margin-left:10px;"
-onclick="rejectMonthlyReward('${item.id}')">
-
-Reject
-
-</button>
-
-</div>
-`;
-
-}
-
-box.innerHTML = html;
-
- }
-
- async function approveMonthlyReward(id){
-
-    if(!confirm("Approve this monthly reward request?")) return;
-
-    const { data: claim, error } = await supabaseClient
-        .from("monthly_reward_claims")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-    if(error || !claim){
-        alert("Claim not found");
-        return;
-    }
-
-    if(claim.status === "Approved"){
-        alert("Already approved");
-        return;
-    }
-
-    const { data:user } = await supabaseClient
-        .from("users")
-        .select("wallet")
-        .eq("member_id", claim.member_id)
-        .single();
-
-     const newWallet = Number(user.wallet || 0) + Number(claim.reward_amount || 0);
-
-    await supabaseClient
-        .from("users")
-        .update({
-            wallet:newWallet
-        })
-        .eq("member_id", claim.member_id);
-
-    await supabaseClient
-        .from("monthly_reward_claims")
-        .update({
-            status:"Approved"
-        })
-        .eq("id", id);
-
-    alert("Monthly Reward Approved");
-
-    loadMonthlyRewardClaims();
- }
-async function rejectMonthlyReward(id){
-
-    if(!confirm("Reject this monthly reward request?")) return;
-
-    await supabaseClient
-        .from("monthly_reward_claims")
-        .update({
-            status:"Rejected"
-        })
-        .eq("id", id);
-
-    alert("Monthly Reward Rejected");
-
-    loadMonthlyRewardClaims();
-         }
 
 async function loadDreamCashTeam(){
   const box = document.getElementById("teamStats");
@@ -638,7 +476,6 @@ async function viewUserReferrals(userId) {
   alert(text);
 }
 
-loadMonthlyRewardClaims();
 loadDreamCashTeam();
 </script>
 
