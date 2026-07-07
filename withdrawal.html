@@ -112,7 +112,7 @@ const supabaseClient = supabase.createClient(
         <b>Name:</b> ${d.name || "N/A"}<br>
         <b>Member ID:</b> ${d.member_id || "N/A"}<br>
         <b>User ID:</b> ${d.user_id || "N/A"}<br>
-
+ 🕒 <b>Requested:</b> ${new Date(d.created_at).toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })}<br>
         <b>Status:</b>
 
         <span class="status ${d.status === "Approved" ? "approved" : d.status === "Rejected" ? "rejected" : "pending"}">
