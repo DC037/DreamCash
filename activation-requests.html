@@ -103,7 +103,24 @@ font-weight:bold;
 
 <body>
 
-<h2>✅ Activation Requests</h2>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;gap:10px;">
+
+<button class="btn green"
+onclick="window.location.href='admin.html'">
+⬅ Back
+</button>
+
+<h2 style="margin:0;flex:1;text-align:center;">
+✅ Activation Requests
+</h2>
+
+<button class="btn"
+style="background:linear-gradient(135deg,#2196f3,#42a5f5);"
+onclick="loadActivationRequests()">
+🔄 Refresh
+</button>
+
+</div>
 
 <div class="card">
 <div id="activationList">
