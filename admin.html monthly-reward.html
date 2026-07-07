@@ -1,1 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Monthly Reward - DreamCash Admin</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+font-family:Arial;
+background:#eef3f7;
+margin:0;
+padding:15px;
+}
+
+.card{
+background:#fff;
+padding:15px;
+border-radius:12px;
+margin-bottom:15px;
+box-shadow:0 3px 10px #0001;
+}
+
+h2{
+color:#0b6b7a;
+}
+
+.btn{
+border:none;
+padding:10px 18px;
+border-radius:20px;
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+margin:5px;
+}
+
+.green{
+background:#16c784;
+}
+
+.red{
+background:#ef4444;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>🎁 Monthly Reward Claims</h2>
+
+<div class="card">
+
+<button class="btn green"
+onclick="window.location.href='admin.html'">
+⬅ Back To Admin
+</button>
+
+</div>
+
+<div class="card">
+
+<div id="monthlyRewardList">
+
+Loading...
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL="https://baqgiuxvscffmtvhceqk.supabase.co";
+
+const SUPABASE_KEY="YOUR_SUPABASE_KEY";
+
+const supabaseClient=
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+</script>
