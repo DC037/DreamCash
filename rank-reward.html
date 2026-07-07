@@ -193,37 +193,62 @@ async function countTotalTeam(rootId){
 }
 
 async function getClaimedRanks(memberId){
-  const snap = await db.collection("rankRewardClaims")
-    .where("userId", "==", memberId)
-    .get();
 
-  let claimed = {};
-  snap.forEach(doc => {
-    const d = doc.data();
-    claimed[d.rank] = d.status || "Pending";
-  });
+const {data,error}=await supabaseClient
+.from("rank_reward_claims")
+.select("rank_name,status")
+.eq("member_id",memberId);
 
-  return claimed;
+let claimed={};
+
+if(!error && data){
+
+data.forEach(item=>{
+claimed[item.rank_name]=item.status;
+});
+
 }
 
-async function claimRank(rankName, reward){
-  if(!currentUser || !currentUser.member_id){
-    alert("User not found");
-    return;
+return claimed;
+
+}
+
+async function claimRank(rankName,reward){
+
+if(!currentUser || !currentUser.member_id){
+alert("User not found");
+return;
+}
+
+const {error}=await supabaseClient
+
+.from("rank_reward_claims")
+
+.insert([{
+
+member_id:currentUser.member_id,
+
+rank_name:rankName,
+
+reward_dc:reward,
+
+status:"Pending"
+
+}]);
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+alert("Rank Reward Claim Submitted Successfully");
+
+loadPage();
+
   }
-
-  await db.collection("rankRewardClaims").add({
-    userId: currentUser.member_id,
-    name: currentUser.name || "User",
-    rank: rankName,
-    reward: reward,
-    status: "Pending",
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  alert("Rank Reward claim submitted. Admin approval pending.");
-  loadPage();
-}
 
 function eligible(rank){
   return teamData.directActive >= rank.direct && teamData.activeTotal >= rank.team;
