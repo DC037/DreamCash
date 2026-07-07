@@ -36,11 +36,22 @@ color:#fff;
 }
 
 .green{
-background:linear-gradient(135deg,#00c853,#00e676);
+background:linear-gradient(to bottom,#4dff88,#00b74a);
+box-shadow:0 4px 10px rgba(0,180,74,.4);
 }
 
 .red{
-background:linear-gradient(135deg,#2196f3,#42a5f5);
+background:linear-gradient(to bottom,#ff7070,#d60000);
+box-shadow:0 4px 10px rgba(214,0,0,.4);
+}
+        .approved-card{
+    background:#eaffef !important;
+    border-left:8px solid #16a34a;
+}
+
+.rejected-card{
+    background:#fff1f1 !important;
+    border-left:8px solid #dc2626;
 }
     </style>
 </head>
@@ -95,7 +106,7 @@ const supabaseClient = supabase.createClient(
   data.forEach(d => {
 
     html += `
-      <div class="withdraw-card">
+      <div class="withdraw-card ${d.status==='Approved'?'approved-card':'rejected-card'}">
         <b>Amount:</b> ₹${d.amount}<br>
         <b>UPI:</b> ${d.upi}<br>
         <b>Name:</b> ${d.name || "N/A"}<br>
