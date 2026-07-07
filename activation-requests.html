@@ -1,1 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Activation Requests</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+font-family:Arial;
+background:#eef3f7;
+margin:0;
+padding:15px;
+}
+
+.card{
+background:#fff;
+padding:15px;
+border-radius:12px;
+margin-bottom:15px;
+box-shadow:0 3px 10px #0001;
+}
+
+h2{
+color:#0b6b7a;
+}
+
+.row{
+border-bottom:1px solid #eee;
+padding:10px 0;
+}
+
+.btn{
+border:none;
+padding:10px 18px;
+border-radius:20px;
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+}
+
+.green{
+background:#16c784;
+}
+
+.red{
+background:#e74c3c;
+}
+
+.status.approved{
+color:green;
+font-weight:bold;
+}
+
+.status.rejected{
+color:red;
+font-weight:bold;
+}
+
+.status.pending{
+color:#e67e22;
+font-weight:bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>✅ Activation Requests</h2>
+
+<div class="card">
+<div id="activationList">
+Loading...
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+
+const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+
+const supabaseClient = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCVIHJ66pEI6A3HmSmaOLNsFanatv-yhic",
+
+authDomain: "dreamcash-dafb4.firebaseapp.com",
+
+projectId: "dreamcash-dafb4",
+
+storageBucket: "dreamcash-dafb4.firebasestorage.app",
+
+messagingSenderId: "66002195487",
+
+appId: "1:66002195487:web:6fb777fca2630c466a312a"
+
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+
+const auth = firebase.auth();
+async function loadActivationRequests(){
+
+const box = document.getElementById("activationList");
+
+box.innerHTML = "Loading...";
+
+const { data, error } = await supabaseClient
+.from("activation_requests")
+.select("*")
+.order("created_at",{ascending:false});
+
+if(error){
+box.innerHTML = error.message;
+return;
+}
+
+if(!data || data.length===0){
+box.innerHTML = "No activation requests found.";
+return;
+}
+
+let html = "";
+
+data.forEach(d=>{
+
+html += `
+<div class="row">
+
+<b>Amount:</b> ₹${d.amount}<br>
+
+<b>Transaction ID:</b> ${d.transaction_id}<br>
+
+<b>Name:</b>
+${d.full_name || d.fullName || d.userName || d.name || d.username || d.displayName || "N/A"}
+<br>
+
+<b>User ID:</b> ${d.user_id}<br>
+
+<b>Status:</b>
+
+<span class="status ${
+d.status==="Approved"
+?"approved"
+:d.status==="Rejected"
+?"rejected"
+:"pending"
+}">
+
+${d.status==="Approved"
+?"✅"
+:d.status==="Rejected"
+?"❌"
+:"⏳"}
+
+${d.status}
+
+</span>
+
+<br><br>
+
+<button
+class="btn green"
+onclick="approveActivation('${d.id}','${d.user_id}')">
+
+Activate
+
+</button>
+
+<button
+class="btn red"
+onclick="rejectActivation('${d.id}','${d.user_id}')">
+
+Reject
+
+</button>
+
+</div>
+`;
+
+});
+
+box.innerHTML = html;
+
+}
+  async function approveActivation(id,userId){
+
+if(!confirm("Approve this activation request?")) return;
+
+let finalUserId = userId;
+
+if(userId.includes("ref=")){
+finalUserId = userId.split("ref=")[1].split("&")[0];
+}
+
+const { error:userError } = await supabaseClient
+.from("users")
+.update({
+status:"Active"
+})
+.eq("member_id",finalUserId);
+
+if(userError){
+alert(userError.message);
+return;
+}
+
+await distributeLevelIncome(finalUserId);
+
+const { error } = await supabaseClient
+.from("activation_requests")
+.update({
+status:"Approved"
+})
+.eq("id",id);
+
+if(error){
+alert(error.message);
+return;
+}
+
+alert("Activation Complete Successfully");
+
+loadActivationRequests();
+
+  }
+async function distributeLevelIncome(userId){
+
+const levelAmounts = [25,10,5,5,5];
+
+let currentMemberId = userId;
+
+for(let level=1; level<=5; level++){
+
+const { data:currentUser } = await supabaseClient
+.from("users")
+.select("sponsor_id")
+.eq("member_id",currentMemberId)
+.single();
+
+if(!currentUser || !currentUser.sponsor_id) break;
+
+const sponsorId = currentUser.sponsor_id;
+
+const income = levelAmounts[level-1];
+
+const { data:sponsorUser } = await supabaseClient
+.from("users")
+.select("wallet,lifetime_earning")
+.eq("member_id",sponsorId)
+.single();
+
+if(!sponsorUser) break;
+
+await supabaseClient
+.from("income_history")
+.insert({
+user_id:sponsorId,
+from_user_id:userId,
+level:level,
+amount:income,
+income_type:"level_income",
+status:"approved"
+});
+
+const oldWallet = Number(sponsorUser.wallet || 0);
+
+const oldLifetime = Number(sponsorUser.lifetime_earning || 0);
+
+await supabaseClient
+.from("users")
+.update({
+wallet:oldWallet + income,
+lifetime_earning:oldLifetime + income
+})
+.eq("member_id",sponsorId);
+
+currentMemberId = sponsorId;
+
+}
+
+  }
+async function rejectActivation(id,userId){
+
+if(!confirm("Reject this activation request?")) return;
+
+let finalUserId = userId || "";
+
+if(finalUserId.includes("ref=")){
+finalUserId = finalUserId.split("ref=")[1].split("&")[0];
+}
+
+const { error:reqError } = await supabaseClient
+.from("activation_requests")
+.update({
+status:"Rejected"
+})
+.eq("id",id);
+
+if(reqError){
+alert("Reject error: " + reqError.message);
+return;
+}
+
+const { error:userError } = await supabaseClient
+.from("users")
+.update({
+status:"Rejected"
+})
+.eq("member_id",finalUserId);
+
+if(userError){
+alert("User status error: " + userError.message);
+return;
+}
+
+alert("Activation Rejected Successfully");
+
+loadActivationRequests();
+
+}
+loadActivationRequests();
+
+</script>
+
+</body>
+</html>  
