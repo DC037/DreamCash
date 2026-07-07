@@ -439,7 +439,7 @@ const {error:updateWalletError}=await supabaseClient
 .update({
 wallet:newWallet
 })
-.eq("member_id",claim.member_id);
+.eq("member_id",claim.user_id);
 
 if(updateWalletError){
 
