@@ -24,6 +24,7 @@ padding-bottom:30px;
 }
 
 .header{
+position:relative;
 background:linear-gradient(135deg,#2563eb,#06b6d4);
 padding:25px 20px;
 text-align:center;
@@ -43,6 +44,30 @@ font-size:14px;
 opacity:.95;
 }
 
+  .back-btn{
+position:absolute;
+top:18px;
+left:18px;
+width:52px;
+height:52px;
+border:none;
+border-radius:14px;
+background:#ffffff;
+color:#2563eb;
+font-size:30px;
+font-weight:bold;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(0,0,0,.20);
+z-index:999;
+transition:.2s;
+}
+
+.back-btn:active{
+transform:scale(.95);
+}
 .summary{
 display:flex;
 gap:12px;
@@ -173,11 +198,7 @@ box-shadow:0 8px 20px rgba(0,0,0,.12);
 <body>
 
 <div class="header">
-<button id="backBtn" class="back-btn">
-
-← Back
-
-</button>
+<button id="backBtn" class="back-btn">←</button>
 <h2>🛡️ Account Verification Requests</h2>
 
 <p>
@@ -394,6 +415,8 @@ ${user.status!=="pending"?"disabled":""}>
 requestContainer.appendChild(card);
 
 });
+  
+}
 // ===== Approve Verification =====
 
 async function approveRequest(memberId){
