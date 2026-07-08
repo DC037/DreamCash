@@ -608,7 +608,7 @@ return;
 
 setLoading(true);
 
-const { data: oldRequest, error: checkError } = await supabase
+const { data: oldRequest, error: checkError } = await supabaseClient
 .from("account_verification")
 .select("status,lock_until")
 .eq("member_id", memberId)
