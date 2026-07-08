@@ -702,14 +702,7 @@ setLoading(false);
 
 if (saveError) {
     console.log(saveError);
-
-    alert(
-        saveError.message +
-        "\nTable: " + saveError.details +
-        "\nHint: " + saveError.hint +
-        "\nCode: " + saveError.code
-    );
-
+    alert(JSON.stringify(saveError, null, 2));
     return;
 }
 
