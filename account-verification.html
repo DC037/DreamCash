@@ -473,9 +473,17 @@ if(data && data.length){
 
 const status=data[0].status;
 const rejectReason = data[0].reject_reason;
-document.getElementById("verificationStatus").innerHTML=
+if(status === "rejected"){
 
+document.getElementById("verificationStatus").innerHTML =
+"❌ Rejected<br><small style='color:red;'>Reason: " + rejectReason + "</small>";
+
+}else{
+
+document.getElementById("verificationStatus").innerHTML =
 status;
+
+}
 
 if(status==="pending"){
 
