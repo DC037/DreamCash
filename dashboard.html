@@ -1230,7 +1230,30 @@ referral_income: totalReferralIncome
 .eq("member_id", data.member_id);
 
   setText("myCode", referralCode);
+const { data: verificationData } = await supabaseClient
+  .from("account_verification")
+  .select("status")
+  .eq("member_id", data.member_id)
+  .maybeSingle();
 
+if (verificationData) {
+
+  const verificationBox = document.getElementById("verificationStatus");
+
+  if (verificationData.status === "approved") {
+    verificationBox.innerHTML = "✅ Verified";
+    verificationBox.style.color = "green";
+  }
+  else if (verificationData.status === "pending") {
+    verificationBox.innerHTML = "🟡 Pending";
+    verificationBox.style.color = "#ff9800";
+  }
+  else if (verificationData.status === "rejected") {
+    verificationBox.innerHTML = "❌ Rejected";
+    verificationBox.style.color = "red";
+  }
+
+}
     const box = document.getElementById("activationBox");
     if(box) box.style.display = data.status === "Active" ? "none" : "block";
 const badge = document.getElementById("activeMemberBadge");
