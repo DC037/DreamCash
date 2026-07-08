@@ -1,1 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Account Verification | DreamCash</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef3f9;
+color:#222;
+padding-bottom:30px;
+}
+
+.header{
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+padding:25px 20px;
+text-align:center;
+color:#fff;
+border-radius:0 0 30px 30px;
+box-shadow:0 10px 25px rgba(0,0,0,.18);
+}
+
+.header h2{
+font-size:28px;
+font-weight:800;
+}
+
+.header p{
+margin-top:8px;
+font-size:14px;
+opacity:.95;
+}
+
+.card{
+background:#fff;
+margin:18px;
+padding:18px;
+border-radius:22px;
+box-shadow:0 8px 20px rgba(0,0,0,.12);
+}
+
+.status-card{
+background:linear-gradient(135deg,#fff7ed,#ffedd5);
+border-left:6px solid #f97316;
+}
+
+.status-title{
+font-size:18px;
+font-weight:bold;
+margin-bottom:8px;
+}
+
+.status-text{
+font-size:17px;
+font-weight:bold;
+color:#ea580c;
+}
+
+.photo-box{
+text-align:center;
+margin-bottom:20px;
+}
+
+.photo-preview{
+width:130px;
+height:130px;
+border-radius:50%;
+border:5px solid #e5e7eb;
+object-fit:cover;
+background:#f3f4f6;
+}
+
+.camera-btn{
+margin-top:15px;
+width:100%;
+padding:14px;
+border:none;
+border-radius:18px;
+background:linear-gradient(135deg,#2563eb,#0ea5e9);
+color:#fff;
+font-size:16px;
+font-weight:bold;
+box-shadow:0 8px 18px rgba(0,0,0,.18);
+}
+
+.form-group{
+margin-top:18px;
+}
+
+.form-group label{
+display:block;
+font-size:15px;
+font-weight:bold;
+margin-bottom:8px;
+color:#374151;
+}
+
+.form-group input,
+.form-group select{
+width:100%;
+padding:14px;
+border-radius:14px;
+border:1px solid #d1d5db;
+font-size:15px;
+outline:none;
+transition:.25s;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+border-color:#2563eb;
+box-shadow:0 0 10px rgba(37,99,235,.20);
+}
+
+.submit-btn{
+margin-top:25px;
+width:100%;
+padding:16px;
+border:none;
+border-radius:18px;
+background:linear-gradient(135deg,#16a34a,#22c55e);
+color:#fff;
+font-size:18px;
+font-weight:bold;
+box-shadow:0 10px 22px rgba(0,0,0,.20);
+}
+
+.note{
+margin-top:18px;
+text-align:center;
+font-size:13px;
+color:#6b7280;
+line-height:20px;
+}
+
+</style>
+  
+</head>
+
+<body>
+
+<div class="header">
+
+<h2>🛡️ Account Verification</h2>
+
+<p>
+Complete your verification to secure your DreamCash account.
+</p>
+
+</div>
+
+<div class="card status-card">
+
+<div class="status-title">
+
+Verification Status
+
+</div>
+
+<div
+id="verificationStatus"
+class="status-text">
+
+❌ Not Verified
+
+</div>
+
+<p
+style="margin-top:10px;
+font-size:13px;
+color:#666;
+line-height:20px;">
+
+Submit your details for verification.
+After admin approval your account will be locked for 90 days.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<div class="photo-box">
+
+<img
+
+id="photoPreview"
+
+class="photo-preview"
+
+src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+
+<br>
+
+<button
+
+id="cameraBtn"
+
+class="camera-btn"
+
+type="button">
+
+📷 Capture Live Photo
+
+</button>
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+👤 Real Full Name
+
+</label>
+
+<input
+
+type="text"
+
+id="fullName"
+
+placeholder="Enter your real full name">
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+📱 WhatsApp Number
+
+</label>
+
+<input
+
+type="tel"
+
+id="whatsapp"
+
+placeholder="Enter WhatsApp Number">
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+💳 UPI ID
+
+</label>
+
+<input
+
+type="text"
+
+id="upiId"
+
+placeholder="Enter UPI ID">
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+🌍 State
+
+</label>
+
+<select id="state">
+
+<option value="">
+
+Select State
+
+</option>
+
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+🏙️ District
+
+</label>
+
+<input
+
+type="text"
+
+id="district"
+
+placeholder="Enter District">
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+📮 PIN Code
+
+</label>
+
+<input
+
+type="number"
+
+id="pinCode"
+
+placeholder="Enter PIN Code">
+
+</div>
+
+<button
+
+id="submitBtn"
+
+class="submit-btn">
+
+🛡️ Submit Verification
+
+</button>
+
+<div class="note">
+
+Your verification request will be reviewed manually by the DreamCash Verification Team.
+
+</div>
+
+</div>
+
+<!-- Status Card -->
+
+<!-- Verification Form -->
+
+<script>
+
+// ===== Live Camera =====
+
+const cameraBtn = document.getElementById("cameraBtn");
+const photoPreview = document.getElementById("photoPreview");
+
+const cameraInput = document.createElement("input");
+
+cameraInput.type = "file";
+cameraInput.accept = "image/*";
+cameraInput.capture = "user";
+
+cameraBtn.onclick = () => {
+
+cameraInput.click();
+
+};
+
+cameraInput.onchange = function(){
+
+const file = this.files[0];
+
+if(!file) return;
+
+const reader = new FileReader();
+
+reader.onload = function(e){
+
+photoPreview.src = e.target.result;
+
+};
+
+reader.readAsDataURL(file);
+
+};
+
+// ===== Validation =====
+
+document.getElementById("submitBtn").onclick = function(){
+
+const fullName =
+document.getElementById("fullName").value.trim();
+
+const whatsapp =
+document.getElementById("whatsapp").value.trim();
+
+const upi =
+document.getElementById("upiId").value.trim();
+
+const state =
+document.getElementById("state").value;
+
+const district =
+document.getElementById("district").value.trim();
+
+const pin =
+document.getElementById("pinCode").value.trim();
+
+if(photoPreview.src.includes("149071.png")){
+
+alert("Please capture your live photo.");
+
+return;
+
+}
+
+if(fullName.length<3){
+
+alert("Enter your real full name.");
+
+return;
+
+}
+
+if(whatsapp.length!=10){
+
+alert("Enter valid WhatsApp Number.");
+
+return;
+
+}
+
+if(state==""){
+
+alert("Select your State.");
+
+return;
+
+}
+
+if(district==""){
+
+alert("Enter District.");
+
+return;
+
+}
+
+if(pin.length!=6){
+
+alert("Enter valid PIN Code.");
+
+return;
+
+}
+
+if(upi==""){
+
+alert("Enter UPI ID.");
+
+return;
+
+}
+
+// Part 3 me Supabase Save hoga
+
+alert("Validation Successful.");
+
+};
+
+</script>
+
+</body>
+
+</html>
