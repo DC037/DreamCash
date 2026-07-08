@@ -599,7 +599,7 @@ const fileName =
 memberId + "_" + Date.now() + ".jpg";
 
 const { error: uploadError } =
-await supabase.storage
+await supabaseClient.storage
 .from("verification-photos")
 .upload(fileName, photoFile,{
     upsert:true,
@@ -616,7 +616,7 @@ if(uploadError){
 // ===== Public URL =====
 
 const { data: photoData } =
-supabase.storage
+supabaseClient.storage
 .from("verification-photos")
 .getPublicUrl(fileName);
 
