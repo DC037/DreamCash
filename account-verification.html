@@ -662,7 +662,7 @@ await supabaseClient.storage
 
 if(uploadError){
     setLoading(false);
-    alert("Photo upload failed.");
+    alert(uploadError.message);
     console.log(uploadError);
     return;
 }
