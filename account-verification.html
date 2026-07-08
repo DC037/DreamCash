@@ -348,7 +348,96 @@ Your verification request will be reviewed manually by the DreamCash Verificatio
 </div>
 
 <script>
+const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
 
+const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+
+const supabaseClient = window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+// ===== Logged In User =====
+
+const memberId = localStorage.getItem("member_id");
+
+if(!memberId){
+
+alert("Please login first.");
+
+window.location.href="login.html";
+
+throw new Error("Member not logged in");
+
+}
+
+// ===== Loading Function =====
+
+function setLoading(status){
+
+const btn=document.getElementById("submitBtn");
+
+if(status){
+
+btn.disabled=true;
+
+btn.innerHTML="⏳ Please Wait...";
+
+}else{
+
+btn.disabled=false;
+
+btn.innerHTML="🛡️ Submit Verification";
+
+}
+
+}
+
+// ===== Check Existing Verification =====
+
+async function checkExistingVerification(){
+
+const {data,error}=await supabaseClient
+
+.from("account_verification")
+
+.select("status")
+
+.eq("member_id",memberId)
+
+.limit(1);
+
+if(error){
+
+console.log(error.message);
+
+return;
+
+}
+
+if(data && data.length){
+
+const status=data[0].status;
+
+document.getElementById("verificationStatus").innerHTML=
+
+status;
+
+if(status==="Pending"){
+
+document.getElementById("submitBtn").disabled=true;
+
+document.getElementById("submitBtn").innerHTML=
+
+"🟡 Verification Pending";
+
+}
+
+}
+
+}
+
+checkExistingVerification();
 // ===== Live Camera =====
 
 const cameraBtn = document.getElementById("cameraBtn");
