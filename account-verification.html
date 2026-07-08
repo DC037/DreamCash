@@ -678,7 +678,7 @@ const photoUrl = photoData.publicUrl;
   // ===== Save Verification Request =====
 
 const { error: saveError } =
-await supabase
+await supabaseclient
 .from("account_verification")
 .upsert({
     member_id: memberId,
