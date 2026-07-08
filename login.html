@@ -135,7 +135,26 @@ async function registerUser(){
   const password = document.getElementById("password").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
   const sponsorId = document.getElementById("referralCode").value.trim();
+if(!sponsorId){
+  alert("Referral Code is required.");
+  return;
+}
 
+const { data: sponsorData, error: sponsorError } = await supabaseClient
+  .from("users")
+  .select("member_id")
+  .eq("member_id", sponsorId)
+  .limit(1);
+
+if(sponsorError){
+  alert(sponsorError.message);
+  return;
+}
+
+if(!sponsorData || sponsorData.length === 0){
+  alert("Invalid Referral Code");
+  return;
+}
   if(!fullName || !whatsapp || !email || !password || !confirmPassword){
     alert("Please fill all details");
     return;
