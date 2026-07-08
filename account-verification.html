@@ -700,9 +700,16 @@ await supabaseClient
 
 setLoading(false);
 
-if(saveError){
+if (saveError) {
     console.log(saveError);
-    alert("Verification request submit failed.");
+
+    alert(
+        saveError.message +
+        "\nTable: " + saveError.details +
+        "\nHint: " + saveError.hint +
+        "\nCode: " + saveError.code
+    );
+
     return;
 }
 
