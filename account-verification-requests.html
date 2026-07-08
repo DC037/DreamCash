@@ -1,1 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Account Verification Requests | DreamCash</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef3f9;
+color:#222;
+padding-bottom:30px;
+}
+
+.header{
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+padding:25px 20px;
+text-align:center;
+color:#fff;
+border-radius:0 0 30px 30px;
+box-shadow:0 10px 25px rgba(0,0,0,.18);
+}
+
+.header h2{
+font-size:28px;
+font-weight:800;
+}
+
+.header p{
+margin-top:8px;
+font-size:14px;
+opacity:.95;
+}
+
+.summary{
+display:flex;
+gap:12px;
+padding:18px;
+}
+
+.summary-box{
+flex:1;
+background:#fff;
+border-radius:18px;
+padding:18px;
+text-align:center;
+box-shadow:0 8px 18px rgba(0,0,0,.12);
+}
+
+.summary-box h3{
+font-size:28px;
+margin-bottom:8px;
+}
+
+.pending h3{
+color:#f59e0b;
+}
+
+.approved h3{
+color:#16a34a;
+}
+
+.rejected h3{
+color:#dc2626;
+}
+
+.summary-box p{
+font-size:14px;
+font-weight:bold;
+color:#555;
+}
+
+.loading{
+margin:20px;
+padding:18px;
+text-align:center;
+background:#fff;
+border-radius:18px;
+font-weight:bold;
+box-shadow:0 6px 15px rgba(0,0,0,.10);
+}
+
+#requestContainer{
+padding:18px;
+}
+
+.request-card{
+background:#fff;
+border-radius:22px;
+padding:18px;
+margin-bottom:18px;
+box-shadow:0 8px 20px rgba(0,0,0,.12);
+}
+
+.photo{
+width:120px;
+height:120px;
+display:block;
+margin:auto;
+border-radius:50%;
+object-fit:cover;
+border:5px solid #dbeafe;
+}
+
+.name{
+margin-top:15px;
+font-size:22px;
+font-weight:bold;
+text-align:center;
+}
+
+.info{
+margin-top:18px;
+line-height:30px;
+font-size:15px;
+}
+
+.info b{
+color:#111827;
+}
+
+.button-row{
+display:flex;
+gap:12px;
+margin-top:20px;
+}
+
+.approve-btn,
+.reject-btn{
+flex:1;
+padding:14px;
+border:none;
+border-radius:15px;
+font-size:16px;
+font-weight:bold;
+color:#fff;
+cursor:pointer;
+}
+
+.approve-btn{
+background:linear-gradient(135deg,#16a34a,#22c55e);
+}
+
+.reject-btn{
+background:linear-gradient(135deg,#dc2626,#ef4444);
+}
+
+.empty-box{
+background:#fff;
+padding:30px;
+border-radius:20px;
+text-align:center;
+font-size:18px;
+font-weight:bold;
+box-shadow:0 8px 20px rgba(0,0,0,.12);
+  }
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+<button id="backBtn" class="back-btn">
+
+← Back
+
+</button>
+<h2>🛡️ Account Verification Requests</h2>
+
+<p>
+Review and manage user verification requests.
+</p>
+
+</div>
+
+<div class="summary">
+
+<div class="summary-box pending">
+
+<h3 id="pendingCount">0</h3>
+
+<p>Pending Requests</p>
+
+</div>
+
+<div class="summary-box approved">
+
+<h3 id="approvedCount">0</h3>
+
+<p>Approved</p>
+
+</div>
+
+<div class="summary-box rejected">
+
+<h3 id="rejectedCount">0</h3>
+
+<p>Rejected</p>
+
+</div>
+
+</div>
+
+<div id="loadingBox" class="loading">
+
+Loading verification requests...
+
+</div>
+
+<div id="requestContainer">
+
+<!-- Pending Requests Yahan Show Honge -->
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+ const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+
+const supabaseClient = window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+const requestContainer =
+document.getElementById("requestContainer");
+
+const loadingBox =
+document.getElementById("loadingBox");
+
+const pendingCount =
+document.getElementById("pendingCount");
+
+const approvedCount =
+document.getElementById("approvedCount");
+
+const rejectedCount =
+document.getElementById("rejectedCount");
+
+// Page Load
+
+window.onload = function(){
+
+loadVerificationRequests();
+
+};
+
+// Pending Requests Load
+
+async function loadVerificationRequests(){
+
+loadingBox.style.display="block";
+
+requestContainer.innerHTML="";
+
+const {data,error}=await supabaseClient
+.from("account_verification")
+.select("*")
+.order("submitted_at",{ascending:false});
+
+loadingBox.style.display="none";
+
+if(error){
+
+requestContainer.innerHTML=`
+<div class="empty-box">
+
+❌ Failed to load verification requests.
+
+</div>`;
+
+console.log(error);
+
+return;
+
+}
+
+// Counters
+
+pendingCount.innerHTML=
+data.filter(x=>x.status==="pending").length;
+
+approvedCount.innerHTML=
+data.filter(x=>x.status==="approved").length;
+
+rejectedCount.innerHTML=
+data.filter(x=>x.status==="rejected").length;
+
+// Agar koi request hi nahi hai
+
+if(data.length===0){
+
+requestContainer.innerHTML=`
+<div class="empty-box">
+
+📭 No verification requests found.
+
+</div>`;
+
+return;
+
+}
+
+data.forEach(user=>{
+
+const card=document.createElement("div");
+
+card.className="request-card";
+
+card.innerHTML=`
+
+<img
+class="photo"
+src="${user.profile_photo}"
+onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+
+<div class="name">
+
+${user.full_name}
+
+</div>
+
+<div class="info">
+
+<b>🆔 Member ID :</b> ${user.member_id}<br>
+
+<b>📱 WhatsApp :</b> ${user.whatsapp}<br>
+
+<b>💳 UPI ID :</b> ${user.upi_id}<br>
+
+<b>🌍 State :</b> ${user.state}<br>
+
+<b>🏙️ District :</b> ${user.district}<br>
+
+<b>📮 PIN Code :</b> ${user.pin_code}<br>
+
+<b>📌 Status :</b>
+<span style="font-weight:bold;
+color:
+${user.status==="approved"?"green":
+user.status==="rejected"?"red":"orange"}">
+
+${user.status.toUpperCase()}
+
+</span><br>
+
+<b>📅 Submitted :</b>
+
+${new Date(user.submitted_at).toLocaleString()}
+
+</div>
+
+<div class="button-row">
+
+<button
+class="approve-btn"
+onclick="approveRequest('${user.member_id}')"
+${user.status!=="pending"?"disabled":""}>
+
+✅ Approve
+
+</button>
+
+<button
+class="reject-btn"
+onclick="rejectRequest('${user.member_id}')"
+${user.status!=="pending"?"disabled":""}>
+
+❌ Reject
+
+</button>
+
+</div>
+
+`;
+
+requestContainer.appendChild(card);
+
+});
+// ===== Approve Verification =====
+
+async function approveRequest(memberId){
+
+if(!confirm("Approve this verification request?")) return;
+
+const approveBtn = event.target;
+
+approveBtn.disabled = true;
+approveBtn.innerHTML = "⏳ Approving...";
+
+// 90 Days Lock
+
+const today = new Date();
+
+const lockDate = new Date();
+
+lockDate.setDate(today.getDate() + 90);
+
+// Update Database
+
+const { error } = await supabaseClient
+
+.from("account_verification")
+
+.update({
+
+status:"approved",
+
+approved_at:today.toISOString(),
+
+lock_until:lockDate.toISOString(),
+
+reject_reason:null
+
+})
+
+.eq("member_id",memberId);
+
+if(error){
+
+alert("❌ Approval failed.");
+
+console.log(error);
+
+approveBtn.disabled = false;
+
+approveBtn.innerHTML = "✅ Approve";
+
+return;
+
+}
+
+alert("✅ Verification Approved Successfully.");
+
+loadVerificationRequests();
+
+}
+  // ===== Reject Verification =====
+
+async function rejectRequest(memberId){
+
+const reason = prompt("Enter reject reason:");
+
+if(reason===null) return;
+
+if(reason.trim()===""){
+
+alert("Please enter reject reason.");
+
+return;
+
+}
+
+const rejectBtn = event.target;
+
+rejectBtn.disabled = true;
+
+rejectBtn.innerHTML = "⏳ Rejecting...";
+
+const { error } = await supabaseClient
+
+.from("account_verification")
+
+.update({
+
+status:"rejected",
+
+reject_reason:reason.trim(),
+
+approved_at:null,
+
+lock_until:null
+
+})
+
+.eq("member_id",memberId);
+
+if(error){
+
+alert("❌ Rejection failed.");
+
+console.log(error);
+
+rejectBtn.disabled=false;
+
+rejectBtn.innerHTML="❌ Reject";
+
+return;
+
+}
+
+alert("❌ Verification Rejected Successfully.");
+
+loadVerificationRequests();
+
+  }
+  // ===== Auto Refresh Every 30 Seconds =====
+
+setInterval(() => {
+
+loadVerificationRequests();
+
+},30000);
+
+// ===== Prevent Double Click =====
+
+document.addEventListener("click",function(e){
+
+if(
+e.target.classList.contains("approve-btn") ||
+e.target.classList.contains("reject-btn")
+){
+
+e.target.disabled=true;
+
+}
+
+});
+</script>
+
+</body>
+
+</html>
