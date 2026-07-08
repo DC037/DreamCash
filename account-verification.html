@@ -472,7 +472,7 @@ return;
 if(data && data.length){
 
 const status=data[0].status;
-
+const rejectReason = data[0].reject_reason;
 document.getElementById("verificationStatus").innerHTML=
 
 status;
