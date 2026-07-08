@@ -678,7 +678,7 @@ const photoUrl = photoData.publicUrl;
   // ===== Save Verification Request =====
 
 const { error: saveError } =
-await supabaseclient
+await supabaseClient
 .from("account_verification")
 .upsert({
     member_id: memberId,
@@ -713,8 +713,6 @@ window.location.href = "dashboard.html";
 };
 
 alert("Validation Successful.");
-
-};
 
 </script>
 
