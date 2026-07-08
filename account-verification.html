@@ -455,7 +455,7 @@ const {data,error}=await supabaseClient
 
 .from("account_verification")
 
-.select("status")
+.select("status,reject_reason")
 
 .eq("member_id",memberId)
 
