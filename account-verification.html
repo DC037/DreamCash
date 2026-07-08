@@ -551,7 +551,113 @@ return;
 
 }
 
-// Part 3 me Supabase Save hoga
+// ===== Duplicate Request Check =====
+
+setLoading(true);
+
+const { data: oldRequest, error: checkError } = await supabase
+.from("account_verification")
+.select("status,lock_until")
+.eq("member_id", memberId)
+.maybeSingle();
+
+if(checkError){
+    setLoading(false);
+    alert("Unable to verify account status.");
+    return;
+}
+
+// Pending Request
+if(oldRequest && oldRequest.status==="pending"){
+    setLoading(false);
+    alert("Your verification request is already pending.");
+    return;
+}
+
+// Approved + Lock Check
+if(
+    oldRequest &&
+    oldRequest.status==="approved" &&
+    oldRequest.lock_until &&
+    new Date(oldRequest.lock_until) > new Date()
+){
+    setLoading(false);
+    alert("Your verified account is locked for 90 days.");
+    return;
+}
+
+// ===== Upload Live Photo =====
+
+const photoFile = cameraInput.files[0];
+
+if(!photoFile){
+    setLoading(false);
+    alert("Please capture your live photo.");
+    return;
+}
+
+const fileName =
+memberId + "_" + Date.now() + ".jpg";
+
+const { error: uploadError } =
+await supabase.storage
+.from("verification-photos")
+.upload(fileName, photoFile,{
+    upsert:true,
+    contentType:"image/jpeg"
+});
+
+if(uploadError){
+    setLoading(false);
+    alert("Photo upload failed.");
+    console.log(uploadError);
+    return;
+}
+
+// ===== Public URL =====
+
+const { data: photoData } =
+supabase.storage
+.from("verification-photos")
+.getPublicUrl(fileName);
+
+const photoUrl = photoData.publicUrl;
+  // ===== Save Verification Request =====
+
+const { error: saveError } =
+await supabase
+.from("account_verification")
+.upsert({
+    member_id: memberId,
+    full_name: fullName,
+    profile_photo: photoUrl,
+    whatsapp: whatsapp,
+    upi_id: upi,
+    state: state,
+    district: district,
+    pin_code: pin,
+    status: "pending",
+    reject_reason: null,
+    submitted_at: new Date().toISOString(),
+    approved_at: null,
+    lock_until: null
+},{
+    onConflict:"member_id"
+});
+
+setLoading(false);
+
+if(saveError){
+    console.log(saveError);
+    alert("Verification request submit failed.");
+    return;
+}
+
+alert("✅ Verification request submitted successfully.\n\nYour request has been sent to the Admin for review.");
+
+window.location.href = "dashboard.html";
+
+};
 
 alert("Validation Successful.");
 
