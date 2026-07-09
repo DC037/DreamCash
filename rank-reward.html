@@ -220,28 +220,39 @@ alert("User not found");
 return;
 }
 
-const {error}=await supabaseClient
-
+const { data: existing } = await supabaseClient
 .from("rank_reward_claims")
+.select("status")
+.eq("member_id", currentUser.member_id)
+.eq("rank_name", rankName)
+.maybeSingle();
 
+if(existing){
+
+if(existing.status==="Approved"){
+alert("Already Claimed");
+return;
+}
+
+if(existing.status==="Pending"){
+alert("Your claim is already pending.");
+return;
+}
+
+}
+
+const {error}=await supabaseClient
+.from("rank_reward_claims")
 .insert([{
-
 member_id:currentUser.member_id,
-
 rank_name:rankName,
-
 reward_dc:reward,
-
 status:"Pending"
-
 }]);
 
 if(error){
-
 alert(error.message);
-
 return;
-
 }
 
 alert("Rank Reward Claim Submitted Successfully");
