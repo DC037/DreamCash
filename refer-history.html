@@ -114,6 +114,11 @@ html += `
 🆔 Member ID : ${user.member_id}<br>
 
 📱 Mobile : ${user.mobile || user.phone || "Not Available"}
+<br>
+📅 Joining : ${new Date(user.created_at).toLocaleDateString("en-IN")} ${new Date(user.created_at).toLocaleTimeString("en-IN")}
+
+<br>
+${user.status==="Active" ? "🟢 Status : Active" : "🔴 Status : Inactive"}
 
 </div>
 `;
