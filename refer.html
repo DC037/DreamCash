@@ -1,1 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Refer & Earn - DreamCash</title>
 
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f2f5f9;
+padding-bottom:90px;
+}
+
+.header{
+background:linear-gradient(135deg,#006bff,#00b7ff);
+color:#fff;
+padding:22px;
+text-align:center;
+border-radius:0 0 20px 20px;
+}
+
+.header h2{
+font-size:24px;
+}
+
+.card{
+background:#fff;
+margin:15px;
+padding:18px;
+border-radius:18px;
+box-shadow:0 6px 18px rgba(0,0,0,.12);
+}
+
+.title{
+font-size:18px;
+font-weight:bold;
+margin-bottom:12px;
+color:#0a5b95;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+border-bottom:1px solid #eee;
+font-size:15px;
+}
+
+.value{
+font-weight:bold;
+color:#111;
+}
+
+.linkBox{
+margin-top:15px;
+padding:15px;
+border:2px dashed #0aa7d8;
+background:#eefcff;
+border-radius:15px;
+font-size:14px;
+font-weight:bold;
+word-break:break-all;
+text-align:center;
+color:#006699;
+}
+
+.btn{
+width:100%;
+padding:14px;
+border:none;
+border-radius:30px;
+font-size:16px;
+font-weight:bold;
+margin-top:12px;
+color:#fff;
+cursor:pointer;
+}
+
+.copyBtn{
+background:linear-gradient(135deg,#00b894,#00d26a);
+}
+
+.shareBtn{
+background:linear-gradient(135deg,#006bff,#00a8ff);
+}
+
+.historyBtn{
+background:linear-gradient(135deg,#ff9800,#ffb300);
+}
+
+.backBtn{
+background:linear-gradient(135deg,#555,#222);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h2>🤝 Refer & Earn</h2>
+<p>Invite Friends & Earn Rewards</p>
+</div>
+
+<div class="card">
+
+<div class="title">
+👤 My Referral Details
+</div>
+
+<div class="row">
+<span>Member ID</span>
+<span class="value" id="memberId">Loading...</span>
+</div>
+
+<div class="row">
+<span>Name</span>
+<span class="value" id="userName">Loading...</span>
+</div>
+
+<div class="row">
+<span>Total Referrals</span>
+<span class="value" id="totalRefer">0</span>
+</div>
+
+<div class="row">
+<span>Referral Income</span>
+<span class="value" id="refIncome">0 DC</span>
+</div>
+
+<div class="linkBox" id="referLink">
+
+Loading Referral Link...
+
+</div>
+
+<button class="btn copyBtn"
+onclick="copyReferral()">
+
+📋 Copy Referral Link
+
+</button>
+
+<button class="btn shareBtn"
+onclick="shareReferral()">
+
+📤 Share Referral Link
+
+</button>
+
+<button class="btn historyBtn"
+onclick="viewReferHistory()">
+
+📜 Referral History
+
+</button>
+
+<button class="btn backBtn"
+onclick="window.location.href='dashboard.html'">
+
+⬅ Back To Dashboard
+
+</button>
+
+</div>
