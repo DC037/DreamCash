@@ -102,9 +102,23 @@ return;
 
 }
 
-document.getElementById("historyList").innerHTML =
-"<div class='card'>Total Referrals : "+data.length+"</div>";
+let html = "";
 
+data.forEach(user => {
+
+html += `
+<div class="card">
+
+<b>👤 ${user.name || "No Name"}</b><br><br>
+
+🆔 ${user.member_id}
+
+</div>
+`;
+
+});
+
+document.getElementById("historyList").innerHTML = html;
 }
 
 window.onload = loadReferralHistory;
