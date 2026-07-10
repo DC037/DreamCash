@@ -50,6 +50,64 @@ Loading Referral History...
 </div>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script>
+
+const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+
+const supabaseClient = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+async function loadReferralHistory(){
+
+const memberId =
+localStorage.getItem("member_id") ||
+localStorage.getItem("last_member_id");
+
+if(!memberId){
+
+alert("Please Login Again");
+
+window.location.href = "login.html";
+
+return;
+
+}
+
+document.getElementById("historyList").innerHTML =
+"<div class='card'>Loading Referral History...</div>";
+  const { data, error } = await supabaseClient
+.from("users")
+.select("*")
+.eq("sponsor_id", memberId)
+.order("created_at", { ascending: false });
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+if(!data || data.length===0){
+
+document.getElementById("historyList").innerHTML =
+"<div class='card'>No Referral Found</div>";
+
+return;
+
+}
+
+document.getElementById("historyList").innerHTML =
+"<div class='card'>Total Referrals : "+data.length+"</div>";
+
+}
+
+window.onload = loadReferralHistory;
+</script>
 </body>
 </html>
