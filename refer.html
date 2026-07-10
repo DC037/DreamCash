@@ -171,3 +171,99 @@ onclick="window.location.href='dashboard.html'">
 </button>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL="https://baqgiuxvscffmtvhceqk.supabase.co";
+const SUPABASE_KEY="sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+
+const supabaseClient=supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+async function loadReferralPage(){
+
+const memberId=
+localStorage.getItem("member_id")||
+localStorage.getItem("last_member_id");
+
+if(!memberId){
+alert("Please Login Again");
+location.href="login.html";
+return;
+}
+
+const {data,error}=await supabaseClient
+.from("users")
+.select("*")
+.eq("member_id",memberId)
+.maybeSingle();
+
+if(error||!data){
+alert("User Not Found");
+return;
+}
+
+document.getElementById("memberId").innerText=data.member_id;
+
+document.getElementById("userName").innerText=
+data.name||"User";
+
+document.getElementById("totalRefer").innerText=
+data.referral_count||0;
+
+document.getElementById("refIncome").innerText=
+(Number(data.referral_income)||0).toFixed(2)+" DC";
+
+document.getElementById("referLink").innerText=
+"https://dreamcashindia.com/login.html?register=1&ref="+
+data.member_id;
+
+}
+
+function copyReferral(){
+
+const txt=
+document.getElementById("referLink").innerText;
+
+navigator.clipboard.writeText(txt);
+
+alert("Referral Link Copied");
+
+}
+
+function shareReferral(){
+
+const txt=
+document.getElementById("referLink").innerText;
+
+if(navigator.share){
+
+navigator.share({
+
+title:"DreamCash",
+
+text:"Join DreamCash & Earn Daily Rewards",
+
+url:txt
+
+});
+
+}else{
+
+window.open(
+"https://wa.me/?text="+
+encodeURIComponent(txt)
+);
+
+}
+
+}
+
+window.onload=loadReferralPage;
+
+</script>
+</body>
+</html>
