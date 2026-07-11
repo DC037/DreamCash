@@ -117,12 +117,15 @@ SUPABASE_KEY
 );
 
 loadTutorials();
-
+console.log(window.supabase);
+console.log(supabase);
 async function loadTutorials(){
 
 const list=document.getElementById("tutorialList");
 
 const {data,error}=await supabase
+    console.log(data);
+console.log(error);
 .from("training_tutorials")
 .select("*")
 .eq("is_active",true)
@@ -130,7 +133,10 @@ const {data,error}=await supabase
 
 if(error){
 
-list.innerHTML='<div class="message">Unable to load tutorials.</div>';
+console.log(error);
+
+list.innerHTML=`<div class="message">${error.message}</div>`;
+
 return;
 
 }
