@@ -88,22 +88,85 @@ font-weight:bold;
 <div class="header">
 <h2>🎥 DreamCash Training Tutorials</h2>
 </div>
+<div id="tutorialList"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Tutorial 1 -->
+<script>
+
+const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+
+const supabaseClient = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+</script>
+<script>
+
+loadTutorials();
+
+async function loadTutorials() {
+
+const { data, error } = await supabaseClient
+.from("training_tutorials")
+.select("*")
+.eq("is_active", true)
+.order("display_order", { ascending: true });
+
+if (error) {
+console.log(error);
+return;
+}
+
+let html = "";
+
+data.forEach(item => {
+
+let videoId = "";
+
+try {
+
+const url = new URL(item.youtube_url);
+
+if (url.hostname.includes("youtu.be")) {
+
+videoId = url.pathname.substring(1);
+
+} else if (url.pathname.includes("/shorts/")) {
+
+videoId = url.pathname.split("/shorts/")[1];
+
+} else {
+
+videoId = url.searchParams.get("v");
+
+}
+
+} catch(e) {}
+
+const thumb =
+`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+
+html += `
 
 <div class="card">
 
-<img
-class="thumb"
-src="https://img.youtube.com/vi/VIDEO_ID_1/maxresdefault.jpg">
+<a href="${item.youtube_url}" target="_blank">
+
+<img class="thumb" src="${thumb}">
+
+</a>
 
 <div class="title">
-DreamCash Registration Tutorial
+
+${item.title}
+
 </div>
 
-<a
-class="watchBtn"
-href="https://youtu.be/VIDEO_ID_1"
+<a class="watchBtn"
+href="${item.youtube_url}"
 target="_blank">
 
 ▶ Watch on YouTube
@@ -112,51 +175,15 @@ target="_blank">
 
 </div>
 
-<!-- Tutorial 2 -->
+`;
 
-<div class="card">
+});
 
-<img
-class="thumb"
-src="https://img.youtube.com/vi/VIDEO_ID_2/maxresdefault.jpg">
+document.getElementById("tutorialList").innerHTML = html;
 
-<div class="title">
-DreamCash Deposit Tutorial
-</div>
+}
 
-<a
-class="watchBtn"
-href="https://youtu.be/VIDEO_ID_2"
-target="_blank">
-
-▶ Watch on YouTube
-
-</a>
-
-</div>
-
-<!-- Tutorial 3 -->
-
-<div class="card">
-
-<img
-class="thumb"
-src="https://img.youtube.com/vi/VIDEO_ID_3/maxresdefault.jpg">
-
-<div class="title">
-DreamCash Withdrawal Tutorial
-</div>
-
-<a
-class="watchBtn"
-href="https://youtu.be/VIDEO_ID_3"
-target="_blank">
-
-▶ Watch on YouTube
-
-</a>
-
-</div>
+</script>
 
 </body>
 </html>
