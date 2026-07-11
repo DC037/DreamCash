@@ -123,14 +123,14 @@ async function loadTutorials(){
 
 const list=document.getElementById("tutorialList");
 
-const {data,error}=await supabase
-    console.log(data);
-console.log(error);
+const { data, error } = await supabase
 .from("training_tutorials")
 .select("*")
-.eq("is_active",true)
-.order("display_order",{ascending:true});
+.eq("is_active", true)
+.order("display_order", { ascending: true });
 
+console.log(data);
+console.log(error);
 if(error){
 
 console.log(error);
