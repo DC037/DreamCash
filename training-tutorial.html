@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Training Tutorials</title>
 
-<title>Training Tutorial - DreamCash</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
@@ -15,159 +16,172 @@ font-family:Arial,sans-serif;
 }
 
 body{
-background:#f3f7fb;
-padding:15px;
-color:#222;
+background:#f4f6f9;
 }
 
 .header{
-background:linear-gradient(135deg,#ff9800,#ffb300);
-color:white;
-padding:18px;
-border-radius:18px;
-text-align:center;
-margin-bottom:18px;
-box-shadow:0 5px 15px rgba(0,0,0,.15);
+background:#0d6efd;
+color:#fff;
+padding:15px;
+display:flex;
+align-items:center;
+gap:12px;
+box-shadow:0 2px 8px rgba(0,0,0,.2);
 }
 
 .backBtn{
-display:inline-block;
-margin-bottom:12px;
-background:#1976d2;
-color:white;
-padding:10px 18px;
-border-radius:12px;
-text-decoration:none;
+background:#fff;
+color:#0d6efd;
+border:none;
+padding:8px 15px;
+border-radius:8px;
 font-weight:bold;
+cursor:pointer;
+}
+
+.header h2{
+font-size:20px;
+}
+
+.container{
+padding:15px;
 }
 
 .card{
-background:white;
-border-radius:18px;
-padding:14px;
-margin-bottom:18px;
-box-shadow:0 5px 15px rgba(0,0,0,.08);
+background:#fff;
+border-radius:12px;
+padding:18px;
+margin-bottom:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.08);
 }
 
-.thumb{
-width:100%;
-height:190px;
-object-fit:cover;
-border-radius:14px;
-display:block;
-}
-
-.title{
+.card h3{
 font-size:18px;
-font-weight:bold;
-text-align:center;
-margin:12px 0;
+margin-bottom:15px;
+color:#222;
 }
+    .thumb{
+width:100%;
+height:200px;
+object-fit:cover;
+border-radius:10px;
+margin-bottom:15px;
+display:block;
+    }
 
 .watchBtn{
-display:block;
 width:100%;
-text-align:center;
-background:linear-gradient(135deg,#ff0000,#ff4d4d);
-color:white;
-padding:14px;
-border-radius:14px;
-text-decoration:none;
-font-size:17px;
+padding:12px;
+border:none;
+background:#ff0000;
+color:#fff;
+font-size:16px;
 font-weight:bold;
+border-radius:8px;
+cursor:pointer;
+}
+
+.watchBtn:hover{
+opacity:.9;
+}
+
+.message{
+text-align:center;
+padding:40px;
+font-size:18px;
+color:#666;
 }
 </style>
-</head>
 
+</head>
 <body>
 
-<a href="dashboard.html" class="backBtn">
-⬅ Back
-</a>
-
 <div class="header">
-<h2>🎥 DreamCash Training Tutorials</h2>
+<button class="backBtn" onclick="history.back()">← Back</button>
+<h2>Training Tutorials</h2>
 </div>
-<div id="tutorialList"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<div class="container" id="tutorialList">
+<div class="message">Loading...</div>
+</div>
 
 <script>
 
-const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+const SUPABASE_URL="https://baqgiuxvscffmtvhceqk.supabase.co";
 
-const SUPABASE_KEY = "sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+const SUPABASE_KEY="sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
 
-const supabaseClient = supabase.createClient(
+const supabase=window.supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
 
-</script>
-<script>
-
 loadTutorials();
 
-async function loadTutorials() {
+async function loadTutorials(){
 
-const { data, error } = await supabaseClient
+const list=document.getElementById("tutorialList");
+
+const {data,error}=await supabase
 .from("training_tutorials")
 .select("*")
-.eq("is_active", true)
-.order("display_order", { ascending: true });
+.eq("is_active",true)
+.order("display_order",{ascending:true});
 
-if (error) {
-console.log(error);
+if(error){
+
+list.innerHTML='<div class="message">Unable to load tutorials.</div>';
 return;
+
 }
 
-let html = "";
+if(!data || data.length===0){
 
-data.forEach(item => {
+list.innerHTML='<div class="message">No Training Videos Available.</div>';
+return;
 
-let videoId = "";
-
-const match = item.youtube_url.match(
-/(?:youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/shorts\/)([^?&/]+)/
-);
-
-if (match) {
-    videoId = match[1];
 }
 
-const thumb = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+list.innerHTML="";
 
-html += `
+data.forEach(video=>{
+
+let videoId="";
+
+try{
+
+const url=new URL(video.youtube_url);
+
+if(url.hostname.includes("youtu.be")){
+videoId=url.pathname.substring(1);
+}else{
+videoId=url.searchParams.get("v");
+}
+
+}catch(e){}
+
+const thumbnail=videoId
+?`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+:"";
+
+list.innerHTML+=`
 
 <div class="card">
 
-<a href="${item.youtube_url}" target="_blank">
+<img class="thumb" src="${thumbnail}" alt="Thumbnail">
 
-<img class="thumb" src="${thumb}">
+<h3>${video.title}</h3>
 
-</a>
-
-<div class="title">
-
-${item.title}
-
-</div>
-
-<a class="watchBtn"
-href="${item.youtube_url}"
-target="_blank">
-
-▶ Watch on YouTube
-
-</a>
+<button class="watchBtn"
+onclick="window.open('${video.youtube_url}','_blank')">
+▶ Watch Video
+</button>
 
 </div>
 
 `;
 
 });
-
-document.getElementById("tutorialList").innerHTML = html;
-
 }
 
 </script>
