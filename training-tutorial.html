@@ -111,12 +111,10 @@ const SUPABASE_URL="https://baqgiuxvscffmtvhceqk.supabase.co";
 
 const SUPABASE_KEY="sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
 
-const supabase=window.supabase.createClient(
+const supabaseClient = supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
-alert(typeof window.supabase);
-alert(typeof window.supabase?.createClient);
 
 loadTutorials();
 console.log(window.supabase);
@@ -125,7 +123,7 @@ async function loadTutorials(){
 
 const list=document.getElementById("tutorialList");
 
-const { data, error } = await supabase
+const { data, error } = await supabaseClient
 .from("training_tutorials")
 .select("*")
 .eq("is_active", true)
