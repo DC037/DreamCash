@@ -1090,34 +1090,7 @@ async function addBalance(amount){
 
  if(el("balance")) el("balance").innerText = newBalance.toFixed(2);
 }
-async function countTotalTeam(rootId){
-  let currentIds = [rootId];
-  let total = 0;
-let activeTotal = 0;
-  let directActive = 0;
-  for(let level = 1; level <= 5; level++){
-    const { data, error } = await supabaseClient
-      .from("users")
-      .select("member_id,status")
-      .in("sponsor_id", currentIds);
 
-    if(error || !data || data.length === 0) break;
-
-    total += data.length;
-    const activeCount = data.filter(u => u.status === "Active").length;
-    if(level === 1){
-  directActive = activeCount;
-    }
-    activeTotal += activeCount;
-    currentIds = data.map(u => u.member_id);
-  }
-
-  return {
-  total,
-  activeTotal,
-  directActive
-};
-}
 async function loadDashboard(){
   function setText(id, value){
     const x = document.getElementById(id);
