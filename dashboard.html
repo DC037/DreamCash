@@ -1204,12 +1204,11 @@ if(adminBox){
   setText("walletMemberStatus", data.status === "Active" ? "✅ Active Member" : "🔴 Inactive Member");
   setText("accountStatus", data.status === "Active" ? "🟢 Account Status: Active" : "🔴 Account Status: Inactive");
   setText("balance", Number(data.wallet || 0).toFixed(2));
-  const teamData = await countTotalTeam(data.member_id);
+  const teamData = {
+  total: 0
+};
 
 const totalReferralIncome = Number(data.wallet || 0);
-setText("totalRefer", teamData.total);
-
-setText("refCount", teamData.total);
 
 setText(
 "refIncome",
@@ -1219,7 +1218,6 @@ totalReferralIncome.toFixed(2) + "DC"
 await supabaseClient
 .from("users")
 .update({
-referral_count: teamData.total,
 referral_income: totalReferralIncome
 })
 .eq("member_id", data.member_id);
