@@ -112,6 +112,12 @@ display:none;
 margin-top:15px;
 }
 
+  .activeLevel{
+background:linear-gradient(135deg,#28a745,#0f9d58)!important;
+color:#fff!important;
+box-shadow:0 4px 10px rgba(0,0,0,.25);
+  }
+
 .memberBox{
 padding:10px;
 border-bottom:1px solid #ddd;
@@ -389,7 +395,17 @@ box.style.display="block";
 box.innerHTML="Loading...";
 
 const rootId=getMemberId();
+document.querySelectorAll(".viewBtn").forEach(btn=>{
+  btn.classList.remove("activeLevel");
+});
 
+const activeBtn=document.querySelector(
+  `.viewBtn[onclick="showLevelTeam(${level})"]`
+);
+
+if(activeBtn){
+  activeBtn.classList.add("activeLevel");
+}
 let currentIds=[rootId];
 
 let levelUsers=[];
@@ -491,7 +507,7 @@ document.addEventListener(
 function(){
 
 loadTeamSummary();
-
+showLevelTeam(1);
 }
 );
 
