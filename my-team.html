@@ -1,1 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>My Team - DreamCash</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f1f5f9;
+padding-bottom:30px;
+}
+
+.header{
+background:linear-gradient(135deg,#00796b,#03a9f4);
+color:#fff;
+padding:18px;
+border-radius:0 0 18px 18px;
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.backBtn{
+background:#fff;
+color:#00796b;
+border:none;
+padding:10px 14px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.headerText h2{
+font-size:22px;
+}
+
+.headerText p{
+font-size:13px;
+margin-top:4px;
+}
+
+.card{
+background:#fff;
+margin:12px;
+padding:16px;
+border-radius:16px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.summaryCard{
+background:linear-gradient(135deg,#006bff,#00a8ff);
+color:#fff;
+}
+
+.summaryCard h2{
+font-size:34px;
+margin-top:10px;
+}
+
+.summaryCard p{
+font-size:14px;
+}
+
+.levelCard{
+background:#fff;
+margin:12px;
+padding:15px;
+border-radius:16px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.levelHead{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.levelTitle{
+font-size:18px;
+font-weight:bold;
+}
+
+.levelCount{
+font-size:15px;
+font-weight:bold;
+color:#00796b;
+}
+
+.viewBtn{
+margin-top:12px;
+border:none;
+padding:10px 20px;
+border-radius:20px;
+background:linear-gradient(135deg,#ff9800,#ffc107);
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+}
+
+.teamList{
+display:none;
+margin-top:15px;
+}
+
+.memberBox{
+padding:10px;
+border-bottom:1px solid #ddd;
+font-size:14px;
+}
+
+.active{
+color:green;
+font-weight:bold;
+}
+
+.inactive{
+color:red;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<button class="backBtn"
+onclick="history.back()">
+← Back
+</button>
+
+<div class="headerText">
+<h2>👥 My Team</h2>
+<p>Level Wise Team Members</p>
+</div>
+
+</div>
+
+<div class="card summaryCard">
+
+<p>Total Team Members</p>
+
+<h2 id="totalTeam">
+0
+</h2>
+
+</div>
+
+<div class="levelCard">
+
+<div class="levelHead">
+
+<div class="levelTitle">
+🟢 Level 1
+</div>
+
+<div class="levelCount"
+id="count1">
+0 Members
+</div>
+
+</div>
+
+<button
+class="viewBtn"
+onclick="showLevelTeam(1)">
+View Level 1
+</button>
+
+<div
+id="team1"
+class="teamList">
+</div>
+
+</div>
+
+<div class="levelCard">
+
+<div class="levelHead">
+
+<div class="levelTitle">
+🟠 Level 2
+</div>
+
+<div class="levelCount"
+id="count2">
+0 Members
+</div>
+
+</div>
+
+<button
+class="viewBtn"
+onclick="showLevelTeam(2)">
+View Level 2
+</button>
+
+<div
+id="team2"
+class="teamList">
+</div>
+
+</div>
+
+<div class="levelCard">
+
+<div class="levelHead">
+
+<div class="levelTitle">
+🔵 Level 3
+</div>
+
+<div class="levelCount"
+id="count3">
+0 Members
+</div>
+
+</div>
+
+<button
+class="viewBtn"
+onclick="showLevelTeam(3)">
+View Level 3
+</button>
+
+<div
+id="team3"
+class="teamList">
+</div>
+
+</div>
+
+<div class="levelCard">
+
+<div class="levelHead">
+
+<div class="levelTitle">
+⚫ Level 4
+</div>
+
+<div class="levelCount"
+id="count4">
+0 Members
+</div>
+
+</div>
+
+<button
+class="viewBtn"
+onclick="showLevelTeam(4)">
+View Level 4
+</button>
+
+<div
+id="team4"
+class="teamList">
+</div>
+
+</div>
+
+<div class="levelCard">
+
+<div class="levelHead">
+
+<div class="levelTitle">
+🟡 Level 5
+</div>
+
+<div class="levelCount"
+id="count5">
+0 Members
+</div>
+
+</div>
+
+<button
+class="viewBtn"
+onclick="showLevelTeam(5)">
+View Level 5
+</button>
+
+<div
+id="team5"
+class="teamList">
+</div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL="https://baqgiuxvscffmtvhceqk.supabase.co";
+const SUPABASE_KEY="sb_publishable_M-R7U0rWY2JPMefvZpAQRw_mj1phJ_l";
+
+const supabaseClient=supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+function getMemberId(){
+
+return localStorage.getItem("member_id") ||
+localStorage.getItem("last_member_id") ||
+"";
+
+}
+
+async function loadTeamSummary(){
+
+const memberId=getMemberId();
+
+if(!memberId){
+
+alert("Member ID Not Found");
+
+return;
+
+}
+
+let currentIds=[memberId];
+
+let totalTeam=0;
+
+for(let level=1;level<=5;level++){
+
+const {data,error}=await supabaseClient
+.from("users")
+.select("member_id")
+.in("sponsor_id",currentIds);
+
+if(error){
+
+console.log(error);
+
+break;
+
+}
+
+if(!data || data.length===0){
+
+document.getElementById(
+"count"+level
+).innerHTML="0 Members";
+
+break;
+
+}
+
+document.getElementById(
+"count"+level
+).innerHTML=data.length+" Members";
+
+totalTeam+=data.length;
+
+currentIds=data.map(x=>x.member_id);
+
+}
+
+document.getElementById(
+"totalTeam"
+).innerHTML=totalTeam;
+
+}
+
+async function showLevelTeam(level){
+
+document
+.querySelectorAll(".teamList")
+.forEach(x=>x.style.display="none");
+
+const box=document.getElementById(
+"team"+level
+);
+
+box.style.display="block";
+
+box.innerHTML="Loading...";
+
+const rootId=getMemberId();
+
+let currentIds=[rootId];
+
+let levelUsers=[];
+
+for(let i=1;i<=level;i++){
+
+const {data,error}=await supabaseClient
+.from("users")
+.select("member_id,name,mobile,status,sponsor_id")
+.in("sponsor_id",currentIds);
+
+if(error){
+
+box.innerHTML=error.message;
+
+return;
+
+}
+
+if(i===level){
+
+levelUsers=data || [];
+
+}
+
+currentIds=(data || []).map(
+x=>x.member_id
+);
+
+if(currentIds.length===0){
+
+break;
+
+}
+
+}
+
+if(levelUsers.length===0){
+
+box.innerHTML=
+"No Team Found";
+
+return;
+
+}
+
+let html="";
+
+levelUsers.forEach(user=>{
+
+const active=
+(user.status || "")
+.toLowerCase()==="active";
+
+html+=`
+
+<div class="memberBox">
+
+<b>${user.member_id}</b>
+
+<br>
+
+${user.name || "User"}
+
+<br>
+
+${level===1 ?
+"Mobile : "+(user.mobile || "N/A")+"<br>"
+:""}
+
+Status :
+
+<span class="${
+active ?
+'active'
+:
+'inactive'
+}">
+
+${active ?
+"Active"
+:
+"Inactive"}
+
+</span>
+
+</div>
+
+`;
+
+});
+
+box.innerHTML=html;
+
+}
+
+document.addEventListener(
+"DOMContentLoaded",
+function(){
+
+loadTeamSummary();
+
+}
+);
+
+</script>
+</body>
+</html>
