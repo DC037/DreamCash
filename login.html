@@ -278,9 +278,25 @@ async function loginUser(){
   }
 
   localStorage.setItem("member_id", data[0].member_id);
-  localStorage.setItem("last_member_id", data[0].member_id);
-  localStorage.setItem("currentUser", JSON.stringify(data[0]));
-  window.location.href = "dashboard.html?member_id=" + data[0].member_id;
+localStorage.setItem("last_member_id", data[0].member_id);
+localStorage.setItem("currentUser", JSON.stringify(data[0]));
+
+const { data: userData, error: videoError } = await supabaseClient
+.from("users")
+.select("welcome_video_seen")
+.eq("member_id", data[0].member_id)
+.single();
+
+if(videoError){
+    alert(videoError.message);
+    return;
+}
+
+if(userData.welcome_video_seen){
+    window.location.href = "dashboard.html?member_id=" + data[0].member_id;
+}else{
+    window.location.href = "welcome-video.html?member_id=" + data[0].member_id;
+}
 }
 
 async function forgotPassword(){
