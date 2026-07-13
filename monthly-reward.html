@@ -228,6 +228,31 @@ const rewards = {
   1:125, 2:75, 3:50, 4:25, 5:15,
   6:10, 7:10, 8:10, 9:10, 10:10
 };
+  async function getTotalTeam(memberId){
+
+let currentIds=[memberId];
+let totalTeam=0;
+
+for(let level=1;level<=5;level++){
+
+const {data,error}=await supabaseClient
+.from("users")
+.select("member_id")
+.in("sponsor_id",currentIds);
+
+if(error || !data || data.length===0){
+break;
+}
+
+totalTeam+=data.length;
+
+currentIds=data.map(x=>x.member_id);
+
+}
+
+return totalTeam;
+
+  }
 
 let activeRewardMonth = "";
 let activeUserMonthlyEarning = 0;
@@ -336,17 +361,26 @@ async function loadLeaderboard(){
     userMap[u.member_id] = u;
   });
 
-  const leaderboard = ids.map(id => {
-    const u = userMap[id] || {};
-    return {
-     name: u.name || "User",
-      member_id: id,
-      referral_count: u.referral_count || 0,
-      monthly_earning: earningMap[id] || 0
-    };
-  })
-  .sort((a,b) => b.monthly_earning - a.monthly_earning)
-  .slice(0,10);
+  const leaderboard = [];
+
+for (const id of ids) {
+
+  const u = userMap[id] || {};
+
+  const liveTeam = await getTotalTeam(id);
+
+  leaderboard.push({
+    name: u.name || "User",
+    member_id: id,
+    team_count: liveTeam,
+    monthly_earning: earningMap[id] || 0
+  });
+
+}
+
+leaderboard.sort((a,b)=>b.monthly_earning-a.monthly_earning);
+
+leaderboard.splice(10);
 
   let html = "";
 
@@ -372,7 +406,7 @@ async function loadLeaderboard(){
           <div class="info">
             <div class="name">${u.name}</div>
             <div class="small">ID: ${u.member_id}</div>
-            <div class="small">Team: ${u.referral_count || 0}</div>
+            <div class="small">Team: ${u.team_count || 0}</div>
           </div>
         </div>
 
