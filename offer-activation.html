@@ -445,7 +445,7 @@ for (let level = 1; level <= 4; level++) {
     const commission = Number(
         (rewardAmount * LEVEL_PERCENTAGES[level] / 100).toFixed(2)
     );
-
+await creditUser(sponsorId, commission, true);
     const { data, error } = await supabaseClient
 .from("offer_history")
 .insert({
