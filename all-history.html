@@ -270,7 +270,14 @@ localStorage.getItem("last_member_id");
 
 const { data, error } = await supabaseClient
 .from("offer_history")
-.select("*")
+.select(`
+  *,
+  offers:offer_id(
+    title,
+    name,
+    reward
+  )
+`)
 .eq("user_id", userId)
 .order("created_at", { ascending: false });
 
