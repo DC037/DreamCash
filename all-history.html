@@ -207,7 +207,34 @@ return;
 console.log(data);
   alert("Records : " + (data ? data.length : 0));
 
-list.innerHTML = JSON.stringify(data);
+let html = "";
+
+data.forEach(item => {
+
+html += `
+<div style="
+background:#fff;
+margin:12px 0;
+padding:15px;
+border-radius:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+border-left:5px solid #2196f3;
+">
+
+<div><b>👤 From User:</b> ${item.from_user_id}</div>
+
+<div><b>🏅 Level:</b> ${item.level}</div>
+
+<div><b>💰 Income:</b> ${item.amount} DC</div>
+
+<div><b>📅 Date:</b> ${new Date(item.created_at).toLocaleString()}</div>
+
+</div>
+`;
+
+});
+
+list.innerHTML = html;
 
 }
 
