@@ -401,6 +401,44 @@ list.innerHTML="No Spin History Found";
 }
 
     }
+    async function loadScratchHistory(){
+
+document.getElementById("scratchHistorySection").style.display="block";
+
+document.getElementById("scratchHistorySection").scrollIntoView({
+behavior:"smooth"
+});
+
+const list=document.getElementById("scratchHistoryList");
+
+const history=JSON.parse(localStorage.getItem("scratchHistory")||"[]");
+
+let html="";
+
+history.forEach(item=>{
+
+html+=`
+<div style="
+background:#fff;
+margin:12px 0;
+padding:15px;
+border-radius:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+border-left:5px solid #12b76a;
+">
+
+<div><b>🎁 Reward:</b> ${item.reward} DC</div>
+
+<div><b>📅 Date:</b> ${item.date}</div>
+
+</div>
+`;
+
+});
+
+list.innerHTML = html || "No Scratch History Found";
+
+    }
   </script>
 </body>
 </html>
