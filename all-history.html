@@ -238,6 +238,23 @@ margin-bottom:15px;">
 <div id="checkInHistoryList"></div>
 
   </div>
+  <div id="rankHistorySection" style="display:none;margin-top:25px;">
+
+<div style="
+background:linear-gradient(135deg,#ffc107,#ff9800);
+color:white;
+padding:15px;
+border-radius:15px;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+margin-bottom:15px;">
+🏆 Rank Reward History
+</div>
+
+<div id="rankHistoryList"></div>
+
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -513,6 +530,61 @@ border-left:5px solid #ff4fa3;
 });
 
 list.innerHTML = html || "No Check-In History Found";
+
+    }
+    async function loadRankRewardHistory(){
+
+document.getElementById("rankHistorySection").style.display="block";
+
+document.getElementById("rankHistorySection").scrollIntoView({
+behavior:"smooth"
+});
+
+const list=document.getElementById("rankHistoryList");
+
+list.innerHTML="Loading...";
+
+const userId=
+localStorage.getItem("member_id")||
+localStorage.getItem("last_member_id");
+
+const {data,error}=await supabaseClient
+.from("rank_reward_claims")
+.select("*")
+.eq("member_id",userId)
+.order("id",{ascending:false});
+
+if(error){
+list.innerHTML="Rank Reward History Load Failed";
+return;
+}
+
+let html="";
+
+data.forEach(item=>{
+
+html+=`
+<div style="
+background:#fff;
+margin:12px 0;
+padding:15px;
+border-radius:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+border-left:5px solid #ffc107;
+">
+
+<div><b>🏆 Rank:</b> ${item.rank_name}</div>
+
+<div><b>💰 Reward:</b> ${item.reward_dc} DC</div>
+
+<div><b>📋 Status:</b> ${item.status}</div>
+
+</div>
+`;
+
+});
+
+list.innerHTML = html || "No Rank Reward History Found";
 
     }
   </script>
