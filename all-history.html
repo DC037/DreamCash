@@ -143,6 +143,35 @@ Withdrawal<br>History
 </a>
 
 </div>
+<div id="referHistorySection" style="display:none;margin-top:25px;">
 
+<div style="
+background:linear-gradient(135deg,#2196f3,#1565c0);
+color:white;
+padding:15px;
+border-radius:15px;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+margin-bottom:15px;">
+🤝 Referral History
+</div>
+
+<div id="referHistoryList"></div>
+
+</div>
+  <script>
+
+function loadReferralHistory(){
+
+document.getElementById("referHistorySection").style.display="block";
+
+document.getElementById("referHistorySection").scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
+  </script>
 </body>
 </html>
