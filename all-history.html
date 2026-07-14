@@ -334,6 +334,71 @@ list.innerHTML = html;
     list.innerHTML = "No Offer History Found";
   }
 }
+    async function loadSpinHistory(){
+
+document.getElementById("spinHistorySection").style.display="block";
+
+document.getElementById("spinHistorySection").scrollIntoView({
+behavior:"smooth"
+});
+
+const list = document.getElementById("spinHistoryList");
+
+list.innerHTML = "Loading...";
+
+const userId =
+localStorage.getItem("member_id") ||
+localStorage.getItem("last_member_id");
+
+const { data, error } = await supabaseClient
+.from("daily_claims")
+.select("*")
+.eq("user_id", userId)
+.eq("task_type","spin")
+.order("claim_date",{ascending:false});
+
+if(error){
+
+list.innerHTML = "Spin History Load Failed";
+
+return;
+
+}
+
+let html = "";
+
+data.forEach(item => {
+
+html += `
+<div style="
+background:#fff;
+margin:12px 0;
+padding:15px;
+border-radius:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+border-left:5px solid #9c27b0;
+">
+
+<div><b>🎡 Task:</b> Spin</div>
+
+<div><b>🔄 Spin Count:</b> ${item.claim_count}</div>
+
+<div><b>💰 Points:</b> ${(item.points/100).toFixed(2)} DC</div>
+
+<div><b>📅 Date:</b> ${item.claim_date}</div>
+
+</div>
+`;
+
+});
+
+list.innerHTML = html;
+
+if(html===""){
+list.innerHTML="No Spin History Found";
+}
+
+    }
   </script>
 </body>
 </html>
