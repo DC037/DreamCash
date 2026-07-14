@@ -346,41 +346,66 @@ alert("Ye offer pehle se Approved hai. Wallet me dobara point add nahi honge.");
 return;
 }
 
-const {data:userData,error:userError}=await supabaseClient
+const LEVEL_PERCENTAGES = [100,10,5,3,2];
+
+async function creditUser(memberId, amount, isReferral=false){
+
+if(!memberId || amount<=0) return;
+
+const {data:user}=await supabaseClient
 .from("users")
-.select("wallet,lifetime_earning")
-.eq("member_id",userId)
+.select("wallet,lifetime_earning,referral_income")
+.eq("member_id",memberId)
 .maybeSingle();
 
-if(userError){
-alert("User wallet error: "+userError.message);
-return;
+if(!user) return;
+
+const updateData={
+wallet:Number(user.wallet||0)+amount,
+lifetime_earning:Number(user.lifetime_earning||0)+amount
+};
+
+if(isReferral){
+updateData.referral_income=
+Number(user.referral_income||0)+amount;
 }
 
-if(!userData){
-alert("User not found in users table. Member ID match nahi ho rahi: "+userId);
-return;
-}
-
-const oldWallet=Number(userData.wallet||0);
-
-const addReward=Number(reward||0);
-
-const oldLifetime=Number(userData.lifetime_earning||0);
-
-const {error:walletError}=await supabaseClient
+await supabaseClient
 .from("users")
-.update({
-wallet:oldWallet+addReward,
-lifetime_earning:oldLifetime+addReward
-})
-.eq("member_id",userId);
+.update(updateData)
+.eq("member_id",memberId);
 
-if(walletError){
-alert("Wallet update error: "+walletError.message);
-return;
 }
+const rewardAmount = Number(reward || 0);
 
+// User ko 100%
+await creditUser(userId, rewardAmount, false);
+  // Level 1 → Level 4 Distribution
+
+let currentMemberId = userId;
+
+for (let level = 1; level <= 4; level++) {
+
+    const { data: currentUser } = await supabaseClient
+        .from("users")
+        .select("sponsor_id")
+        .eq("member_id", currentMemberId)
+        .maybeSingle();
+
+    if (!currentUser || !currentUser.sponsor_id) {
+        break;
+    }
+
+    const sponsorId = currentUser.sponsor_id;
+
+    const commission =
+        Number((rewardAmount * LEVEL_PERCENTAGES[level] / 100).toFixed(2));
+
+    await creditUser(sponsorId, commission, true);
+
+    currentMemberId = sponsorId;
+
+}
 const res=await fetch(
 
 SUPABASE_URL+
