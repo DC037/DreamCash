@@ -331,7 +331,7 @@ async function approveOffer(submissionId,userId,reward){
 if(!confirm("Approve this offer request?")) return;
 
 const {data:oldReq,error:oldReqError}=await supabaseClient
-.from("offer_submissions")
+.from("offer_history")
 .select("status")
 .eq("id",submissionId)
 .maybeSingle();
@@ -407,7 +407,7 @@ alert("Approve Error: "+result);
 return;
 }
 const { data: submission } = await supabaseClient
-.from("offer_submissions")
+.from("offer_history")
 .select("offer_id")
 .eq("id", submissionId)
 .single();
@@ -447,7 +447,7 @@ for (let level = 1; level <= 4; level++) {
     );
 
     const { data, error } = await supabaseClient
-.from("offer_submissions")
+.from("offer_history")
 .insert({
     user_id: sponsorId,
     from_user_id: userId,
