@@ -407,7 +407,7 @@ alert("Approve Error: "+result);
 return;
 }
 const { data: submission } = await supabaseClient
-.from("offer_history")
+.from("offer_submissions")
 .select("offer_id")
 .eq("id", submissionId)
 .single();
