@@ -606,6 +606,63 @@ border-left:5px solid #ffc107;
 list.innerHTML = html || "No Rank Reward History Found";
 
     }
+    async function loadMonthlyRewardHistory(){
+
+document.getElementById("monthlyRewardHistorySection").style.display="block";
+
+document.getElementById("monthlyRewardHistorySection").scrollIntoView({
+behavior:"smooth"
+});
+
+const list=document.getElementById("monthlyRewardHistoryList");
+
+list.innerHTML="Loading...";
+
+const userId=
+localStorage.getItem("member_id")||
+localStorage.getItem("last_member_id");
+
+const {data,error}=await supabaseClient
+.from("monthly_reward_claims")
+.select("*")
+.eq("user_id",userId)
+.order("id",{ascending:false});
+
+if(error){
+list.innerHTML="Monthly Reward History Load Failed";
+return;
+}
+
+let html="";
+
+data.forEach(item=>{
+
+html+=`
+<div style="
+background:#fff;
+margin:12px 0;
+padding:15px;
+border-radius:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+border-left:5px solid #00bcd4;
+">
+
+<div><b>📅 Month:</b> ${item.month}</div>
+
+<div><b>🏆 Rank:</b> #${item.rank}</div>
+
+<div><b>💰 Reward:</b> ${item.reward_amount} DC</div>
+
+<div><b>📋 Status:</b> ${item.status}</div>
+
+</div>
+`;
+
+});
+
+list.innerHTML = html || "No Monthly Reward History Found";
+
+    }
   </script>
 </body>
 </html>
