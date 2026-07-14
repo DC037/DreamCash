@@ -464,9 +464,9 @@ if (error) {
     alert(JSON.stringify(error));
 }
 
-if (insertError) {
-  console.error(insertError);
-  alert(JSON.stringify(insertError));
+if (Error) {
+  console.error(Error);
+  alert(JSON.stringify(Error));
   return;
 }
 
