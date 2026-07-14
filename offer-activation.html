@@ -451,8 +451,11 @@ for (let level = 1; level <= 4; level++) {
 .from("offer_submissions")
 .insert({
     user_id: sponsorId,
+    from_user_id: userId,
     offer_id: submission.offer_id,
     reward: commission,
+    level: level,
+    income_type: "level_income",
     status: "Approved"
 });
 
