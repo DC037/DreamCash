@@ -452,7 +452,7 @@ await creditUser(sponsorId, commission, true);
     user_id: sponsorId,
     from_user_id: userId,
     offer_id: submission.offer_id,
-    reward: Math.round(commission),
+    reward: commission,
     level: level,
     income_type: "level_income",
     status: "Approved"
