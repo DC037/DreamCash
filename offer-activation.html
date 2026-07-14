@@ -446,18 +446,21 @@ for (let level = 1; level <= 4; level++) {
         (rewardAmount * LEVEL_PERCENTAGES[level] / 100).toFixed(2)
     );
 
-    await creditUser(sponsorId, commission, true);
-    await supabaseClient
+    const { error: insertError } = await supabaseClient
 .from("offer_submissions")
 .insert({
-    user_id: sponsorId,
-    from_user_id: userId,
-    offer_id: submission.offer_id,
-    reward: commission,
-    level: level,
-    income_type: "level_income",
-    status: "Approved"
+  user_id: sponsorId,
+  from_user_id: userId,
+  offer_id: submission.offer_id,
+  reward: commission,
+  level: level,
+  income_type: "level_income",
+  status: "Approved"
 });
+
+if (insertError) {
+  alert(insertError.message);
+}
 
     currentMemberId = sponsorId;
       }
