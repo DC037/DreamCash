@@ -406,6 +406,11 @@ if(!res.ok){
 alert("Approve Error: "+result);
 return;
 }
+const { data: submission } = await supabaseClient
+.from("offer_submissions")
+.select("offer_id")
+.eq("id", submissionId)
+.single();
 const rewardAmount = Number(reward || 0);
 
 // User ko 100%
@@ -442,6 +447,14 @@ for (let level = 1; level <= 4; level++) {
     );
 
     await creditUser(sponsorId, commission, true);
+    await supabaseClient
+.from("offer_submissions")
+.insert({
+    user_id: sponsorId,
+    offer_id: submission.offer_id,
+    reward: commission,
+    status: "Approved"
+});
 
     currentMemberId = sponsorId;
       }
