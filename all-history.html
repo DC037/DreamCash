@@ -308,6 +308,7 @@ const supabaseClient = supabase.createClient(
   <script>
 
 async function loadReferralHistory(){
+  hideAllHistorySections();
 
 document.getElementById("referHistorySection").style.display="block";
 
@@ -368,6 +369,7 @@ list.innerHTML = html;
 
 }
 async function loadOfferHistory(){
+  hideAllHistorySections();
 
 document.getElementById("offerHistorySection").style.display="block";
 
@@ -430,6 +432,7 @@ list.innerHTML = html;
   }
 }
     async function loadSpinHistory(){
+      hideAllHistorySections();
 
 document.getElementById("spinHistorySection").style.display="block";
 
@@ -495,6 +498,7 @@ list.innerHTML="No Spin History Found";
 
     }
     async function loadScratchHistory(){
+      hideAllHistorySections();
 
 document.getElementById("scratchHistorySection").style.display="block";
 
@@ -533,6 +537,7 @@ list.innerHTML = html || "No Scratch History Found";
 
     }
     async function loadCheckInHistory(){
+      hideAllHistorySections();
 
 document.getElementById("checkInHistorySection").style.display="block";
 
@@ -571,6 +576,7 @@ list.innerHTML = html || "No Check-In History Found";
 
     }
     async function loadRankRewardHistory(){
+      hideAllHistorySections();
 
 document.getElementById("rankHistorySection").style.display="block";
 
@@ -626,6 +632,7 @@ list.innerHTML = html || "No Rank Reward History Found";
 
     }
     async function loadMonthlyRewardHistory(){
+      hideAllHistorySections();
 
 document.getElementById("monthlyRewardHistorySection").style.display="block";
 
@@ -683,6 +690,7 @@ list.innerHTML = html || "No Monthly Reward History Found";
 
     }
     async function loadWithdrawalHistory(){
+      hideAllHistorySections();
 
 document.getElementById("withdrawHistorySection").style.display="block";
 
