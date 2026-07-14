@@ -205,6 +205,9 @@ return;
 }
 
 console.log(data);
+  alert("Records : " + (data ? data.length : 0));
+
+list.innerHTML = JSON.stringify(data);
 
 }
 
