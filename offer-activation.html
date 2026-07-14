@@ -446,17 +446,23 @@ for (let level = 1; level <= 4; level++) {
         (rewardAmount * LEVEL_PERCENTAGES[level] / 100).toFixed(2)
     );
 
-    const { error: insertError } = await supabaseClient
+    const { data, error } = await supabaseClient
 .from("offer_submissions")
 .insert({
-  user_id: sponsorId,
-  from_user_id: userId,
-  offer_id: submission.offer_id,
-  reward: commission,
-  level: level,
-  income_type: "level_income",
-  status: "Approved"
-});
+    user_id: sponsorId,
+    from_user_id: userId,
+    offer_id: submission.offer_id,
+    reward: Math.round(commission),
+    level: level,
+    income_type: "level_income",
+    status: "Approved"
+})
+.select();
+
+if (error) {
+    console.log(error);
+    alert(JSON.stringify(error));
+}
 
 if (insertError) {
   console.error(insertError);
