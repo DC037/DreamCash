@@ -219,6 +219,23 @@ margin-bottom:15px;">
 <div id="scratchHistoryList"></div>
 
   </div>
+  <div id="checkInHistorySection" style="display:none;margin-top:25px;">
+
+<div style="
+background:linear-gradient(135deg,#ff4fa3,#d81b60);
+color:white;
+padding:15px;
+border-radius:15px;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+margin-bottom:15px;">
+✅ Check-In History
+</div>
+
+<div id="checkInHistoryList"></div>
+
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -456,6 +473,44 @@ border-left:5px solid #12b76a;
 });
 
 list.innerHTML = html || "No Scratch History Found";
+
+    }
+    async function loadCheckInHistory(){
+
+document.getElementById("checkInHistorySection").style.display="block";
+
+document.getElementById("checkInHistorySection").scrollIntoView({
+behavior:"smooth"
+});
+
+const list=document.getElementById("checkInHistoryList");
+
+const history=JSON.parse(localStorage.getItem("checkInHistory")||"[]");
+
+let html="";
+
+history.forEach(item=>{
+
+html+=`
+<div style="
+background:#fff;
+margin:12px 0;
+padding:15px;
+border-radius:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+border-left:5px solid #ff4fa3;
+">
+
+<div><b>✅ Reward:</b> ${item.reward} DC</div>
+
+<div><b>📅 Date:</b> ${item.date}</div>
+
+</div>
+`;
+
+});
+
+list.innerHTML = html || "No Check-In History Found";
 
     }
   </script>
