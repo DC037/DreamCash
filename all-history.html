@@ -283,6 +283,34 @@ return;
 }
 
 alert("Records : " + (data ? data.length : 0));
+  let html = "";
+
+data.forEach(item => {
+
+html += `
+<div style="
+background:#fff;
+margin:12px 0;
+padding:15px;
+border-radius:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+border-left:5px solid #ff9800;
+">
+
+<div><b>🎁 Offer:</b> ${item.offers?.title || item.offers?.name || "Offer"}</div>
+
+<div><b>💰 Reward:</b> ${item.reward || 0} DC</div>
+
+<div><b>📌 Status:</b> ${item.status}</div>
+
+<div><b>📅 Date:</b> ${new Date(item.created_at).toLocaleString()}</div>
+
+</div>
+`;
+
+});
+
+list.innerHTML = html;
 }
   </script>
 </body>
