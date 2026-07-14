@@ -411,7 +411,7 @@ const { data: submission } = await supabaseClient
 .select("offer_id, reward")
 .eq("id", submissionId)
 .single();
-const rewardAmount = Number(reward || 0);
+const rewardAmount = Number(submission.reward || 0);
 alert(
 "reward = " + reward +
 "\nrewardAmount = " + rewardAmount
