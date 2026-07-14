@@ -386,11 +386,19 @@ let currentMemberId = userId;
 
 for (let level = 1; level <= 4; level++) {
 
-    const { data: currentUser } = await supabaseClient
-        .from("users")
-        .select("sponsor_id")
-        .eq("member_id", currentMemberId)
-        .maybeSingle();
+    const {
+    data: currentUser,
+    error: sponsorError
+} = await supabaseClient
+.from("users")
+.select("sponsor_id")
+.eq("member_id", currentMemberId)
+.maybeSingle();
+
+if (sponsorError) {
+    console.error(sponsorError);
+    break;
+}
 
     if (!currentUser || !currentUser.sponsor_id) {
         break;
