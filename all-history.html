@@ -273,7 +273,8 @@ const { data, error } = await supabaseClient
 .select("*")
 .eq("user_id", userId)
 .order("created_at", { ascending: false });
-
+console.log("User ID:", userId);
+console.log("Data:", data, "Error:", error);
 if(error){
 
 list.innerHTML = "Offer History Load Failed";
