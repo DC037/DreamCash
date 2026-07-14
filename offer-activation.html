@@ -408,7 +408,7 @@ return;
 }
 const { data: submission } = await supabaseClient
 .from("offer_submissions")
-.select("offer_id")
+.select("offer_id, reward")
 .eq("id", submissionId)
 .single();
 const rewardAmount = Number(reward || 0);
