@@ -376,44 +376,7 @@ await supabaseClient
 .eq("member_id",memberId);
 
 }
-const rewardAmount = Number(reward || 0);
 
-// User ko 100%
-await creditUser(userId, rewardAmount, false);
-  // Level 1 → Level 4 Distribution
-
-let currentMemberId = userId;
-
-for (let level = 1; level <= 4; level++) {
-
-    const {
-    data: currentUser,
-    error: sponsorError
-} = await supabaseClient
-.from("users")
-.select("sponsor_id")
-.eq("member_id", currentMemberId)
-.maybeSingle();
-
-if (sponsorError) {
-    console.error(sponsorError);
-    break;
-}
-
-    if (!currentUser || !currentUser.sponsor_id) {
-        break;
-    }
-
-    const sponsorId = currentUser.sponsor_id;
-
-    const commission =
-        Number((rewardAmount * LEVEL_PERCENTAGES[level] / 100).toFixed(2));
-
-    await creditUser(sponsorId, commission, true);
-
-    currentMemberId = sponsorId;
-
-}
 const res=await fetch(
 
 SUPABASE_URL+
@@ -443,7 +406,45 @@ if(!res.ok){
 alert("Approve Error: "+result);
 return;
 }
+const rewardAmount = Number(reward || 0);
 
+// User ko 100%
+await creditUser(userId, rewardAmount, false);
+
+// Level 1 → Level 4 Distribution
+
+let currentMemberId = userId;
+
+for (let level = 1; level <= 4; level++) {
+
+    const {
+        data: currentUser,
+        error: sponsorError
+    } = await supabaseClient
+        .from("users")
+        .select("sponsor_id")
+        .eq("member_id", currentMemberId)
+        .maybeSingle();
+
+    if (sponsorError) {
+        console.error(sponsorError);
+        break;
+    }
+
+    if (!currentUser || !currentUser.sponsor_id) {
+        break;
+    }
+
+    const sponsorId = currentUser.sponsor_id;
+
+    const commission = Number(
+        (rewardAmount * LEVEL_PERCENTAGES[level] / 100).toFixed(2)
+    );
+
+    await creditUser(sponsorId, commission, true);
+
+    currentMemberId = sponsorId;
+      }
 alert("Offer Approved Successfully & Wallet Updated");
 
 loadOfferRequests();
