@@ -682,6 +682,63 @@ border-left:5px solid #00bcd4;
 list.innerHTML = html || "No Monthly Reward History Found";
 
     }
+    async function loadWithdrawalHistory(){
+
+document.getElementById("withdrawHistorySection").style.display="block";
+
+document.getElementById("withdrawHistorySection").scrollIntoView({
+behavior:"smooth"
+});
+
+const list=document.getElementById("withdrawHistoryList");
+
+list.innerHTML="Loading...";
+
+const userId=
+localStorage.getItem("member_id")||
+localStorage.getItem("last_member_id");
+
+const {data,error}=await supabaseClient
+.from("withdrawal_requests")
+.select("*")
+.eq("member_id",userId)
+.order("created_at",{ascending:false});
+
+if(error){
+list.innerHTML="Withdrawal History Load Failed";
+return;
+}
+
+let html="";
+
+data.forEach(item=>{
+
+html+=`
+<div style="
+background:#fff;
+margin:12px 0;
+padding:15px;
+border-radius:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+border-left:5px solid #f44336;
+">
+
+<div><b>💰 Amount:</b> ${item.amount} DC</div>
+
+<div><b>🏦 UPI:</b> ${item.upi}</div>
+
+<div><b>📋 Status:</b> ${item.status}</div>
+
+<div><b>📅 Date:</b> ${new Date(item.created_at).toLocaleString()}</div>
+
+</div>
+`;
+
+});
+
+list.innerHTML = html || "No Withdrawal History Found";
+
+    }
   </script>
 </body>
 </html>
