@@ -459,7 +459,9 @@ for (let level = 1; level <= 4; level++) {
 });
 
 if (insertError) {
-  alert(insertError.message);
+  console.error(insertError);
+  alert(JSON.stringify(insertError));
+  return;
 }
 
     currentMemberId = sponsorId;
