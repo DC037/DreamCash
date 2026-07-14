@@ -174,13 +174,37 @@ const supabaseClient = supabase.createClient(
 </script>
   <script>
 
-function loadReferralHistory(){
+async function loadReferralHistory(){
 
 document.getElementById("referHistorySection").style.display="block";
 
 document.getElementById("referHistorySection").scrollIntoView({
 behavior:"smooth"
 });
+
+const list = document.getElementById("referHistoryList");
+
+list.innerHTML = "Loading...";
+
+const userId =
+localStorage.getItem("member_id") ||
+localStorage.getItem("last_member_id");
+
+const { data, error } = await supabaseClient
+.from("income_history")
+.select("*")
+.eq("user_id", userId)
+.order("created_at", { ascending:false });
+
+if(error){
+
+list.innerHTML = "History Load Failed";
+
+return;
+
+}
+
+console.log(data);
 
 }
 
