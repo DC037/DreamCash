@@ -162,6 +162,23 @@ margin-bottom:15px;">
 <div id="referHistoryList"></div>
 
 </div>
+  <div id="offerHistorySection" style="display:none;margin-top:25px;">
+
+<div style="
+background:linear-gradient(135deg,#ff9800,#ff6f00);
+color:white;
+padding:15px;
+border-radius:15px;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+margin-bottom:15px;">
+🎁 Offer History
+</div>
+
+<div id="offerHistoryList"></div>
+
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -236,7 +253,37 @@ border-left:5px solid #2196f3;
 list.innerHTML = html;
 
 }
+async function loadOfferHistory(){
 
+document.getElementById("offerHistorySection").style.display="block";
+
+document.getElementById("offerHistorySection").scrollIntoView({
+behavior:"smooth"
+});
+const list = document.getElementById("offerHistoryList");
+
+list.innerHTML = "Loading...";
+
+const userId =
+localStorage.getItem("member_id") ||
+localStorage.getItem("last_member_id");
+
+const { data, error } = await supabaseClient
+.from("offer_submissions")
+.select("*, offers(*)")
+.eq("user_id", userId)
+.order("created_at", { ascending: false });
+
+if(error){
+
+list.innerHTML = "Offer History Load Failed";
+
+return;
+
+}
+
+alert("Records : " + (data ? data.length : 0));
+}
   </script>
 </body>
 </html>
