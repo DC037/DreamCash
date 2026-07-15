@@ -227,18 +227,29 @@ let html="";
 
 for(const d of data){
 
-const userData = allUsers.find(u => u.member_id === d.user_id);
-let uplineName = "N/A";
+const {data:userData}=await supabaseClient
+.from("users")
+.select("full_name,name,username,sponsor_id")
+.eq("member_id",d.user_id)
+.single();
 
-const sponsorData = allUsers.find(
-u => u.member_id === userData?.sponsor_id
-);
+let uplineName="N/A";
 
-uplineName =
-sponsorData?.full_name ||
-sponsorData?.name ||
-sponsorData?.username ||
+if(userData?.sponsor_id){
+
+const {data:sponsorData}=await supabaseClient
+.from("users")
+.select("full_name,name,username")
+.eq("member_id",userData.sponsor_id)
+.single();
+
+uplineName=
+sponsorData?.full_name||
+sponsorData?.name||
+sponsorData?.username||
 "N/A";
+
+}
 
 html+=`
 
