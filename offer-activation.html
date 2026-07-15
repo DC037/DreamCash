@@ -204,9 +204,7 @@ headers:{
 );
 
 const data=await response.json();
-const { data: allUsers } = await supabaseClient
-.from("users")
-.select("member_id,full_name,name,username,sponsor_id");
+
 const error=null;
 
 if(error){
