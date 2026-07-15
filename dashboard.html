@@ -1493,36 +1493,6 @@ window.submitWithdraw = async function(){
   alert("Withdrawal Request Submitted");
 };
 
-window.viewPaymentHistory = async function(){
-  const memberId = el("memberId").innerText.trim();
-
-const { data, error } = await supabaseClient
-  .from("withdrawal_requests")
-  .select("*")
-  .order("created_at", { ascending: false });
-
-const myHistory = (data || []).filter(w =>
-  String(w.member_id || w.user_id || "").trim() === memberId
-);
-
-  if(error){
-    alert("History Error: " + error.message);
-    return;
-  }
-
-  if(!myHistory || myHistory.length === 0){
-    alert("No withdrawal history found");
-    return;
-  }
-
-  alert(myHistory.map(w =>
-    "Amount: ₹" + w.amount +
-    "\nUPI: " + w.upi +
-    "\nStatus: " + w.status +
-    "\nDate: " + new Date(w.created_at).toLocaleString()
-  ).join("\n\n"));
-};
-
 window.copyReferral = function(){
   const link = el("myCode").innerText;
   navigator.clipboard.writeText(link).then(function(){
