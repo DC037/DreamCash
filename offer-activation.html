@@ -237,17 +237,7 @@ const {data:userData}=await supabaseClient
 
 .single();
 
-let applyName=
-
-userData?.full_name||
-
-userData?.name||
-
-userData?.username||
-
-"N/A";
-
-let sponsorName="N/A";
+let uplineName = "N/A";
 
 if(userData?.sponsor_id){
 
@@ -261,7 +251,7 @@ const {data:sponsorData}=await supabaseClient
 
 .single();
 
-sponsorName=
+uplineName=
 
 sponsorData?.full_name||
 
@@ -270,7 +260,7 @@ sponsorData?.name||
 sponsorData?.username||
 
 "N/A";
-
+    
 }
 
 html+=`
@@ -279,9 +269,9 @@ html+=`
 
 <b>User ID:</b> ${d.user_id}<br>
 
-<b>Apply Name:</b> ${applyName}<br>
+<b>Upline Name:</b> ${uplineName}<br>
 
-<b>Sponsor:</b> ${sponsorName}<br>
+<b>Date & Time:</b> ${new Date(d.created_at).toLocaleString()}<br>
 
 <b>Offer ID:</b> ${d.offer_id}<br>
 
