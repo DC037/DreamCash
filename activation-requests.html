@@ -189,6 +189,27 @@ return;
 let html = "";
 
 for (const d of data) {
+  let uplineName = "N/A";
+
+const { data: member } = await supabaseClient
+.from("users")
+.select("sponsor_id")
+.eq("member_id", d.user_id)
+.single();
+
+if (member && member.sponsor_id) {
+
+const { data: sponsor } = await supabaseClient
+.from("users")
+.select("name")
+.eq("member_id", member.sponsor_id)
+.single();
+
+if (sponsor) {
+uplineName = sponsor.name;
+}
+
+}
   let cardColor =
 d.status==="Approved"
 ? "#eafaf1"
