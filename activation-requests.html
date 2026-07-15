@@ -175,7 +175,9 @@ const { data, error } = await supabaseClient
 .from("activation_requests")
 .select("*")
 .order("created_at",{ascending:false});
-
+const { data: users } = await supabaseClient
+.from("users")
+.select("member_id,name,sponsor_id");
 if(error){
 box.innerHTML = error.message;
 return;
@@ -191,19 +193,11 @@ let html = "";
 for (const d of data) {
   let uplineName = "N/A";
 
-const { data: member } = await supabaseClient
-.from("users")
-.select("sponsor_id")
-.eq("member_id", d.user_id)
-.single();
+const member = users.find(u => u.member_id === d.user_id);
 
-if (member && member.sponsor_id) {
+if (member) {
 
-const { data: sponsor } = await supabaseClient
-.from("users")
-.select("name")
-.eq("member_id", member.sponsor_id)
-.single();
+const sponsor = users.find(u => u.member_id === member.sponsor_id);
 
 if (sponsor) {
 uplineName = sponsor.name;
