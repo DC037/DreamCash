@@ -1823,16 +1823,6 @@ async function claimAfterScratch(){
   closeScratchPopup();
 }
 
-window.viewScratchHistory = function(){
-  const history = JSON.parse(localStorage.getItem("scratchHistory") || "[]");
-
-  if(history.length === 0){
-    alert("No Scratch History Found");
-    return;
-  }
-
-  alert(history.map(x => "Reward: " + x.reward + " DC\n" + x.date).join("\n\n"));
-};
 window.openQRPopup = function(){
   document.getElementById("qrPopup").style.display = "block";
 };
