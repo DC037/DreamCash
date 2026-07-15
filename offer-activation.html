@@ -204,7 +204,9 @@ headers:{
 );
 
 const data=await response.json();
-
+const { data: allUsers } = await supabaseClient
+.from("users")
+.select("member_id,name,sponsor_id");
 const error=null;
 
 if(error){
@@ -227,30 +229,21 @@ let html="";
 
 for(const d of data){
 
-const {data:userData}=await supabaseClient
-.from("users")
-.select("full_name,name,username,sponsor_id")
-.eq("member_id",d.user_id)
-.single();
+const member = allUsers.find(u => u.member_id === d.user_id);
 
-let uplineName="N/A";
+let uplineName = "N/A";
 
-if(userData?.sponsor_id){
+if (member) {
 
-const {data:sponsorData}=await supabaseClient
-.from("users")
-.select("full_name,name,username")
-.eq("member_id",userData.sponsor_id)
-.single();
+const sponsor = allUsers.find(
+u => u.member_id === member.sponsor_id
+);
 
-uplineName=
-sponsorData?.full_name||
-sponsorData?.name||
-sponsorData?.username||
-"N/A";
-
+if (sponsor) {
+uplineName = sponsor.name;
 }
 
+}
 html+=`
 
 <div class="row">
