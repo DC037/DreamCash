@@ -229,16 +229,7 @@ let html="";
 
 for(const d of data){
 
-const {data:userData}=await supabaseClient
-
-.from("users")
-
-.select("full_name,name,username,sponsor_id")
-
-.eq("member_id",d.user_id)
-
-.single();
-
+const userData = allUsers.find(u => u.member_id === d.user_id);
 let uplineName = "N/A";
 
 if(userData?.sponsor_id){
