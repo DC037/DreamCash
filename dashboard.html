@@ -784,9 +784,7 @@ Spin Now
     <h3>Daily Check-In</h3>
     <p>Claim your daily reward.</p>
     <button class="btn" onclick="dailyCheckIn()">Claim</button>
-    <button class="btn blue" onclick="viewCheckInHistory()">Check-In History</button>
-  </div>
-
+    
   <div class="box scratchGreen">
     <div class="icon">🎁</div>
     <h3>Scratch Card</h3>
@@ -1675,17 +1673,6 @@ window.dailyCheckIn = async function(){
   localStorage.setItem("checkInHistory", JSON.stringify(history));
 
   alert("Daily Check-In Success! You won " + reward.toFixed(2) + " DC");
-};
-
-window.viewCheckInHistory = function(){
-  const history = JSON.parse(localStorage.getItem("checkInHistory") || "[]");
-
-  if(history.length === 0){
-    alert("No Check-In History Found");
-    return;
-  }
-
-  alert(history.map(x => "Reward: " + x.reward + " DC\n" + x.date).join("\n\n"));
 };
 
 const scratchRewards = [0.10, 0.15, 0.20, 0.25, 0.30];
