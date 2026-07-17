@@ -50,7 +50,7 @@ async function loadOffers(){
   try {
     const { data, error } = await supabaseClient
       .from("offers")
-      .select("id,title,status,reward,offer_url")
+      .select("id,title,status,reward,offer_url,logo_url,description")
       .order("created_at", { ascending: false });
   
 
@@ -73,6 +73,10 @@ async function loadOffers(){
     activeOffers.forEach(offer => {
       html += `
         <div class="offer-card">
+        ${offer.logo_url ? `
+<img src="${offer.logo_url}"
+     style="width:60px;height:60px;border-radius:12px;object-fit:cover;margin-bottom:10px;">
+` : ""}
           <div class="offer-title">${offer.title || ""}</div>
           <div class="offer-desc">${offer.description || ""}</div>
           <div class="offer-reward">Reward: ${offer.reward || 0} Coins</div>
