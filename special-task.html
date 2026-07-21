@@ -69,11 +69,18 @@ body{
 <div class="container">
 
 <div class="card">
-<h2>Special Tasks</h2>
+
+<h2>🔥 TimeWall OfferWall</h2>
 
 <p>
-Special tasks will be available here.
+Complete offers and earn DreamCash automatically.
 </p>
+
+<button
+id="timewallBtn"
+style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer;">
+🚀 Open TimeWall
+</button>
 
 </div>
 
@@ -82,6 +89,24 @@ Special tasks will be available here.
 </a>
 
 </div>
+<script>
+const memberId =
+  localStorage.getItem("member_id") ||
+  localStorage.getItem("last_member_id");
 
+document.getElementById("timewallBtn").addEventListener("click", function () {
+
+  if (!memberId) {
+    alert("Member ID not found. Please login again.");
+    return;
+  }
+
+  const url =
+    "https://timewall.io/users/login?oid=51de77a4d9885033&uid=" +
+    encodeURIComponent(memberId);
+
+  window.open(url, "_blank");
+});
+</script>
 </body>
 </html>
