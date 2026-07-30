@@ -472,25 +472,15 @@ if (oldClaim) {
 
   if (oldClaim.status === "Approved") {
 
-      if (canClaimToday()) {
+    html += `
+    <button class="btn lock" disabled>
+        🔒 Claim unlocks on 30th
+    </button>
+    `;
 
-          html += `
-          <button class="btn green"
-          onclick="claimReward(${rank},${rewardAmount})">
-          Claim Reward
-          </button>
-          `;
-
-      } else {
-
-          html += `
-          <button class="btn lock">
-          🔒 Claim unlocks on 30th
-          </button>
-          `;
-
-      }
-
+    box.innerHTML = html;
+    return;
+  }
   }
 
   box.innerHTML = html;
