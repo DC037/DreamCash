@@ -453,7 +453,7 @@ async function loadClaimBox(leaderboard){
     `;
     return;
   }
-
+const rewardAmount = rewards[rank];
   const { data: oldClaim } = await supabaseClient
     .from("monthly_reward_claims")
     .select("*")
@@ -496,8 +496,6 @@ if (oldClaim) {
   box.innerHTML = html;
   return;
 }
-
-  const rewardAmount = rewards[rank];
 
   if(!canClaimToday()){
     box.innerHTML = `
