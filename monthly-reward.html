@@ -461,15 +461,41 @@ async function loadClaimBox(leaderboard){
     .eq("month", month)
     .maybeSingle();
 
-  if(oldClaim){
-    box.innerHTML = `
-      <b>Month:</b> ${oldClaim.month}<br>
-      <b>Rank:</b> #${oldClaim.rank}<br>
-      <b>Reward:</b> ${oldClaim.reward_amount} DC<br>
-      <b>Status:</b> <span class="${oldClaim.status.toLowerCase()}">${oldClaim.status}</span>
-    `;
-    return;
+if (oldClaim) {
+
+  let html = `
+    <b>Month:</b> ${oldClaim.month}<br>
+    <b>Rank:</b> #${oldClaim.rank}<br>
+    <b>Reward:</b> ${oldClaim.reward_amount} DC<br>
+    <b>Status:</b> <span class="${oldClaim.status.toLowerCase()}">${oldClaim.status}</span><br>
+  `;
+
+  if (oldClaim.status === "Approved") {
+
+      if (canClaimToday()) {
+
+          html += `
+          <button class="btn green"
+          onclick="claimReward(${rank},${rewardAmount})">
+          Claim Reward
+          </button>
+          `;
+
+      } else {
+
+          html += `
+          <button class="btn lock">
+          🔒 Claim unlocks on 30th
+          </button>
+          `;
+
+      }
+
   }
+
+  box.innerHTML = html;
+  return;
+}
 
   const rewardAmount = rewards[rank];
 
