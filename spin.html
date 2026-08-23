@@ -63,10 +63,9 @@ function todayDate(){
 }
 async function check15DaysReferralCondition(user){
   try {
-    const regDateStr = user.created_at || user.date || user.joining_date || user.created_date;
-    if(!regDateStr) return true;
+    if(!user || !user.created_at) return true;
 
-    const userCreatedAt = new Date(regDateStr);
+    const userCreatedAt = new Date(user.created_at);
     const now = new Date();
     const diffDays = Math.floor((now - userCreatedAt) / (1000 * 60 * 60 * 24));
 
@@ -79,7 +78,7 @@ async function check15DaysReferralCondition(user){
 
     const { data: referrals, error } = await supabaseClient
       .from("users")
-      .select("member_id, status, created_at, date, joining_date")
+      .select("member_id, status, created_at")
       .eq("sponsor_id", currentMemberId);
 
     if(error || !referrals || referrals.length === 0){
@@ -89,7 +88,7 @@ async function check15DaysReferralCondition(user){
     const hasActiveIn15Days = referrals.some(ref => {
       const st = String(ref.status || "").toLowerCase();
       const isActive = (st === "active" || st === "approved");
-      const refDate = new Date(ref.created_at || ref.date || ref.joining_date || 0);
+      const refDate = new Date(ref.created_at);
       return isActive && (refDate >= fifteenDaysAgo);
     });
 
@@ -99,7 +98,7 @@ async function check15DaysReferralCondition(user){
     return true;
   }
 }
-  
+
 async function initSpinPage(){
   currentMemberId = getMemberId();
 
@@ -136,12 +135,9 @@ async function initSpinPage(){
   }
 
   currentActive = true;
+
   referralCheckPassed = await check15DaysReferralCondition(user);
-  if(!referralCheckPassed){
-    document.getElementById("statusText").innerText = "⚠️ Referral Required";
-    document.getElementById("spinLeftText").innerText = "Active 1 ID to Unlock Spin";
-  }
-  
+
   const { data:spinRow } = await supabaseClient
     .from("daily_claims")
     .select("*")
@@ -153,10 +149,15 @@ async function initSpinPage(){
   const used = spinRow ? Number(spinRow.claim_count || 0) : 0;
   currentSpinLeft = Math.max(0, 5 - used);
 
-    if(referralCheckPassed){
+  if(!referralCheckPassed){
+    document.getElementById("statusText").innerText = "⚠️ Referral Required";
+    document.getElementById("spinLeftText").innerText = "Active 1 ID to Unlock Spin";
+  } else {
     document.getElementById("statusText").innerText = "✅ Active User";
     document.getElementById("spinLeftText").innerText = "Today Spins Left: " + currentSpinLeft;
-    }
+  }
+}
+
 
 async function startSpin(){
   if(!currentActive){
