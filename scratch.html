@@ -160,19 +160,19 @@ async function initScratchPage(){
   } else {
     document.getElementById("statusText").innerText = "✅ Active User";
     document.getElementById("scratchLeftText").innerText = "Today Scratch Left: " + currentScratchLeft;
-    resetScratchCanvas();
-  }
+    
+}
+
+  resetScratchCanvas();
 }
 
 function resetScratchCanvas(){
-  if(currentScratchLeft <= 0 || !referralCheckPassed || !currentActive){
-    return;
-  }
   rewardClaimed = false;
   scratchRewardValue = rewards[Math.floor(Math.random() * rewards.length)];
   document.getElementById("scratchReward").innerText = scratchRewardValue.toFixed(2) + " DC";
 
   canvas = document.getElementById("scratchCanvas");
+  if(!canvas) return;
   ctx = canvas.getContext("2d");
   ctx.globalCompositeOperation = "source-over";
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -180,10 +180,11 @@ function resetScratchCanvas(){
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 16px Arial";
+  ctx.font = "bold 18px Arial";
   ctx.textAlign = "center";
-  ctx.fillText("Scratch Here", canvas.width/2, canvas.height/2 + 5);
-}
+  ctx.fillText("🎁 Scratch Card", canvas.width/2, canvas.height/2 + 6);
+  }
+  
 
 function scratchMove(e){
   if(!isDrawing || !ctx) return;
