@@ -1584,13 +1584,14 @@ window.closeQRPopup = function(){
 };
 document.addEventListener("DOMContentLoaded", function(){
   loadDashboard();
-
+});
   
   const savedProfilePhoto = localStorage.getItem("profilePhoto");
 const dashboardPhoto = document.getElementById("dashboardProfilePhoto");
 
 if (savedProfilePhoto && dashboardPhoto) {
   dashboardPhoto.src = savedProfilePhoto;
+}
 })();
   
 </script>
