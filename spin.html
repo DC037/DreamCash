@@ -62,33 +62,44 @@ function todayDate(){
   return new Date().toISOString().split("T")[0];
 }
 async function check15DaysReferralCondition(user){
-  const userCreatedAt = new Date(user.created_at || user.date || new Date());
-  const now = new Date();
-  const diffDays = Math.floor((now - userCreatedAt) / (1000 * 60 * 60 * 24));
+  try {
+    const regDateStr = user.created_at || user.date || user.joining_date || user.created_date;
+    if(!regDateStr) return true;
 
-  if(diffDays <= 15){
+    const userCreatedAt = new Date(regDateStr);
+    const now = new Date();
+    const diffDays = Math.floor((now - userCreatedAt) / (1000 * 60 * 60 * 24));
+
+    if(diffDays <= 15){
+      return true;
+    }
+
+    const fifteenDaysAgo = new Date();
+    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+
+    const { data: referrals, error } = await supabaseClient
+      .from("users")
+      .select("member_id, status, created_at, date, joining_date")
+      .eq("sponsor_id", currentMemberId);
+
+    if(error || !referrals || referrals.length === 0){
+      return false;
+    }
+
+    const hasActiveIn15Days = referrals.some(ref => {
+      const st = String(ref.status || "").toLowerCase();
+      const isActive = (st === "active" || st === "approved");
+      const refDate = new Date(ref.created_at || ref.date || ref.joining_date || 0);
+      return isActive && (refDate >= fifteenDaysAgo);
+    });
+
+    return hasActiveIn15Days;
+  } catch(e) {
+    console.error("Referral Check Error:", e);
     return true;
   }
-
-  const fifteenDaysAgo = new Date();
-  fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
-  const dateLimit = fifteenDaysAgo.toISOString();
-
-  const { data: referrals, error } = await supabaseClient
-    .from("users")
-    .select("member_id")
-    .or(`sponsor_id.eq.${currentMemberId},referred_by.eq.${currentMemberId}`)
-    .in("status", ["active", "Active", "approved", "Approved"])
-    .gte("created_at", dateLimit)
-    .limit(1);
-
-  if(error || !referrals || referrals.length === 0){
-    return false;
-  }
-
-  return true;
 }
-
+  
 async function initSpinPage(){
   currentMemberId = getMemberId();
 
