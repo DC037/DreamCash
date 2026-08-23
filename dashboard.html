@@ -764,7 +764,8 @@ Spin Now
     <div class="icon">🎁</div>
     <h3>Scratch Card</h3>
     <p>5 scratch cards per day.</p>
-    <button class="btn orange" onclick="checkScratchAccess()">Scratch</button>
+    <button class="btn orange" onclick="window.location.href='scratch.html?member_id=' + encodeURIComponent(document.getElementById('memberId').innerText.trim())">Scratch</button>
+    
     
   </div>
 
