@@ -125,7 +125,12 @@ async function initSpinPage(){
   }
 
   currentActive = true;
-
+  referralCheckPassed = await check15DaysReferralCondition(user);
+  if(!referralCheckPassed){
+    document.getElementById("statusText").innerText = "⚠️ Referral Required";
+    document.getElementById("spinLeftText").innerText = "Active 1 ID to Unlock Spin";
+  }
+  
   const { data:spinRow } = await supabaseClient
     .from("daily_claims")
     .select("*")
