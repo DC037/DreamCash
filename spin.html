@@ -151,7 +151,11 @@ async function startSpin(){
     alert("Please activate your ID first");
     return;
   }
-
+  if(!referralCheckPassed){
+    alert("Please Active One ID and Continue Spin");
+    return;
+  }
+  
   if(currentSpinLeft <= 0){
     alert("No spins left today. Come back tomorrow.");
     return;
