@@ -1,1 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DreamCash Scratch Card</title>
 
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#020617,#111827,#1e1b4b);min-height:100vh;text-align:center;color:#fff}
+.header{background:linear-gradient(135deg,#10b981,#059669,#047857);padding:20px;font-size:24px;font-weight:bold}
+.card{background:rgba(255,255,255,.12);margin:25px auto;padding:25px;border-radius:28px;max-width:420px;border:1px solid rgba(255,255,255,.25)}
+.scratchArea{position:relative;width:280px;height:160px;margin:20px auto;border-radius:18px;overflow:hidden;background:#fff3cd;box-shadow:0 0 20px rgba(16,185,129,0.3)}
+#scratchReward{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;color:#0b7a75;z-index:1;user-select:none}
+#scratchCanvas{position:absolute;top:0;left:0;width:100%;height:100%;background:transparent;touch-action:none;z-index:2;cursor:pointer}
+.btn{padding:13px 24px;border:none;border-radius:28px;background:linear-gradient(135deg,#10b981,#06b6d4);color:white;font-weight:bold;margin:7px;cursor:pointer}
+.btn:disabled{opacity:.6}
+.back{background:linear-gradient(135deg,#16a34a,#22c55e,#86efac);color:#020617}
+.history{background:rgba(255,255,255,.15);margin:18px auto;padding:15px;border-radius:18px;max-width:420px;text-align:left}
+</style>
+</head>
+
+<body>
+
+<div class="header">🎁 DreamCash Scratch Card</div>
+
+<div class="card">
+  <h3 id="statusText">Checking...</h3>
+  <p id="scratchLeftText">Today Scratch Left: 0</p>
+  
+  <div class="scratchArea">
+    <div id="scratchReward">0.00 DC</div>
+    <canvas id="scratchCanvas" width="280" height="160"></canvas>
+  </div>
+
+  <button class="btn" onclick="loadScratchHistory()">Scratch History</button>
+  <button class="btn back" onclick="window.location.href='dashboard.html'">Back Dashboard</button>
+</div>
+
+<div id="historyBox"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://baqgiuxvscffmtvhceqk.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhcWdpdXh2c2NmZm10dmhjZXFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjU1NjQsImV4cCI6MjA5NzM0MTU2NH0.Ds_kkWUrI7r7sWarCDO7uavPl3yqHogClSBPAlRfYcs";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const rewards = [0.10, 0.15, 0.20, 0.25, 0.30];
+
+let currentMemberId = "";
+let currentActive = false;
+let currentScratchLeft = 0;
+let referralCheckPassed = true;
+
+let scratchRewardValue = 0;
+let canvas = null;
+let ctx = null;
+let isDrawing = false;
+let rewardClaimed = false;
+let scratchDataNow = null;
+
+function getMemberId(){
+  const p = new URLSearchParams(window.location.search);
+  const id = p.get("member_id") ||
+    localStorage.getItem("member_id") ||
+    localStorage.getItem("memberId") ||
+    localStorage.getItem("user_id") || "";
+  return String(id).trim().toUpperCase();
+}
+
+function todayDate(){
+  return new Date().toISOString().split("T")[0];
+}
+
+async function check15DaysReferralCondition(user){
+  try {
+    if(!user || !user.created_at) return true;
+    const userCreatedAt = new Date(user.created_at);
+    const now = new Date();
+    const diffDays = Math.floor((now - userCreatedAt) / (1000 * 60 * 60 * 24));
+
+    if(diffDays <= 15) return true;
+
+    const fifteenDaysAgo = new Date();
+    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+
+    const { data: referrals, error } = await supabaseClient
+      .from("users")
+      .select("member_id, status, created_at")
+      .eq("sponsor_id", currentMemberId);
+
+    if(error || !referrals || referrals.length === 0) return false;
+
+    return referrals.some(ref => {
+      const st = String(ref.status || "").toLowerCase();
+      const isActive = (st === "active" || st === "approved");
+      const refDate = new Date(ref.created_at);
+      return isActive && (refDate >= fifteenDaysAgo);
+    });
+  } catch(e) {
+    console.error("Referral Check Error:", e);
+    return true;
+  }
+}
+
+async function initScratchPage(){
+  currentMemberId = getMemberId();
+  document.getElementById("statusText").innerText = "Checking...";
+  document.getElementById("scratchLeftText").innerText = "Loading...";
+
+  if(!currentMemberId){
+    document.getElementById("statusText").innerText = "🔴 User Not Found";
+    document.getElementById("scratchLeftText").innerText = "Open from dashboard";
+    currentActive = false;
+    return;
+  }
+
+  const { data:user, error:userError } = await supabaseClient
+    .from("users")
+    .select("*")
+    .eq("member_id", currentMemberId)
+    .maybeSingle();
+
+  if(userError || !user){
+    document.getElementById("statusText").innerText = "🔴 User Not Found";
+    document.getElementById("scratchLeftText").innerText = "Scratch Locked";
+    currentActive = false;
+    return;
+  }
+
+  const status = String(user.status || "").trim().toLowerCase();
+  if(status !== "active" && status !== "approved"){
+    document.getElementById("statusText").innerText = "🔴 Inactive User";
+    document.getElementById("scratchLeftText").innerText = "Activate ID First";
+    currentActive = false;
+    return;
+  }
+
+  currentActive = true;
+  referralCheckPassed = await check15DaysReferralCondition(user);
+
+  const { data:claimRow } = await supabaseClient
+    .from("daily_claims")
+    .select("*")
+    .eq("user_id", currentMemberId)
+    .eq("task_type", "scratch")
+    .eq("claim_date", todayDate())
+    .maybeSingle();
+
+  const used = claimRow ? Number(claimRow.claim_count || 0) : 0;
+  currentScratchLeft = Math.max(0, 5 - used);
+
+  scratchDataNow = {
+    claimId: claimRow ? claimRow.id : null,
+    claim_count: used
+  };
+
+  if(!referralCheckPassed){
+    document.getElementById("statusText").innerText = "⚠️ Referral Required";
+    document.getElementById("scratchLeftText").innerText = "Active 1 ID to Unlock Scratch";
+  } else {
+    document.getElementById("statusText").innerText = "✅ Active User";
+    document.getElementById("scratchLeftText").innerText = "Today Scratch Left: " + currentScratchLeft;
+    resetScratchCanvas();
+  }
+}
+
+function resetScratchCanvas(){
+  if(currentScratchLeft <= 0 || !referralCheckPassed || !currentActive){
+    return;
+  }
+  rewardClaimed = false;
+  scratchRewardValue = rewards[Math.floor(Math.random() * rewards.length)];
+  document.getElementById("scratchReward").innerText = scratchRewardValue.toFixed(2) + " DC";
+
+  canvas = document.getElementById("scratchCanvas");
+  ctx = canvas.getContext("2d");
+  ctx.globalCompositeOperation = "source-over";
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#ff7a00";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 16px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("Scratch Here", canvas.width/2, canvas.height/2 + 5);
+}
+
+function scratchMove(e){
+  if(!isDrawing || !ctx) return;
+  if(!currentActive){
+    alert("Please activate your ID first");
+    isDrawing = false;
+    return;
+  }
+  if(!referralCheckPassed){
+    alert("Please Active One ID and Continue Scratch");
+    isDrawing = false;
+    return;
+  }
+  if(currentScratchLeft <= 0){
+    alert("No scratches left today. Come back tomorrow.");
+    isDrawing = false;
+    return;
+  }
+
+  e.preventDefault();
+  ctx.globalCompositeOperation = "destination-out";
+  const rect = canvas.getBoundingClientRect();
+  const point = e.touches ? e.touches[0] : e;
+  const x = (point.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (point.clientY - rect.top) * (canvas.height / rect.height);
+
+  ctx.beginPath();
+  ctx.arc(x, y, 25, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+async function claimAfterScratch(){
+  if(rewardClaimed || !currentActive || !referralCheckPassed || currentScratchLeft <= 0) return;
+  rewardClaimed = true;
+
+  const today = todayDate();
+  const newCount = (scratchDataNow?.claim_count || 0) + 1;
+
+  if(scratchDataNow && scratchDataNow.claimId){
+    const { error } = await supabaseClient
+      .from("daily_claims")
+      .update({
+        claim_count: newCount,
+        points: Math.round(scratchRewardValue * 100)
+      })
+      .eq("id", scratchDataNow.claimId);
+
+    if(error){
+      alert("Claim error: " + error.message);
+      rewardClaimed = false;
+      return;
+    }
+  } else {
+    const { data: insData, error } = await supabaseClient
+      .from("daily_claims")
+      .insert([{
+        user_id: currentMemberId,
+        task_type: "scratch",
+        claim_date: today,
+        points: Math.round(scratchRewardValue * 100),
+        claim_count: 1
+      }])
+      .select()
+      .maybeSingle();
+
+    if(error){
+      alert("Claim error: " + error.message);
+      rewardClaimed = false;
+      return;
+    }
+    if(insData) scratchDataNow.claimId = insData.id;
+  }
+
+  // Update User Wallet
+  const { data: userData } = await supabaseClient
+    .from("users")
+    .select("wallet")
+    .eq("member_id", currentMemberId)
+    .maybeSingle();
+
+  const newWallet = Number(userData?.wallet || 0) + scratchRewardValue;
+  await supabaseClient.from("users").update({ wallet: newWallet }).eq("member_id", currentMemberId);
+
+  currentScratchLeft -= 1;
+  if(scratchDataNow) scratchDataNow.claim_count = newCount;
+
+  document.getElementById("scratchLeftText").innerText = "Today Scratch Left: " + currentScratchLeft;
+  alert("Congratulations! You won " + scratchRewardValue.toFixed(2) + " DC");
+
+  if(currentScratchLeft > 0){
+    resetScratchCanvas();
+  }
+}
+
+async function loadScratchHistory(){
+  const memberId = currentMemberId || getMemberId();
+  const { data, error } = await supabaseClient
+    .from("daily_claims")
+    .select("*")
+    .eq("user_id", memberId)
+    .eq("task_type", "scratch")
+    .order("claim_date", { ascending:false })
+    .limit(20);
+
+  if(error || !data || data.length === 0){
+    document.getElementById("historyBox").innerHTML = "<div class='history'>No Scratch History Found</div>";
+    return;
+  }
+
+  let html = "<div class='history'><h3>Scratch History</h3>";
+  data.forEach(item=>{
+    html += "<p>Date: " + item.claim_date + " | Count: " + item.claim_count + " | Points: " + item.points + "</p>";
+  });
+  html += "</div>";
+  document.getElementById("historyBox").innerHTML = html;
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+  initScratchPage();
+  const c = document.getElementById("scratchCanvas");
+  if(c){
+    c.addEventListener("touchstart", function(e){ isDrawing = true; e.preventDefault(); }, {passive:false});
+    c.addEventListener("touchmove", scratchMove, {passive:false});
+    c.addEventListener("touchend", function(e){ isDrawing = false; e.preventDefault(); claimAfterScratch(); }, {passive:false});
+    c.addEventListener("mousedown", function(){ isDrawing = true; });
+    c.addEventListener("mousemove", scratchMove);
+    c.addEventListener("mouseup", function(){ isDrawing = false; claimAfterScratch(); });
+    c.addEventListener("mouseleave", function(){ isDrawing = false; });
+  }
+});
+</script>
+
+</body>
+</html>
