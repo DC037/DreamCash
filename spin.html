@@ -142,9 +142,10 @@ async function initSpinPage(){
   const used = spinRow ? Number(spinRow.claim_count || 0) : 0;
   currentSpinLeft = Math.max(0, 5 - used);
 
-  document.getElementById("statusText").innerText = "✅ Active User";
-  document.getElementById("spinLeftText").innerText = "Today Spins Left: " + currentSpinLeft;
-}
+    if(referralCheckPassed){
+    document.getElementById("statusText").innerText = "✅ Active User";
+    document.getElementById("spinLeftText").innerText = "Today Spins Left: " + currentSpinLeft;
+    }
 
 async function startSpin(){
   if(!currentActive){
