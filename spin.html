@@ -44,6 +44,8 @@ const rewards = [0.10,0.15,0.20,0.25,0.30];
 let currentMemberId = "";
 let currentActive = false;
 let currentSpinLeft = 0;
+let referralCheckPassed = true;
+
 
 function getMemberId(){
   const p = new URLSearchParams(window.location.search);
