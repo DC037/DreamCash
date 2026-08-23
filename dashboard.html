@@ -1575,7 +1575,6 @@ window.dailyCheckIn = async function(){
   alert("Daily Check-In Success! You won " + reward.toFixed(2) + " DC");
 };
 
-
 window.openQRPopup = function(){
   document.getElementById("qrPopup").style.display = "block";
 };
@@ -1586,24 +1585,14 @@ window.closeQRPopup = function(){
 document.addEventListener("DOMContentLoaded", function(){
   loadDashboard();
 
-  const c = el("scratchCanvas");
-  if(c){
-    c.addEventListener("touchstart", function(e){ isDrawing = true; e.preventDefault(); }, {passive:false});
-    c.addEventListener("touchmove", scratchMove, {passive:false});
-    c.addEventListener("touchend", function(e){ isDrawing = false; e.preventDefault(); claimAfterScratch(); }, {passive:false});
-    c.addEventListener("mousedown", function(){ isDrawing = true; });
-    c.addEventListener("mousemove", scratchMove);
-    c.addEventListener("mouseup", function(){ isDrawing = false; claimAfterScratch(); });
-    c.addEventListener("mouseleave", function(){ isDrawing = false; });
-  }
-});
-  })();
+  
   const savedProfilePhoto = localStorage.getItem("profilePhoto");
 const dashboardPhoto = document.getElementById("dashboardProfilePhoto");
 
 if (savedProfilePhoto && dashboardPhoto) {
   dashboardPhoto.src = savedProfilePhoto;
-}
+})();
+  
 </script>
 <div style="text-align:center;padding:20px 10px 90px 10px;font-size:13px;color:#666;line-height:1.8;">
 
